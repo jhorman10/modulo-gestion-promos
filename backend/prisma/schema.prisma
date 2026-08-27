@@ -1,0 +1,76 @@
+// Prisma Schema for Promotions Management Module
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum PromotionStatus {
+  PROGRAMADA
+  ACTIVA
+  FINALIZADA
+}
+
+enum ProductCategoryType {
+  PRODUCT
+  CATEGORY
+}
+
+model ProductCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(200)
+  type      ProductCategoryType
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  promotions PromotionProductCategory[]
+
+  @@unique([name, type])
+  @@index([type])
+  @@map("products_categories")
+}
+
+model Promotion {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @db.VarChar(200)
+  discountType  DiscountType @map("discount_type")
+  discountValue Decimal  @db.Decimal(10, 2) @map("discount_value")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  status        PromotionStatus @default(PROGRAMADA)
+  deletedAt     DateTime? @map("deleted_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  associations PromotionProductCategory[]
+
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("promotions")
+}
+
+model PromotionProductCategory {
+  id               String @id @default(uuid()) @db.Uuid
+  promotionId      String @map("promotion_id") @db.Uuid
+  productCategoryId String @map("product_category_id") @db.Uuid
+  associationType  ProductCategoryType @map("association_type")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  promotion        Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  productCategory  ProductCategory @relation(fields: [productCategoryId], references: [id], onDelete: Cascade)
+
+  @@unique([promotionId, productCategoryId])
+  @@index([associationType])
+  @@map("promotion_products_categories")
+}
