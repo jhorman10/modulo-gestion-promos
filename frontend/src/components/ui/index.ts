@@ -21,3 +21,6 @@ export type { ToastProviderProps } from './Toast';
 
 export { FormField } from './FormField';
 export type { FormFieldProps } from './FormField';
+
+export { ConfirmationDialog } from './ConfirmationDialog';
+export type { ConfirmationDialogProps } from './ConfirmationDialog';

@@ -1,23 +1,32 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { Promotion } from '../api/promotions';
 import { ProductCategory } from '../api/registry';
 
 // Hoisted mocks
-const { mockApiGet, mockApiPost } = vi.hoisted(() => ({
+const { mockApiGet, mockApiPost, mockApiPatch, mockUsePromotion } = vi.hoisted(() => ({
   mockApiGet: vi.fn(),
   mockApiPost: vi.fn(),
+  mockApiPatch: vi.fn(),
+  mockUsePromotion: vi.fn(),
 }));
 
 vi.mock('../api/client', () => ({
   api: {
     get: mockApiGet,
     post: mockApiPost,
-    patch: vi.fn(),
+    patch: mockApiPatch,
     delete: vi.fn(),
   },
+}));
+
+vi.mock('../api/promotions', () => ({
+  usePromotion: (...args: any[]) => mockUsePromotion(...args),
+  PROMOTIONS_QUERY_KEY: ['promotions'],
+  promotionsQueryKey: (params: any) => ['promotions', params],
 }));
 
 // Create a wrapper for React Query
@@ -54,6 +63,13 @@ describe('PromotionForm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock for usePromotion (non-edit mode returns empty data)
+    mockUsePromotion.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
     mockApiGet
       .mockResolvedValueOnce({
         products: mockProducts,
@@ -272,5 +288,128 @@ describe('PromotionForm', () => {
     });
 
     await waitFor(() => expect(screen.queryByRole('button', { name: /creando|creating/i })).not.toBeInTheDocument());
+  });
+
+  it('should load existing promotion data in edit mode', async () => {
+    const existingPromotion = {
+      id: '1',
+      name: 'Existing Promo',
+      discount_type: 'percentage',
+      discount_value: 0.20,
+      start_date: '2026-09-01T00:00:00Z',
+      end_date: '2026-09-30T23:59:59Z',
+      status: 'Programada',
+      products: [mockProducts[0]],
+      categories: [mockCategories[0]],
+      created_at: '2026-08-01T00:00:00Z',
+      updated_at: '2026-08-01T00:00:00Z',
+      deleted_at: null,
+    };
+
+    mockUsePromotion.mockReturnValue({
+      data: existingPromotion,
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
+    const { PromotionForm } = await import('../components/PromotionForm');
+    render(<PromotionForm promotionId="1" />, { wrapper });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Existing Promo')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /actualizar|update/i })).toBeInTheDocument();
+    });
+  });
+
+  it('should submit update via PATCH in edit mode', async () => {
+    const user = userEvent.setup();
+    
+    const existingPromotion = {
+      id: '1',
+      name: 'Existing Promo',
+      discount_type: 'percentage',
+      discount_value: 0.20,
+      start_date: '2026-09-01T00:00:00Z',
+      end_date: '2026-09-30T23:59:59Z',
+      status: 'Programada',
+      products: [mockProducts[0]],
+      categories: [mockCategories[0]],
+      created_at: '2026-08-01T00:00:00Z',
+      updated_at: '2026-08-01T00:00:00Z',
+      deleted_at: null,
+    };
+
+    const updatedPromotion = { ...existingPromotion, name: 'Updated Promo' };
+
+    mockUsePromotion.mockReturnValue({
+      data: existingPromotion,
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+
+    mockApiPatch.mockResolvedValue(updatedPromotion);
+
+    const onSuccess = vi.fn();
+    const { PromotionForm } = await import('../components/PromotionForm');
+    render(<PromotionForm promotionId="1" onSuccess={onSuccess} />, { wrapper });
+
+    await waitFor(() => expect(screen.getByDisplayValue('Existing Promo')).toBeInTheDocument());
+
+    // Update the name using userEvent for proper react-hook-form integration
+    const nameInput = screen.getByDisplayValue('Existing Promo');
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Updated Promo');
+    
+    // Click submit
+    await user.click(screen.getByRole('button', { name: /actualizar|update/i }));
+
+    await waitFor(() => expect(mockApiPatch).toHaveBeenCalledWith('/promotions/1', expect.objectContaining({
+      name: 'Updated Promo',
+    })));
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledWith(updatedPromotion));
+  });
+
+  it('should show loading state when fetching promotion for edit', async () => {
+    mockUsePromotion.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+    });
+
+    const { PromotionForm } = await import('../components/PromotionForm');
+    render(<PromotionForm promotionId="1" />, { wrapper });
+
+    // Should show loading state
+    await waitFor(() => expect(screen.getByText(/cargando|loading/i)).toBeInTheDocument());
+  });
+
+  it('should show error when promotion fetch fails in edit mode', async () => {
+    mockUsePromotion.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('Promotion not found'),
+    });
+
+    const { PromotionForm } = await import('../components/PromotionForm');
+    render(<PromotionForm promotionId="999" />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText(/error|no encontrado|not found/i)).toBeInTheDocument());
+  });
+
+  it('should call onCancel when cancel button is clicked', async () => {
+    const onCancel = vi.fn();
+    const { PromotionForm } = await import('../components/PromotionForm');
+    render(<PromotionForm onCancel={onCancel} />, { wrapper });
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /crear|crear promoción/i })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: /cancelar|cancel/i }));
+
+    await waitFor(() => expect(onCancel).toHaveBeenCalled());
   });
 });

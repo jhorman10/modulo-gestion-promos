@@ -1,14 +1,25 @@
 import { useState } from 'react';
-import { usePromotions } from '../api/promotions';
-import { Promotion } from '../api/promotions';
+import { useNavigate } from 'react-router-dom';
+import { usePromotions, Promotion } from '../api/promotions';
 
 interface PromotionListProps {
   onPromotionClick?: (promotion: Promotion) => void;
+  onEdit?: (promotion: Promotion) => void;
+  onActivate?: (promotion: Promotion) => void;
+  onFinalize?: (promotion: Promotion) => void;
+  onDelete?: (promotion: Promotion) => void;
 }
 
-export function PromotionList({ onPromotionClick }: PromotionListProps) {
+export function PromotionList({
+  onPromotionClick,
+  onEdit,
+  onActivate,
+  onFinalize,
+  onDelete,
+}: PromotionListProps) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const navigate = useNavigate();
 
   const { data, isLoading, isError, error, refetch } = usePromotions({ page, size });
 
@@ -98,15 +109,14 @@ export function PromotionList({ onPromotionClick }: PromotionListProps) {
                   {promotion.categories.map((c) => <span key={c.id} className="badge badge-category">{c.name}</span>)}
                 </td>
                 <td>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPromotionClick?.(promotion);
-                    }}
-                  >
-                    Ver
-                  </button>
+                  <PromotionActions
+                    promotion={promotion}
+                    onEdit={onEdit}
+                    onActivate={onActivate}
+                    onFinalize={onFinalize}
+                    onDelete={onDelete}
+                    onNavigate={navigate}
+                  />
                 </td>
               </tr>
             ))}
@@ -136,6 +146,86 @@ export function PromotionList({ onPromotionClick }: PromotionListProps) {
             Siguiente
           </button>
         </nav>
+      )}
+    </div>
+  );
+}
+
+interface PromotionActionsProps {
+  promotion: Promotion;
+  onEdit?: (promotion: Promotion) => void;
+  onActivate?: (promotion: Promotion) => void;
+  onFinalize?: (promotion: Promotion) => void;
+  onDelete?: (promotion: Promotion) => void;
+  onNavigate?: (path: string) => void;
+}
+
+function PromotionActions({
+  promotion,
+  onEdit,
+  onActivate,
+  onFinalize,
+  onDelete,
+  onNavigate,
+}: PromotionActionsProps) {
+  const canEdit = promotion.status !== 'Finalizada';
+  const canDelete = promotion.status === 'Programada';
+  const canActivate = promotion.status === 'Programada';
+  const canFinalize = promotion.status === 'Activa';
+
+  return (
+    <div className="promotion-actions" role="group" aria-label={`Acciones para ${promotion.name}`}>
+      {canEdit && (
+        <button
+          className="btn btn-sm btn-primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onEdit) {
+              onEdit(promotion);
+            } else if (onNavigate) {
+              onNavigate(`/promotions/${promotion.id}/edit`);
+            }
+          }}
+          aria-label={`Editar ${promotion.name}`}
+        >
+          Editar
+        </button>
+      )}
+      {canActivate && (
+        <button
+          className="btn btn-sm btn-success"
+          onClick={(e) => {
+            e.stopPropagation();
+            onActivate?.(promotion);
+          }}
+          aria-label={`Activar ${promotion.name}`}
+        >
+          Activar
+        </button>
+      )}
+      {canFinalize && (
+        <button
+          className="btn btn-sm btn-warning"
+          onClick={(e) => {
+            e.stopPropagation();
+            onFinalize?.(promotion);
+          }}
+          aria-label={`Finalizar ${promotion.name}`}
+        >
+          Finalizar
+        </button>
+      )}
+      {canDelete && (
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.(promotion);
+          }}
+          aria-label={`Eliminar ${promotion.name}`}
+        >
+          Eliminar
+        </button>
       )}
     </div>
   );

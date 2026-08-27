@@ -8,6 +8,7 @@ export interface ModalProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
+  confirmDisabled?: boolean;
   showCloseButton?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function Modal({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   onConfirm,
+  confirmDisabled = false,
   showCloseButton = true,
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -78,7 +80,12 @@ export function Modal({
             <button type="button" className="btn btn-secondary" onClick={onClose}>
               {cancelText}
             </button>
-            <button type="button" className="btn btn-primary" onClick={onConfirm}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onConfirm}
+              disabled={confirmDisabled}
+            >
               {confirmText}
             </button>
           </div>

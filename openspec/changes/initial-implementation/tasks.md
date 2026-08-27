@@ -158,23 +158,23 @@ Chain strategy: pending
 
 ## Phase 4: Frontend Features (Promotion List, Form, Summary View)
 
-- [ ] 4.1 **RED** Write integration test (Playwright) for Promotion List page: loads data, pagination works, shows status badges
-- [ ] 4.2 **GREEN** Implement `frontend/src/pages/PromotionsPage.tsx` composing List + Summary + Form (modal/drawer)
-- [ ] 4.3 **RED** Write Playwright test: Create promotion → appears in list → summary updates
-- [ ] 4.4 **GREEN** Wire create mutation in PromotionsPage, form submission flow, success toast
-- [ ] 4.5 **RED** Write Playwright test: Activate promotion (Programada→Activa) → list updates → summary valid_today increments
-- [ ] 4.6 **GREEN** Wire activate mutation, button enabled only for Programada within date range
-- [ ] 4.7 **RED** Write Playwright test: Finalize promotion (Activa→Finalizada) → list updates → summary by_status updates
-- [ ] 4.8 **GREEN** Wire finalize mutation, button enabled only for Activa
-- [ ] 4.9 **RED** Write Playwright test: Delete Programada promotion → removed from list → summary decrements
-- [ ] 4.10 **GREEN** Wire delete mutation with confirmation, button enabled only for Programada
-- [ ] 4.11 **RED** Write Playwright test: Finalized promotion immutable — activate/finalize/delete buttons disabled, no edit
-- [ ] 4.12 **GREEN** Enforce UI disable for Finalized state in PromotionActions
-- [ ] 4.13 **RED** Write Playwright test: Empty state handling — no promotions shows message, summary all zeros
-- [ ] 4.14 **GREEN** Implement empty states in PromotionList and PromotionSummary
-- [ ] 4.15 **RED** Write Playwright test: Date picker validation — end_date must be after start_date
-- [ ] 4.16 **GREEN** Add client-side date validation in PromotionForm (mirrors backend)
-- [ ] 4.17 **REFACTOR** Polish UI: responsive layout, loading skeletons, error toasts, accessibility (ARIA labels, keyboard nav)
+- [x] 4.1 **RED** Write integration test (Playwright) for Promotion List page: loads data, pagination works, shows status badges
+- [x] 4.2 **GREEN** Implement `frontend/src/pages/PromotionsPage.tsx` composing List + Summary + Form (modal/drawer)
+- [x] 4.3 **RED** Write Playwright test: Create promotion → appears in list → summary updates
+- [x] 4.4 **GREEN** Wire create mutation in PromotionsPage, form submission flow, success toast
+- [x] 4.5 **RED** Write Playwright test: Activate promotion (Programada→Activa) → list updates → summary valid_today increments
+- [x] 4.6 **GREEN** Wire activate mutation, button enabled only for Programada within date range
+- [x] 4.7 **RED** Write Playwright test: Finalize promotion (Activa→Finalizada) → list updates → summary by_status updates
+- [x] 4.8 **GREEN** Wire finalize mutation, button enabled only for Activa
+- [x] 4.9 **RED** Write Playwright test: Delete Programada promotion → removed from list → summary decrements
+- [x] 4.10 **GREEN** Wire delete mutation with confirmation, button enabled only for Programada
+- [x] 4.11 **RED** Write Playwright test: Finalized promotion immutable — activate/finalize/delete buttons disabled, no edit
+- [x] 4.12 **GREEN** Enforce UI disable for Finalized state in PromotionActions
+- [x] 4.13 **RED** Write Playwright test: Empty state handling — no promotions shows message, summary all zeros
+- [x] 4.14 **GREEN** Implement empty states in PromotionList and PromotionSummary
+- [x] 4.15 **RED** Write Playwright test: Date picker validation — end_date must be after start_date
+- [x] 4.16 **GREEN** Add client-side date validation in PromotionForm (mirrors backend)
+- [x] 4.17 **REFACTOR** Polish UI: responsive layout, loading skeletons, error toasts, accessibility (ARIA labels, keyboard nav)
 
 **Test Commands**: `cd frontend && npx playwright test --project=chromium`
 **Spec Refs**: promotion-management (E2E scenario), promotion-summary (E2E), shared-contracts (date format, pagination)

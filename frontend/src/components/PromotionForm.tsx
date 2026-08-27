@@ -1,9 +1,12 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useProductsCategories } from '../api/registry';
+import { usePromotion } from '../api/promotions';
 import { api } from '../api/client';
 import { Promotion } from '../api/promotions';
+import { Spinner } from './ui/Spinner';
 
 const PromotionFormSchema = z.object({
   name: z.string().min(1, 'Nombre es requerido').max(200, 'Nombre muy largo'),
@@ -53,12 +56,17 @@ type PromotionFormData = z.infer<typeof PromotionFormSchema>;
 
 interface PromotionFormProps {
   initialData?: Partial<PromotionFormData>;
+  promotionId?: string;
   onSuccess?: (promotion: Promotion) => void;
   onError?: (error: Error) => void;
+  onCancel?: () => void;
 }
 
-export function PromotionForm({ initialData, onSuccess, onError }: PromotionFormProps) {
+export function PromotionForm({ initialData, promotionId, onSuccess, onError, onCancel }: PromotionFormProps) {
+  const isEditMode = !!promotionId;
+  
   const { data: registry, isLoading: registryLoading } = useProductsCategories();
+  const { data: existingPromotion, isLoading: promotionLoading, isError: promotionError, error: promotionFetchError } = usePromotion(promotionId ?? '');
   
   const products = registry?.products ?? [];
   const categories = registry?.categories ?? [];
@@ -68,6 +76,7 @@ export function PromotionForm({ initialData, onSuccess, onError }: PromotionForm
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<PromotionFormData>({
     resolver: zodResolver(PromotionFormSchema),
@@ -84,6 +93,21 @@ export function PromotionForm({ initialData, onSuccess, onError }: PromotionForm
     mode: 'onChange',
   });
 
+  // Pre-fill form when in edit mode and data is loaded
+  useEffect(() => {
+    if (isEditMode && existingPromotion && existingPromotion.start_date) {
+      reset({
+        name: existingPromotion.name,
+        discount_type: existingPromotion.discount_type,
+        discount_value: existingPromotion.discount_value,
+        start_date: existingPromotion.start_date.slice(0, 16), // Convert to datetime-local format
+        end_date: existingPromotion.end_date.slice(0, 16),
+        product_ids: existingPromotion.products.map((p) => p.id),
+        category_ids: existingPromotion.categories.map((c) => c.id),
+      });
+    }
+  }, [isEditMode, existingPromotion, reset]);
+
   const discountType = watch('discount_type');
 
   const onSubmit = async (data: PromotionFormData) => {
@@ -98,12 +122,35 @@ export function PromotionForm({ initialData, onSuccess, onError }: PromotionForm
         category_ids: data.category_ids ?? [],
       };
 
-      const promotion = await api.post<Promotion>('/promotions', payload);
+      let promotion: Promotion;
+      if (isEditMode) {
+        promotion = await api.patch<Promotion>(`/promotions/${promotionId}`, payload);
+      } else {
+        promotion = await api.post<Promotion>('/promotions', payload);
+      }
       onSuccess?.(promotion);
     } catch (err) {
-      onError?.(err instanceof Error ? err : new Error('Error al crear promoción'));
+      onError?.(err instanceof Error ? err : new Error(isEditMode ? 'Error al actualizar promoción' : 'Error al crear promoción'));
     }
   };
+
+  // Show loading state when fetching promotion for edit
+  if (isEditMode && promotionLoading) {
+    return (
+      <div className="promotion-form-loading" role="status" aria-label="Cargando promoción">
+        <Spinner label="Cargando promoción..." />
+      </div>
+    );
+  }
+
+  // Show error state when promotion fetch fails
+  if (isEditMode && promotionError) {
+    return (
+      <div className="promotion-form-error" role="alert">
+        <p>Error al cargar la promoción: {promotionFetchError instanceof Error ? promotionFetchError.message : 'Error desconocido'}</p>
+      </div>
+    );
+  }
 
   if (registryLoading) {
     return (
@@ -261,25 +308,24 @@ export function PromotionForm({ initialData, onSuccess, onError }: PromotionForm
         )}
 
         <div className="form-actions">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              // Reset form
-              Object.keys(errors).forEach((key) => {
-                // Form will be reset by parent or user action
-              });
-            }}
-            disabled={isSubmitting}
-          >
-            Limpiar
-          </button>
+          {onCancel && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            </button>
+          )}
           <button
             type="submit"
             className="btn btn-primary"
-            disabled={isSubmitting || !isDirty}
+            disabled={isSubmitting || (!isDirty && isEditMode)}
           >
-            {isSubmitting ? 'Creando...' : 'Crear promoción'}
+            {isSubmitting 
+              ? (isEditMode ? 'Actualizando...' : 'Creando...') 
+              : (isEditMode ? 'Actualizar' : 'Crear promoción')}
           </button>
         </div>
       </div>
