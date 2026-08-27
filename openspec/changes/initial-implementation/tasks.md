@@ -113,25 +113,42 @@ Chain strategy: pending
 
 ---
 
-## Phase 3: Frontend Core (Setup, API Client, Shared Components)
+## Phase 3: Frontend Core (App Entry, Layout, Shared UI, Form System, Providers, Routing)
 
-- [ ] 3.1 **RED** Write unit test for API client: `apiClient.get/post/patch/delete` with baseURL, error interceptor (maps to ErrorResponse)
-- [ ] 3.2 **GREEN** Implement `frontend/src/api/client.ts` with Axios/Fetch wrapper, React Query integration
-- [ ] 3.3 **RED** Write unit tests for API hooks: `usePromotions`, `usePromotionSummary`, `useProductsCategories` (mock React Query)
-- [ ] 3.4 **GREEN** Implement `frontend/src/api/promotions.ts`, `frontend/src/api/summary.ts`, `frontend/src/api/registry.ts` with TanStack Query v5
-- [ ] 3.5 **RED** Write component test for `PromotionList` skeleton: renders loading, empty, error states
-- [ ] 3.6 **GREEN** Implement `frontend/src/components/PromotionList.tsx` with table, pagination controls, React Query integration
-- [ ] 3.7 **RED** Write component test for `PromotionForm`: validation (required, percentage bounds, date ordering, association), submit calls create mutation
-- [ ] 3.8 **GREEN** Implement `frontend/src/components/PromotionForm.tsx` with React Hook Form + Zod resolver, product/category multi-select
-- [ ] 3.9 **RED** Write component test for `PromotionSummary`: displays 4 counters, updates on invalidation
-- [ ] 3.10 **GREEN** Implement `frontend/src/components/PromotionSummary.tsx` with cards/grid layout
-- [ ] 3.11 **RED** Write component test for `PromotionActions`: activate/finalize/delete buttons disabled per state, confirmation dialogs
-- [ ] 3.12 **GREEN** Implement `frontend/src/components/PromotionActions.tsx` with state-aware buttons, toast notifications
-- [ ] 3.13 **RED** Write test for `usePromotionMutations` hook: create, activate, finalize, delete mutations with invalidation
-- [ ] 3.14 **GREEN** Implement `frontend/src/hooks/usePromotionMutations.ts` with React Query mutation + queryClient.invalidateQueries
-- [ ] 3.15 **REFACTOR** Create `frontend/src/App.tsx` with React Query Provider, routing (React Router v6), layout
-- [ ] 3.16 **REFACTOR** Create `frontend/src/main.tsx` entry point, global styles, error boundary
-- [ ] 3.17 **REFACTOR** Create shared UI components: `Button`, `Input`, `Select`, `Modal`, `Toast`, `Table`, `Pagination` in `frontend/src/components/ui/`
+- [x] 3.1 **RED** Write test for App.tsx: renders with providers, navigates routes, redirects / to /promotions
+- [x] 3.1 **GREEN** Implement `frontend/src/App.tsx` with React Router + React Query providers, routes
+- [x] 3.2 **RED** Write test for main.tsx entry point: renders App in StrictMode with BrowserRouter
+- [x] 3.2 **GREEN** Implement `frontend/src/main.tsx` entry point with createRoot
+- [x] 3.3 **RED** Write test for Layout: renders header, navigation, main content area
+- [x] 3.3 **GREEN** Implement `frontend/src/components/layout/Layout.tsx` with header, navigation, main content
+- [x] 3.4 **RED** Write test for Header: renders title, links to /promotions, renders children
+- [x] 3.4 **GREEN** Implement `frontend/src/components/layout/Header.tsx` with app title and navigation
+- [x] 3.5 **RED** Write test for Navigation: default items, custom items, active state, correct links
+- [x] 3.5 **GREEN** Implement `frontend/src/components/layout/Navigation.tsx` with routes to list, new, summary
+- [x] 3.6 **RED** Write tests for Button: variants, loading state, disabled, aria-busy, click handler
+- [x] 3.6 **GREEN** Implement `frontend/src/components/ui/Button.tsx` with variants: primary, secondary, danger, loading
+- [x] 3.7 **RED** Write tests for Input: label, required indicator, error state, aria-invalid, forwardRef
+- [x] 3.7 **GREEN** Implement `frontend/src/components/ui/Input.tsx` with error state, label, required indicator
+- [x] 3.8 **RED** Write tests for Select: options, label, error state, placeholder, disabled
+- [x] 3.8 **GREEN** Implement `frontend/src/components/ui/Select.tsx` with error state, label, options
+- [x] 3.9 **RED** Write tests for DateTimePicker: datetime-local type, label, error, disabled
+- [x] 3.9 **GREEN** Implement `frontend/src/components/ui/DateTimePicker.tsx` with datetime-local input
+- [x] 3.10 **RED** Write tests for Modal: open/close, title, confirm/cancel buttons, close button, backdrop
+- [x] 3.10 **GREEN** Implement `frontend/src/components/ui/Modal.tsx` confirmation dialogs with HTML dialog element
+- [x] 3.11 **RED** Write tests for Toast: provider renders, toastService methods exist, custom position
+- [x] 3.11 **GREEN** Implement `frontend/src/components/ui/Toast.tsx` notification system with react-hot-toast
+- [x] 3.12 **RED** Write tests for Spinner: renders status role, size variants, custom label
+- [x] 3.12 **GREEN** Implement `frontend/src/components/ui/Spinner.tsx` loading states
+- [x] 3.13 **RED** Write tests for useFormValidation: initialization, setValue, form state, helpers
+- [x] 3.13 **GREEN** Implement `frontend/src/hooks/useFormValidation.ts` with react-hook-form + Zod resolver
+- [x] 3.14 **RED** Write tests for PromotionFormSchema: all validation rules, boundaries, defaults
+- [x] 3.14 **GREEN** Implement `frontend/src/schemas/PromotionFormSchema.ts` mirroring backend Zod schema
+- [x] 3.15 **RED** Write tests for FormField: label, required, error, hint, children rendering
+- [x] 3.15 **GREEN** Implement `frontend/src/components/ui/FormField.tsx` reusable form field component
+- [x] 3.16 **RED** Write tests for QueryProvider: renders children, uses client, custom client
+- [x] 3.16 **GREEN** Implement `frontend/src/providers/QueryProvider.tsx` with QueryClientProvider, error retry, cache config
+- [x] 3.17 **RED** Write tests for PromotionSummary: loading, data, error, zero values
+- [x] 3.17 **GREEN** Implement `frontend/src/components/PromotionSummary.tsx` and routing in App.tsx
 
 **Test Commands**: `cd frontend && npm test -- --run src/api/ src/components/ src/hooks/`
 **Spec Refs**: promotion-management (UI flows), promotion-summary (UI), product-category-registry (dropdown data)

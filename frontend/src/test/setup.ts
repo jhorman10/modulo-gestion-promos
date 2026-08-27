@@ -1,4 +1,4 @@
-import { vi, expect } from 'vitest';
+import { vi, expect, afterAll } from 'vitest';
 import '@testing-library/jest-dom';
 
 // Global test setup for frontend
