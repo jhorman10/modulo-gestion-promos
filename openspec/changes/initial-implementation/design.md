@@ -6,15 +6,15 @@ Monorepo: `frontend/` (React+Vite+TS), `backend/` (Express+TS+Prisma), `docker-c
 
 ## Architecture Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Monorepo** | Single repo, `frontend/` `backend/` at root | Atomic commits, shared docker-compose, simple CI |
-| **State Machine** | Explicit endpoints + service validation | Testable, observable, portable; no hidden DB triggers |
-| **Validation** | Zod schemas → infer TS types | Runtime + compile-time, composable, matches spec contracts |
-| **Server State** | TanStack Query v5 | Caching, deduping, invalidation built-in |
-| **Soft Delete** | Prisma middleware `deleted_at: null` filter | Single enforcement point, impossible to forget |
-| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts 1–100 | Spec requires 0.01–1.00; avoids float precision |
-| **Docker** | Multi-stage: builder → nginx (FE) / node:20-alpine (BE) | ~20MB FE, ~50MB BE, no dev deps in prod |
+| Decision             | Choice                                                  | Rationale                                                  |
+| -------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| **Monorepo**         | Single repo, `frontend/` `backend/` at root             | Atomic commits, shared docker-compose, simple CI           |
+| **State Machine**    | Explicit endpoints + service validation                 | Testable, observable, portable; no hidden DB triggers      |
+| **Validation**       | Zod schemas → infer TS types                            | Runtime + compile-time, composable, matches spec contracts |
+| **Server State**     | TanStack Query v5                                       | Caching, deduping, invalidation built-in                   |
+| **Soft Delete**      | Prisma middleware `deleted_at: null` filter             | Single enforcement point, impossible to forget             |
+| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts 1–100      | Spec requires 0.01–1.00; avoids float precision            |
+| **Docker**           | Multi-stage: builder → nginx (FE) / node:20-alpine (BE) | ~20MB FE, ~50MB BE, no dev deps in prod                    |
 
 ## Data Flow
 
@@ -30,11 +30,11 @@ Browser → Nginx:80 → Frontend (Vite) → API calls → Backend:3001 → Pris
 
 ## File Changes (Key Files)
 
-| Area | Files |
-|------|-------|
-| **Backend** | `src/main.ts`, `routes/*.ts`, `controllers/*.ts`, `services/*.ts`, `validators/*.ts`, `middleware/*.ts`, `utils/*.ts`, `prisma/schema.prisma`, `prisma/seed.ts`, `Dockerfile` |
-| **Frontend** | `src/main.tsx`, `App.tsx`, `api/client.ts`, `api/*.ts`, `components/*.tsx`, `hooks/*.ts`, `utils/*.ts`, `Dockerfile` |
-| **Infra** | `docker-compose.yml`, `.env.example`, `.github/workflows/ci.yml`, `README.md`, `DECISIONS.md` |
+| Area         | Files                                                                                                                                                                         |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Backend**  | `src/main.ts`, `routes/*.ts`, `controllers/*.ts`, `services/*.ts`, `validators/*.ts`, `middleware/*.ts`, `utils/*.ts`, `prisma/schema.prisma`, `prisma/seed.ts`, `Dockerfile` |
+| **Frontend** | `src/main.tsx`, `App.tsx`, `api/client.ts`, `api/*.ts`, `components/*.tsx`, `hooks/*.ts`, `utils/*.ts`, `Dockerfile`                                                          |
+| **Infra**    | `docker-compose.yml`, `.env.example`, `.github/workflows/ci.yml`, `README.md`, `DECISIONS.md`                                                                                 |
 
 ## Interfaces / Contracts
 
@@ -54,11 +54,11 @@ Browser → Nginx:80 → Frontend (Vite) → API calls → Backend:3001 → Pris
 
 ## Testing Strategy
 
-| Layer | Scope | Tool |
-|-------|-------|------|
-| **Unit** | Validators (7+ scenarios), Services (state machine, valid_today, soft delete), Utils (pagination, dates) | Vitest, mock Prisma |
-| **Integration** | All 6 promotion endpoints, registry, health — real test DB, rollback per test | Vitest + Supertest |
-| **E2E** | Create→Activate→Summary→Finalize→Summary, soft delete exclusion | Playwright vs docker-compose |
+| Layer           | Scope                                                                                                    | Tool                         |
+| --------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| **Unit**        | Validators (7+ scenarios), Services (state machine, valid_today, soft delete), Utils (pagination, dates) | Vitest, mock Prisma          |
+| **Integration** | All 6 promotion endpoints, registry, health — real test DB, rollback per test                            | Vitest + Supertest           |
+| **E2E**         | Create→Activate→Summary→Finalize→Summary, soft delete exclusion                                          | Playwright vs docker-compose |
 
 **Order**: Validators → State Machine → Create (7) → List (4) → Activate (5) → Finalize (3) → Delete (4) → Finalized Immutability (4) → Registry → Summary → Health → E2E.
 

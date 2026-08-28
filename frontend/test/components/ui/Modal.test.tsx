@@ -56,7 +56,7 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /cerrar diálogo/i })).toBeInTheDocument();
     });
 
     it('should not render close button when showCloseButton is false', () => {
@@ -65,7 +65,7 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      expect(screen.queryByRole('button', { name: /close/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /cerrar diálogo/i })).not.toBeInTheDocument();
     });
 
     it('should call onClose when close button is clicked', () => {
@@ -75,7 +75,7 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      fireEvent.click(screen.getByRole('button', { name: /close/i }));
+      fireEvent.click(screen.getByRole('button', { name: /cerrar diálogo/i }));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
   });
@@ -87,8 +87,8 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      expect(screen.getByRole('button', { name: /confirm/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /confirmar/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /cancelar/i })).toBeInTheDocument();
     });
 
     it('should not render confirm/cancel buttons when onConfirm is not provided', () => {
@@ -97,13 +97,19 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      expect(screen.queryByRole('button', { name: /confirm/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /confirmar/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /cancelar/i })).not.toBeInTheDocument();
     });
 
     it('should use custom confirm/cancel text', () => {
       render(
-        <Modal isOpen={true} onClose={() => {}} onConfirm={() => {}} confirmText="Delete" cancelText="Go Back">
+        <Modal
+          isOpen={true}
+          onClose={() => {}}
+          onConfirm={() => {}}
+          confirmText="Delete"
+          cancelText="Go Back"
+        >
           <p>Content</p>
         </Modal>
       );
@@ -118,7 +124,7 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      fireEvent.click(screen.getByRole('button', { name: /confirm/i }));
+      fireEvent.click(screen.getByRole('button', { name: /confirmar/i }));
       expect(onConfirm).toHaveBeenCalledTimes(1);
     });
 
@@ -129,7 +135,7 @@ describe('Modal', () => {
           <p>Content</p>
         </Modal>
       );
-      fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      fireEvent.click(screen.getByRole('button', { name: /cancelar/i }));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
   });

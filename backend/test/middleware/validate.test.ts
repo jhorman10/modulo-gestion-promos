@@ -23,16 +23,16 @@ describe('Validation middleware', () => {
     const express = (await import('express')).default;
     const testApp = express();
     testApp.use(express.json());
-    
+
     // Add a test route with validation
     testApp.post('/test-validate', validateBody(testSchema), (req, res) => {
       res.status(200).json({ success: true, data: req.body });
     });
-    
+
     // Add error handler
     const { errorHandler } = await import('../../src/middleware/error-handler');
     testApp.use(errorHandler);
-    
+
     app = testApp;
     server = app.listen(0);
   });

@@ -30,7 +30,11 @@ describe('Button', () => {
 
   describe('loading state', () => {
     it('should show loading text when isLoading is true', () => {
-      render(<Button isLoading loadingText="Saving...">Submit</Button>);
+      render(
+        <Button isLoading loadingText="Saving...">
+          Submit
+        </Button>
+      );
       expect(screen.getByRole('button', { name: 'Saving...' })).toBeInTheDocument();
     });
 
@@ -77,14 +81,22 @@ describe('Button', () => {
 
     it('should not call onClick when disabled', () => {
       const handleClick = vi.fn();
-      render(<Button disabled onClick={handleClick}>Click</Button>);
+      render(
+        <Button disabled onClick={handleClick}>
+          Click
+        </Button>
+      );
       fireEvent.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
     });
 
     it('should not call onClick when loading', () => {
       const handleClick = vi.fn();
-      render(<Button isLoading onClick={handleClick}>Click</Button>);
+      render(
+        <Button isLoading onClick={handleClick}>
+          Click
+        </Button>
+      );
       fireEvent.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
     });

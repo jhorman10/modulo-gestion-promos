@@ -1,4 +1,4 @@
-import type { Express, Request, Response} from 'express';
+import type { Express, Request, Response } from 'express';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -24,12 +24,14 @@ export function createApp(deps: AppDependencies = {}): Express {
 
   // Security middleware
   app.use(helmet());
-  
+
   // CORS
-  app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+      credentials: true,
+    })
+  );
 
   // Logging
   app.use(morgan('combined'));
@@ -67,7 +69,7 @@ export function createApp(deps: AppDependencies = {}): Express {
 if (require.main === module) {
   const PORT = parseInt(process.env.PORT || '3001', 10);
   const app = createApp();
-  
+
   const server = app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
   });
@@ -79,7 +81,7 @@ if (require.main === module) {
       console.log('HTTP server closed.');
       process.exit(0);
     });
-    
+
     // Force close after 10s
     setTimeout(() => {
       console.error('Forced shutdown after 10s');

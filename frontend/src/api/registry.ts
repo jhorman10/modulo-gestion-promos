@@ -35,7 +35,8 @@ export function useProductsCategories(params: ProductsCategoriesParams = {}) {
 
   return useQuery({
     queryKey: registryQueryKey({ page, size, type }),
-    queryFn: () => api.get<ProductsCategoriesResponse>('/products-categories', { page, size, type }),
+    queryFn: () =>
+      api.get<ProductsCategoriesResponse>('/products-categories', { page, size, type }),
     staleTime: 5 * 60_000, // 5 minutes - registry data doesn't change often
   });
 }

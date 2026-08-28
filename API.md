@@ -13,6 +13,7 @@ All endpoints return JSON. Dates use ISO 8601 format (UTC, ending with `Z`). IDs
 Check application and database connectivity.
 
 **Response** `200 OK`
+
 ```json
 {
   "status": "ok",
@@ -22,6 +23,7 @@ Check application and database connectivity.
 ```
 
 **Response** `503 Service Unavailable` (database unreachable)
+
 ```json
 {
   "status": "error",
@@ -39,6 +41,7 @@ Check application and database connectivity.
 List all products and categories.
 
 **Response** `200 OK`
+
 ```json
 {
   "data": [
@@ -62,6 +65,7 @@ List all products and categories.
 Create a new promotion.
 
 **Request Body**
+
 ```json
 {
   "name": "Summer Sale",
@@ -75,17 +79,19 @@ Create a new promotion.
 ```
 
 **Validation Rules**
-| Field | Type | Rules |
-|-------|------|-------|
-| `name` | string | Required, 1–200 characters |
-| `discount_type` | `"percentage"` \| `"fixed"` | Required |
-| `discount_value` | number | Required. Percentage: 0.01–1.00. Fixed: > 0 |
-| `start_date` | ISO 8601 | Required, must end with `Z` (UTC) |
-| `end_date` | ISO 8601 | Required, must be after `start_date` |
-| `product_ids` | UUID[] | At least one product or category required |
-| `category_ids` | UUID[] | At least one product or category required |
+
+| Field            | Type                        | Rules                                       |
+| ---------------- | --------------------------- | ------------------------------------------- |
+| `name`           | string                      | Required, 1–200 characters                  |
+| `discount_type`  | `"percentage"` \| `"fixed"` | Required                                    |
+| `discount_value` | number                      | Required. Percentage: 0.01–1.00. Fixed: > 0 |
+| `start_date`     | ISO 8601                    | Required, must end with `Z` (UTC)           |
+| `end_date`       | ISO 8601                    | Required, must be after `start_date`        |
+| `product_ids`    | UUID[]                      | At least one product or category required   |
+| `category_ids`   | UUID[]                      | At least one product or category required   |
 
 **Response** `201 Created`
+
 ```json
 {
   "id": "uuid",
@@ -95,12 +101,8 @@ Create a new promotion.
   "start_date": "2025-06-01T00:00:00.000Z",
   "end_date": "2025-08-31T23:59:59.000Z",
   "status": "Programada",
-  "products": [
-    { "id": "uuid-1", "name": "Product 1", "type": "PRODUCT" }
-  ],
-  "categories": [
-    { "id": "uuid-3", "name": "Category 1", "type": "CATEGORY" }
-  ],
+  "products": [{ "id": "uuid-1", "name": "Product 1", "type": "PRODUCT" }],
+  "categories": [{ "id": "uuid-3", "name": "Category 1", "type": "CATEGORY" }],
   "created_at": "2025-08-27T12:00:00.000Z",
   "updated_at": "2025-08-27T12:00:00.000Z",
   "deleted_at": null
@@ -114,17 +116,19 @@ Create a new promotion.
 List promotions with pagination and optional filters.
 
 **Query Parameters**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `page` | number | Page number (default: 1) |
-| `size` | number | Page size (default: 10, max: 100) |
-| `status` | `"Programada"` \| `"Activa"` \| `"Finalizada"` | Filter by status |
-| `product_id` | UUID | Filter by associated product |
-| `category_id` | UUID | Filter by associated category |
-| `start_date_from` | ISO 8601 | Filter promotions starting from this date |
-| `end_date_to` | ISO 8601 | Filter promotions ending before this date |
+
+| Parameter         | Type                                           | Description                               |
+| ----------------- | ---------------------------------------------- | ----------------------------------------- |
+| `page`            | number                                         | Page number (default: 1)                  |
+| `size`            | number                                         | Page size (default: 10, max: 100)         |
+| `status`          | `"Programada"` \| `"Activa"` \| `"Finalizada"` | Filter by status                          |
+| `product_id`      | UUID                                           | Filter by associated product              |
+| `category_id`     | UUID                                           | Filter by associated category             |
+| `start_date_from` | ISO 8601                                       | Filter promotions starting from this date |
+| `end_date_to`     | ISO 8601                                       | Filter promotions ending before this date |
 
 **Response** `200 OK`
+
 ```json
 {
   "data": [
@@ -159,6 +163,7 @@ List promotions with pagination and optional filters.
 Get promotion summary statistics.
 
 **Response** `200 OK`
+
 ```json
 {
   "by_status": {
@@ -179,13 +184,15 @@ Get promotion summary statistics.
 Get a single promotion by ID.
 
 **Path Parameters**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | UUID | Promotion ID |
+
+| Parameter | Type | Description  |
+| --------- | ---- | ------------ |
+| `id`      | UUID | Promotion ID |
 
 **Response** `200 OK` — Same structure as single item in list response.
 
 **Response** `404 Not Found`
+
 ```json
 {
   "error": {
@@ -202,11 +209,12 @@ Get a single promotion by ID.
 Update a promotion. Only `Programada` and `Activa` promotions can be updated.
 
 **Request Body** (all fields optional)
+
 ```json
 {
   "name": "Updated Name",
   "discount_type": "fixed",
-  "discount_value": 10.00,
+  "discount_value": 10.0,
   "start_date": "2025-07-01T00:00:00Z",
   "end_date": "2025-09-30T23:59:59Z",
   "product_ids": ["uuid-1"],
@@ -217,6 +225,7 @@ Update a promotion. Only `Programada` and `Activa` promotions can be updated.
 **Response** `200 OK` — Updated promotion object.
 
 **Response** `409 Conflict` — If promotion is `Finalizada` (immutable).
+
 ```json
 {
   "error": {
@@ -233,12 +242,14 @@ Update a promotion. Only `Programada` and `Activa` promotions can be updated.
 Activate a promotion (Programada → Activa).
 
 **Business Rules**:
+
 - Current status must be `Programada`
 - Current date must be within `[startDate, endDate]` (inclusive)
 
 **Response** `200 OK` — Updated promotion with status `Activa`.
 
 **Response** `409 Conflict`
+
 ```json
 {
   "error": {
@@ -255,11 +266,13 @@ Activate a promotion (Programada → Activa).
 Finalize a promotion (Activa → Finalizada).
 
 **Business Rules**:
+
 - Current status must be `Activa`
 
 **Response** `200 OK` — Updated promotion with status `Finalizada`.
 
 **Response** `409 Conflict`
+
 ```json
 {
   "error": {
@@ -276,12 +289,14 @@ Finalize a promotion (Activa → Finalizada).
 Soft delete a promotion (sets `deletedAt`).
 
 **Business Rules**:
+
 - Current status must be `Programada`
 - Sets `deletedAt` timestamp (record preserved in database)
 
 **Response** `204 No Content`
 
 **Response** `409 Conflict`
+
 ```json
 {
   "error": {
@@ -304,12 +319,12 @@ Programada ──→ Activa ──→ Finalizada
           (terminal)
 ```
 
-| Transition | Endpoint | Constraints |
-|------------|----------|-------------|
-| Programada → Activa | `POST /:id/activate` | Current date within validity period |
-| Activa → Finalizada | `POST /:id/finalize` | None |
-| Programada → Deleted | `DELETE /:id` | Soft delete (sets `deletedAt`) |
-| Finalizada → * | — | Immutable (no transitions allowed) |
+| Transition           | Endpoint             | Constraints                         |
+| -------------------- | -------------------- | ----------------------------------- |
+| Programada → Activa  | `POST /:id/activate` | Current date within validity period |
+| Activa → Finalizada  | `POST /:id/finalize` | None                                |
+| Programada → Deleted | `DELETE /:id`        | Soft delete (sets `deletedAt`)      |
+| Finalizada → *       | —                    | Immutable (no transitions allowed)  |
 
 ---
 
@@ -327,9 +342,9 @@ All errors follow this structure:
 }
 ```
 
-| HTTP Status | Code | When |
-|-------------|------|------|
-| 400 | `VALIDATION_ERROR` | Invalid request body, query, or params |
-| 404 | `NOT_FOUND` | Resource not found |
-| 409 | `INVALID_STATE_TRANSITION` | Invalid status transition or immutable state |
-| 500 | `INTERNAL_ERROR` | Unexpected server error |
+| HTTP Status | Code                       | When                                         |
+| ----------- | -------------------------- | -------------------------------------------- |
+| 400         | `VALIDATION_ERROR`         | Invalid request body, query, or params       |
+| 404         | `NOT_FOUND`                | Resource not found                           |
+| 409         | `INVALID_STATE_TRANSITION` | Invalid status transition or immutable state |
+| 500         | `INTERNAL_ERROR`           | Unexpected server error                      |

@@ -5,52 +5,54 @@ import { z } from 'zod';
 import { useProductsCategories } from '../api/registry';
 import { usePromotion } from '../api/promotions';
 import { api } from '../api/client';
-import { Promotion } from '../api/promotions';
+import type { Promotion } from '../api/promotions';
 import { Spinner } from './ui/Spinner';
 
-const PromotionFormSchema = z.object({
-  name: z.string().min(1, 'Nombre es requerido').max(200, 'Nombre muy largo'),
-  discount_type: z.enum(['percentage', 'fixed'], { message: 'Tipo de descuento es requerido' }),
-  discount_value: z.number().positive('Valor del descuento es requerido'),
-  start_date: z.string().min(1, 'Fecha de inicio es requerida'),
-  end_date: z.string().min(1, 'Fecha de fin es requerida'),
-  product_ids: z.array(z.string()).optional(),
-  category_ids: z.array(z.string()).optional(),
-}).superRefine((data, ctx) => {
-  if (data.discount_type === 'percentage') {
-    if (data.discount_value < 0.01 || data.discount_value > 1.00) {
+const PromotionFormSchema = z
+  .object({
+    name: z.string().min(1, 'Nombre es requerido').max(200, 'Nombre muy largo'),
+    discount_type: z.enum(['percentage', 'fixed'], { message: 'Tipo de descuento es requerido' }),
+    discount_value: z.number().positive('Valor del descuento es requerido'),
+    start_date: z.string().min(1, 'Fecha de inicio es requerida'),
+    end_date: z.string().min(1, 'Fecha de fin es requerida'),
+    product_ids: z.array(z.string()).optional(),
+    category_ids: z.array(z.string()).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.discount_type === 'percentage') {
+      if (data.discount_value < 0.01 || data.discount_value > 1.0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Porcentaje debe estar entre 0.01 y 1.00',
+          path: ['discount_value'],
+        });
+      }
+    } else if (data.discount_type === 'fixed') {
+      if (data.discount_value <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Monto fijo debe ser mayor a 0',
+          path: ['discount_value'],
+        });
+      }
+    }
+
+    if (new Date(data.end_date) <= new Date(data.start_date)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Porcentaje debe estar entre 0.01 y 1.00',
-        path: ['discount_value'],
+        message: 'Fecha de fin debe ser posterior a fecha de inicio',
+        path: ['end_date'],
       });
     }
-  } else if (data.discount_type === 'fixed') {
-    if (data.discount_value <= 0) {
+
+    if ((data.product_ids?.length ?? 0) + (data.category_ids?.length ?? 0) === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Monto fijo debe ser mayor a 0',
-        path: ['discount_value'],
+        message: 'Al menos un producto o categoría es requerido',
+        path: ['product_ids'],
       });
     }
-  }
-
-  if (new Date(data.end_date) <= new Date(data.start_date)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Fecha de fin debe ser posterior a fecha de inicio',
-      path: ['end_date'],
-    });
-  }
-
-  if ((data.product_ids?.length ?? 0) + (data.category_ids?.length ?? 0) === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Al menos un producto o categoría es requerido',
-      path: ['product_ids'],
-    });
-  }
-});
+  });
 
 type PromotionFormData = z.infer<typeof PromotionFormSchema>;
 
@@ -62,12 +64,23 @@ interface PromotionFormProps {
   onCancel?: () => void;
 }
 
-export function PromotionForm({ initialData, promotionId, onSuccess, onError, onCancel }: PromotionFormProps) {
+export function PromotionForm({
+  initialData,
+  promotionId,
+  onSuccess,
+  onError,
+  onCancel,
+}: PromotionFormProps) {
   const isEditMode = !!promotionId;
-  
+
   const { data: registry, isLoading: registryLoading } = useProductsCategories();
-  const { data: existingPromotion, isLoading: promotionLoading, isError: promotionError, error: promotionFetchError } = usePromotion(promotionId ?? '');
-  
+  const {
+    data: existingPromotion,
+    isLoading: promotionLoading,
+    isError: promotionError,
+    error: promotionFetchError,
+  } = usePromotion(promotionId ?? '');
+
   const products = registry?.products ?? [];
   const categories = registry?.categories ?? [];
 
@@ -75,7 +88,6 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
     register,
     handleSubmit,
     watch,
-    setValue,
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<PromotionFormData>({
@@ -102,8 +114,8 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
         discount_value: existingPromotion.discount_value,
         start_date: existingPromotion.start_date.slice(0, 16), // Convert to datetime-local format
         end_date: existingPromotion.end_date.slice(0, 16),
-        product_ids: existingPromotion.products.map((p) => p.id),
-        category_ids: existingPromotion.categories.map((c) => c.id),
+        product_ids: existingPromotion.products.map(p => p.id),
+        category_ids: existingPromotion.categories.map(c => c.id),
       });
     }
   }, [isEditMode, existingPromotion, reset]);
@@ -115,7 +127,8 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
       const payload = {
         name: data.name,
         discount_type: data.discount_type,
-        discount_value: data.discount_type === 'percentage' ? data.discount_value : data.discount_value,
+        discount_value:
+          data.discount_type === 'percentage' ? data.discount_value : data.discount_value,
         start_date: new Date(data.start_date).toISOString(),
         end_date: new Date(data.end_date).toISOString(),
         product_ids: data.product_ids ?? [],
@@ -130,7 +143,11 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
       }
       onSuccess?.(promotion);
     } catch (err) {
-      onError?.(err instanceof Error ? err : new Error(isEditMode ? 'Error al actualizar promoción' : 'Error al crear promoción'));
+      onError?.(
+        err instanceof Error
+          ? err
+          : new Error(isEditMode ? 'Error al actualizar promoción' : 'Error al crear promoción')
+      );
     }
   };
 
@@ -147,7 +164,10 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
   if (isEditMode && promotionError) {
     return (
       <div className="promotion-form-error" role="alert">
-        <p>Error al cargar la promoción: {promotionFetchError instanceof Error ? promotionFetchError.message : 'Error desconocido'}</p>
+        <p>
+          Error al cargar la promoción:{' '}
+          {promotionFetchError instanceof Error ? promotionFetchError.message : 'Error desconocido'}
+        </p>
       </div>
     );
   }
@@ -161,11 +181,20 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="promotion-form" noValidate>
+    <form
+      onSubmit={e => {
+        void handleSubmit(onSubmit)(e);
+      }}
+      className="promotion-form"
+      noValidate
+    >
       <div className="form-grid">
         <div className="form-field">
           <label htmlFor="name" className="form-label">
-            Nombre <span className="required" aria-hidden="true">*</span>
+            Nombre{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="name"
@@ -177,13 +206,18 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             aria-invalid={!!errors.name}
           />
           {errors.name && (
-            <p id="name-error" className="form-error" role="alert">{errors.name.message}</p>
+            <p id="name-error" className="form-error" role="alert">
+              {errors.name.message}
+            </p>
           )}
         </div>
 
         <div className="form-field">
           <label htmlFor="discount_type" className="form-label">
-            Tipo de descuento <span className="required" aria-hidden="true">*</span>
+            Tipo de descuento{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <select
             id="discount_type"
@@ -197,13 +231,18 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             <option value="fixed">Monto fijo</option>
           </select>
           {errors.discount_type && (
-            <p id="discount-type-error" className="form-error" role="alert">{errors.discount_type.message}</p>
+            <p id="discount-type-error" className="form-error" role="alert">
+              {errors.discount_type.message}
+            </p>
           )}
         </div>
 
         <div className="form-field">
           <label htmlFor="discount_value" className="form-label">
-            Valor del descuento <span className="required" aria-hidden="true">*</span>
+            Valor del descuento{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="discount_value"
@@ -214,22 +253,29 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             className={`form-input ${errors.discount_value ? 'error' : ''}`}
             {...register('discount_value', { valueAsNumber: true })}
             placeholder={discountType === 'percentage' ? 'Ej: 0.15 (15%)' : 'Ej: 500'}
-            aria-describedby={errors.discount_value ? 'discount-value-error' : 'discount-value-hint'}
+            aria-describedby={
+              errors.discount_value ? 'discount-value-error' : 'discount-value-hint'
+            }
             aria-invalid={!!errors.discount_value}
           />
           <p id="discount-value-hint" className="form-hint">
-            {discountType === 'percentage' 
+            {discountType === 'percentage'
               ? 'Ingrese un valor entre 0.01 y 1.00 (ej: 0.15 para 15%)'
               : 'Ingrese el monto fijo en pesos (ej: 500)'}
           </p>
           {errors.discount_value && (
-            <p id="discount-value-error" className="form-error" role="alert">{errors.discount_value.message}</p>
+            <p id="discount-value-error" className="form-error" role="alert">
+              {errors.discount_value.message}
+            </p>
           )}
         </div>
 
         <div className="form-field">
           <label htmlFor="start_date" className="form-label">
-            Fecha de inicio <span className="required" aria-hidden="true">*</span>
+            Fecha de inicio{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="start_date"
@@ -240,13 +286,18 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             aria-invalid={!!errors.start_date}
           />
           {errors.start_date && (
-            <p id="start-date-error" className="form-error" role="alert">{errors.start_date.message}</p>
+            <p id="start-date-error" className="form-error" role="alert">
+              {errors.start_date.message}
+            </p>
           )}
         </div>
 
         <div className="form-field">
           <label htmlFor="end_date" className="form-label">
-            Fecha de fin <span className="required" aria-hidden="true">*</span>
+            Fecha de fin{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="end_date"
@@ -257,13 +308,18 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             aria-invalid={!!errors.end_date}
           />
           {errors.end_date && (
-            <p id="end-date-error" className="form-error" role="alert">{errors.end_date.message}</p>
+            <p id="end-date-error" className="form-error" role="alert">
+              {errors.end_date.message}
+            </p>
           )}
         </div>
 
         <div className="form-field full-width">
           <label className="form-label">
-            Productos <span className="required" aria-hidden="true">*</span>
+            Productos{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <div className="multi-select-wrapper">
             <select
@@ -273,17 +329,24 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
               aria-describedby={errors.product_ids ? 'products-error' : 'products-hint'}
               aria-invalid={!!errors.product_ids}
             >
-              {products.map((product) => (
-                <option key={product.id} value={product.id}>{product.name}</option>
+              {products.map(product => (
+                <option key={product.id} value={product.id}>
+                  {product.name}
+                </option>
               ))}
             </select>
-            <p id="products-hint" className="form-hint">Mantenga Ctrl/Cmd para seleccionar múltiples</p>
+            <p id="products-hint" className="form-hint">
+              Mantenga Ctrl/Cmd para seleccionar múltiples
+            </p>
           </div>
         </div>
 
         <div className="form-field full-width">
           <label className="form-label">
-            Categorías <span className="required" aria-hidden="true">*</span>
+            Categorías{' '}
+            <span className="required" aria-hidden="true">
+              *
+            </span>
           </label>
           <div className="multi-select-wrapper">
             <select
@@ -293,11 +356,15 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
               aria-describedby={errors.category_ids ? 'categories-error' : 'categories-hint'}
               aria-invalid={!!errors.category_ids}
             >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>{category.name}</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
               ))}
             </select>
-            <p id="categories-hint" className="form-hint">Mantenga Ctrl/Cmd para seleccionar múltiples</p>
+            <p id="categories-hint" className="form-hint">
+              Mantenga Ctrl/Cmd para seleccionar múltiples
+            </p>
           </div>
         </div>
 
@@ -323,9 +390,13 @@ export function PromotionForm({ initialData, promotionId, onSuccess, onError, on
             className="btn btn-primary"
             disabled={isSubmitting || (!isDirty && isEditMode)}
           >
-            {isSubmitting 
-              ? (isEditMode ? 'Actualizando...' : 'Creando...') 
-              : (isEditMode ? 'Actualizar' : 'Crear promoción')}
+            {isSubmitting
+              ? isEditMode
+                ? 'Actualizando...'
+                : 'Creando...'
+              : isEditMode
+                ? 'Actualizar'
+                : 'Crear promoción'}
           </button>
         </div>
       </div>

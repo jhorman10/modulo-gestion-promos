@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
 
 import { describe, it, expect } from 'vitest';
-import { 
-  parseISODate, 
-  formatISODate, 
-  isValidToday, 
+import {
+  parseISODate,
+  formatISODate,
+  isValidToday,
   isValidISODate,
   startOfDayUTC,
-  endOfDayUTC 
+  endOfDayUTC,
 } from '../../src/utils/dates';
 
 describe('date utilities', () => {
@@ -95,7 +95,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-15T00:00:00.000Z');
       const endDate = new Date('2026-09-15T23:59:59.999Z');
       const serverDate = new Date('2026-09-15T12:00:00.000Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(true);
     });
 
@@ -103,7 +103,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-15T00:00:00.000Z');
       const endDate = new Date('2026-09-15T23:59:59.999Z');
       const serverDate = new Date('2026-09-15T00:00:00.000Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(true);
     });
 
@@ -111,7 +111,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-15T00:00:00.000Z');
       const endDate = new Date('2026-09-15T23:59:59.999Z');
       const serverDate = new Date('2026-09-15T23:59:59.999Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(true);
     });
 
@@ -119,7 +119,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-15T00:00:00.000Z');
       const endDate = new Date('2026-09-15T23:59:59.999Z');
       const serverDate = new Date('2026-09-14T23:59:59.999Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(false);
     });
 
@@ -127,7 +127,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-15T00:00:00.000Z');
       const endDate = new Date('2026-09-15T23:59:59.999Z');
       const serverDate = new Date('2026-09-16T00:00:00.000Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(false);
     });
 
@@ -135,7 +135,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-10T00:00:00.000Z');
       const endDate = new Date('2026-09-20T23:59:59.999Z');
       const serverDate = new Date('2026-09-15T12:00:00.000Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(true);
     });
 
@@ -143,7 +143,7 @@ describe('date utilities', () => {
       const startDate = new Date('2026-09-10T00:00:00.000Z');
       const endDate = new Date('2026-09-20T23:59:59.999Z');
       const serverDate = new Date('2026-09-09T12:00:00.000Z');
-      
+
       expect(isValidToday(startDate, endDate, serverDate)).toBe(false);
     });
   });
@@ -162,7 +162,7 @@ describe('date utilities', () => {
         '2026-12-31T23:59:59.999Z',
         '2026-06-15T12:30:45.123Z',
       ];
-      
+
       for (const dateStr of dates) {
         const parsed = parseISODate(dateStr);
         const formatted = formatISODate(parsed);

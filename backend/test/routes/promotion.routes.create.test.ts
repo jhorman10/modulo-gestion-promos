@@ -17,7 +17,7 @@ describe('POST /api/promotions integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -26,7 +26,8 @@ describe('POST /api/promotions integration', () => {
     await prisma.$disconnect();
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
   // Create test products and categories
   let testProductId: string;
@@ -68,10 +69,7 @@ describe('POST /api/promotions integration', () => {
         category_ids: [testCategoryId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(201);
+      const response = await request(app).post('/api/promotions').send(payload).expect(201);
       expect(response.body).toMatchObject({
         id: expect.any(String),
         name: 'Test Promotion',
@@ -99,10 +97,7 @@ describe('POST /api/promotions integration', () => {
         category_ids: [],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(201);
+      const response = await request(app).post('/api/promotions').send(payload).expect(201);
 
       expect(response.body.discount_type).toBe('fixed');
       expect(response.body.discount_value).toBe(500);
@@ -115,10 +110,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(201);
+      const response = await request(app).post('/api/promotions').send(payload).expect(201);
 
       expect(response.body.discount_value).toBe(0.01);
     });
@@ -126,16 +118,13 @@ describe('POST /api/promotions integration', () => {
     it('should accept percentage value at upper boundary (1.00)', async () => {
       const payload = {
         ...validPayload,
-        discount_value: 1.00,
+        discount_value: 1.0,
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(201);
+      const response = await request(app).post('/api/promotions').send(payload).expect(201);
 
-      expect(response.body.discount_value).toBe(1.00);
+      expect(response.body.discount_value).toBe(1.0);
     });
   });
 
@@ -147,17 +136,12 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
       expect(response.body.error.message).toBe('Request validation failed');
       expect(response.body.error.details).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'body.discount_value' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'body.discount_value' })])
       );
     });
 
@@ -168,10 +152,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -184,16 +165,11 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
       expect(response.body.error.details).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'body.end_date' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'body.end_date' })])
       );
     });
 
@@ -205,10 +181,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -218,10 +191,7 @@ describe('POST /api/promotions integration', () => {
       const { name, ...payload } = validPayload;
       payload.product_ids = [testProductId];
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -231,10 +201,7 @@ describe('POST /api/promotions integration', () => {
       const { discount_type, ...payload } = validPayload;
       payload.product_ids = [testProductId];
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -244,10 +211,7 @@ describe('POST /api/promotions integration', () => {
       const { discount_value, ...payload } = validPayload;
       payload.product_ids = [testProductId];
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -257,10 +221,7 @@ describe('POST /api/promotions integration', () => {
       const { start_date, ...payload } = validPayload;
       payload.product_ids = [testProductId];
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -270,10 +231,7 @@ describe('POST /api/promotions integration', () => {
       const { end_date, ...payload } = validPayload;
       payload.product_ids = [testProductId];
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -285,10 +243,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -300,10 +255,7 @@ describe('POST /api/promotions integration', () => {
         category_ids: [],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -315,10 +267,7 @@ describe('POST /api/promotions integration', () => {
         category_ids: [],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
       expect(response.body.error.message).toBe('Product or category not found');
@@ -331,10 +280,7 @@ describe('POST /api/promotions integration', () => {
         category_ids: ['123e4567-e89b-12d3-a456-426614174999'], // non-existent
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
       expect(response.body.error.message).toBe('Product or category not found');
@@ -348,10 +294,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -364,10 +307,7 @@ describe('POST /api/promotions integration', () => {
         product_ids: [testProductId],
       };
 
-      const response = await request(app)
-        .post('/api/promotions')
-        .send(payload)
-        .expect(400);
+      const response = await request(app).post('/api/promotions').send(payload).expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });

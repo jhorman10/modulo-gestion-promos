@@ -138,23 +138,23 @@ jobs:
 
 ## Required GitHub Secrets
 
-| Secret | Description |
-|--------|-------------|
+| Secret       | Description                                 |
+| ------------ | ------------------------------------------- |
 | DATABASE_URL | PostgreSQL connection string for smoke test |
-| NODE_ENV | Environment (e.g., "test") |
+| NODE_ENV     | Environment (e.g., "test")                  |
 
 ---
 
 ## Validation Rules
 
-| Rule |
-|------|
-| All jobs run on ubuntu-latest |
-| Explicit `needs:` dependencies between stages |
-| Smoke test validates env vars before docker compose |
+| Rule                                                         |
+| ------------------------------------------------------------ |
+| All jobs run on ubuntu-latest                                |
+| Explicit `needs:` dependencies between stages                |
+| Smoke test validates env vars before docker compose          |
 | Health check wait: 60s max, 2s interval, exponential backoff |
-| `docker compose down -v` in finally/always block |
-| Pipeline triggered on push/PR to main |
+| `docker compose down -v` in finally/always block             |
+| Pipeline triggered on push/PR to main                        |
 
 ---
 

@@ -1,4 +1,5 @@
-import { InputHTMLAttributes, forwardRef } from 'react';
+import type { InputHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -15,7 +16,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label htmlFor={inputId} className="form-label">
             {label}
-            {props.required && <span className="required" aria-hidden="true"> *</span>}
+            {props.required && (
+              <span className="required" aria-hidden="true">
+                {' '}
+                *
+              </span>
+            )}
           </label>
         )}
         <input

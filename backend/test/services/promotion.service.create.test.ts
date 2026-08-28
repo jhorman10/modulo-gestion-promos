@@ -62,15 +62,23 @@ describe('PromotionService - create', () => {
   };
 
   const mockAssociations = [
-    { 
-      productCategoryId: '123e4567-e89b-12d3-a456-426614174000', 
+    {
+      productCategoryId: '123e4567-e89b-12d3-a456-426614174000',
       associationType: 'PRODUCT',
-      productCategory: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' }
+      productCategory: {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        name: 'Product 1',
+        type: 'PRODUCT',
+      },
     },
-    { 
-      productCategoryId: '123e4567-e89b-12d3-a456-426614174001', 
+    {
+      productCategoryId: '123e4567-e89b-12d3-a456-426614174001',
       associationType: 'CATEGORY',
-      productCategory: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' }
+      productCategory: {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Category 1',
+        type: 'CATEGORY',
+      },
     },
   ];
 
@@ -106,8 +114,12 @@ describe('PromotionService - create', () => {
       start_date: '2026-09-01T00:00:00.000Z',
       end_date: '2026-09-30T23:59:59.000Z',
       status: 'Programada',
-      products: [{ id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' }],
-      categories: [{ id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' }],
+      products: [
+        { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' },
+      ],
+      categories: [
+        { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' },
+      ],
       created_at: expect.any(String),
       updated_at: expect.any(String),
       deleted_at: null,
@@ -117,13 +129,26 @@ describe('PromotionService - create', () => {
 
   it('should create fixed amount promotion with only product associations', async () => {
     // Arrange
-    const fixedInput = { ...validCreateInput, discount_type: 'fixed' as const, discount_value: 500, category_ids: [] };
-    const mockFixedPromotion = { ...mockPromotion, discountType: 'FIXED', discountValue: new Decimal('500.00') };
+    const fixedInput = {
+      ...validCreateInput,
+      discount_type: 'fixed' as const,
+      discount_value: 500,
+      category_ids: [],
+    };
+    const mockFixedPromotion = {
+      ...mockPromotion,
+      discountType: 'FIXED',
+      discountValue: new Decimal('500.00'),
+    };
     const fixedAssociations = [
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174000', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174000',
         associationType: 'PRODUCT',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          name: 'Product 1',
+          type: 'PRODUCT',
+        },
       },
     ];
 
@@ -159,10 +184,14 @@ describe('PromotionService - create', () => {
     const categoryOnlyInput = { ...validCreateInput, product_ids: [] };
     const mockCategoryPromotion = { ...mockPromotion };
     const categoryAssociations = [
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174001', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174001',
         associationType: 'CATEGORY',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Category 1',
+          type: 'CATEGORY',
+        },
       },
     ];
 
@@ -194,15 +223,23 @@ describe('PromotionService - create', () => {
   it('should store percentage discount_value as decimal', async () => {
     // Arrange
     const decimalAssociations = [
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174000', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174000',
         associationType: 'PRODUCT',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          name: 'Product 1',
+          type: 'PRODUCT',
+        },
       },
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174001', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174001',
         associationType: 'CATEGORY',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Category 1',
+          type: 'CATEGORY',
+        },
       },
     ];
 
@@ -301,15 +338,23 @@ describe('PromotionService - create', () => {
   it('should create junction records for products with association_type PRODUCT', async () => {
     // Arrange
     const junctionAssociations = [
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174000', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174000',
         associationType: 'PRODUCT',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Product 1', type: 'PRODUCT' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          name: 'Product 1',
+          type: 'PRODUCT',
+        },
       },
-      { 
-        productCategoryId: '123e4567-e89b-12d3-a456-426614174001', 
+      {
+        productCategoryId: '123e4567-e89b-12d3-a456-426614174001',
         associationType: 'CATEGORY',
-        productCategory: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Category 1', type: 'CATEGORY' }
+        productCategory: {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Category 1',
+          type: 'CATEGORY',
+        },
       },
     ];
 
@@ -340,23 +385,29 @@ describe('PromotionService - create', () => {
     // Assert - check that createMany was called twice (once for products, once for categories)
     expect(capturedTx).toBeDefined();
     expect(capturedTx.promotionProductCategory.createMany).toHaveBeenCalledTimes(2);
-    
+
     // First call should be for products
     const firstCall = capturedTx.promotionProductCategory.createMany.mock.calls[0];
     expect(firstCall[0]).toEqual(
       expect.objectContaining({
         data: expect.arrayContaining([
-          expect.objectContaining({ associationType: 'PRODUCT', productCategoryId: '123e4567-e89b-12d3-a456-426614174000' }),
+          expect.objectContaining({
+            associationType: 'PRODUCT',
+            productCategoryId: '123e4567-e89b-12d3-a456-426614174000',
+          }),
         ]),
       })
     );
-    
+
     // Second call should be for categories
     const secondCall = capturedTx.promotionProductCategory.createMany.mock.calls[1];
     expect(secondCall[0]).toEqual(
       expect.objectContaining({
         data: expect.arrayContaining([
-          expect.objectContaining({ associationType: 'CATEGORY', productCategoryId: '123e4567-e89b-12d3-a456-426614174001' }),
+          expect.objectContaining({
+            associationType: 'CATEGORY',
+            productCategoryId: '123e4567-e89b-12d3-a456-426614174001',
+          }),
         ]),
       })
     );

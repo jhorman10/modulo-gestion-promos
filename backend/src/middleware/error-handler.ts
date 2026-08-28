@@ -22,7 +22,7 @@ export function errorHandler(
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Request validation failed',
-        details: err.errors.map((e) => ({
+        details: err.errors.map(e => ({
           field: e.path.join('.'),
           message: e.message,
         })),
@@ -69,9 +69,7 @@ export function errorHandler(
   res.status(500).json({
     error: {
       code: 'INTERNAL_ERROR',
-      message: process.env.NODE_ENV === 'production' 
-        ? 'An unexpected error occurred' 
-        : err.message,
+      message: process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message,
     },
   });
 }

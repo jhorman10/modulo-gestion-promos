@@ -17,7 +17,7 @@ describe('GET /api/promotions integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -33,7 +33,8 @@ describe('GET /api/promotions integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
   // Create test products and categories
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,30 +69,32 @@ describe('GET /api/promotions integration', () => {
   });
 
   // Helper to create a promotion directly in DB
-  async function createPromotion(overrides: Partial<{
-    name: string;
-    discount_type: 'percentage' | 'fixed';
-    discount_value: number;
-    start_date: string;
-    end_date: string;
-    status: 'Programada' | 'Activa' | 'Finalizada';
-    product_ids: string[];
-    category_ids: string[];
-    deleted_at: Date | null;
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      name: string;
+      discount_type: 'percentage' | 'fixed';
+      discount_value: number;
+      start_date: string;
+      end_date: string;
+      status: 'Programada' | 'Activa' | 'Finalizada';
+      product_ids: string[];
+      category_ids: string[];
+      deleted_at: Date | null;
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     // Create product/category if not provided
     const productIds = overrides.product_ids || [];
     const categoryIds = overrides.category_ids || [];
-    
+
     const finalProductIds = [...productIds];
     const finalCategoryIds = [...categoryIds];
-    
+
     if (finalProductIds.length === 0 && finalCategoryIds.length === 0) {
       // Create a default product if none provided
       const product = await prisma.productCategory.create({
@@ -99,7 +102,7 @@ describe('GET /api/promotions integration', () => {
       });
       finalProductIds.push(product.id);
     }
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: overrides.name || 'Test Promotion',
@@ -148,9 +151,7 @@ describe('GET /api/promotions integration', () => {
     });
 
     it('should return first page with default size (10)', async () => {
-      const response = await request(app)
-        .get('/api/promotions')
-        .expect(200);
+      const response = await request(app).get('/api/promotions').expect(200);
 
       expect(response.body.data).toHaveLength(10);
       expect(response.body.pagination).toEqual({
@@ -164,9 +165,7 @@ describe('GET /api/promotions integration', () => {
     });
 
     it('should return second page with custom size', async () => {
-      const response = await request(app)
-        .get('/api/promotions?page=2&size=5')
-        .expect(200);
+      const response = await request(app).get('/api/promotions?page=2&size=5').expect(200);
 
       expect(response.body.data).toHaveLength(5);
       expect(response.body.pagination).toEqual({
@@ -180,9 +179,7 @@ describe('GET /api/promotions integration', () => {
     });
 
     it('should return empty array for page beyond total pages', async () => {
-      const response = await request(app)
-        .get('/api/promotions?page=10')
-        .expect(200);
+      const response = await request(app).get('/api/promotions?page=10').expect(200);
 
       expect(response.body.data).toHaveLength(0);
       expect(response.body.pagination).toEqual({
@@ -194,9 +191,7 @@ describe('GET /api/promotions integration', () => {
     });
 
     it('should reject size exceeding maximum 100', async () => {
-      const response = await request(app)
-        .get('/api/promotions?size=200')
-        .expect(400);
+      const response = await request(app).get('/api/promotions?size=200').expect(400);
 
       expect(response.body.error.code).toBe('VALIDATION_ERROR');
     });
@@ -224,27 +219,21 @@ describe('GET /api/promotions integration', () => {
     });
 
     it('should filter by status Programada', async () => {
-      const response = await request(app)
-        .get('/api/promotions?status=Programada')
-        .expect(200);
+      const response = await request(app).get('/api/promotions?status=Programada').expect(200);
 
       expect(response.body.data).toHaveLength(2);
       expect(response.body.data.every(p => p.status === 'Programada')).toBe(true);
     });
 
     it('should filter by status Activa', async () => {
-      const response = await request(app)
-        .get('/api/promotions?status=Activa')
-        .expect(200);
+      const response = await request(app).get('/api/promotions?status=Activa').expect(200);
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].status).toBe('Activa');
     });
 
     it('should filter by status Finalizada', async () => {
-      const response = await request(app)
-        .get('/api/promotions?status=Finalizada')
-        .expect(200);
+      const response = await request(app).get('/api/promotions?status=Finalizada').expect(200);
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].status).toBe('Finalizada');
@@ -267,9 +256,9 @@ describe('GET /api/promotions integration', () => {
         .expect(200);
 
       expect(response.body.data).toHaveLength(1);
-      expect(response.body.data.every(p => 
-        p.products.some(prod => prod.id === product.id)
-      )).toBe(true);
+      expect(response.body.data.every(p => p.products.some(prod => prod.id === product.id))).toBe(
+        true
+      );
     });
 
     it('should filter by category_id', async () => {
@@ -305,9 +294,11 @@ describe('GET /api/promotions integration', () => {
 
       expect(response.body.data).toHaveLength(2);
       // All should have start_date >= 2026-09-02
-      expect(response.body.data.every(p => 
-        new Date(p.start_date) >= new Date('2026-09-02T00:00:00.000Z')
-      )).toBe(true);
+      expect(
+        response.body.data.every(
+          p => new Date(p.start_date) >= new Date('2026-09-02T00:00:00.000Z')
+        )
+      ).toBe(true);
     });
 
     it('should filter by end_date_to', async () => {
@@ -323,24 +314,22 @@ describe('GET /api/promotions integration', () => {
 
       expect(response.body.data.length).toBeGreaterThanOrEqual(2);
       // All should have end_date <= 2026-09-02
-      expect(response.body.data.every(p => 
-        new Date(p.end_date) <= new Date('2026-09-02T23:59:59.000Z')
-      )).toBe(true);
+      expect(
+        response.body.data.every(p => new Date(p.end_date) <= new Date('2026-09-02T23:59:59.000Z'))
+      ).toBe(true);
     });
   });
 
   describe('Soft delete exclusion', () => {
     it('should exclude soft-deleted promotions from list', async () => {
       await createPromotion({ name: 'Active Promo', status: 'Programada' });
-      await createPromotion({ 
-        name: 'Deleted Promo', 
+      await createPromotion({
+        name: 'Deleted Promo',
         status: 'Programada',
         deleted_at: new Date(),
       });
 
-      const response = await request(app)
-        .get('/api/promotions')
-        .expect(200);
+      const response = await request(app).get('/api/promotions').expect(200);
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].name).toBe('Active Promo');
@@ -364,9 +353,7 @@ describe('GET /api/promotions integration', () => {
         category_ids: [category.id],
       });
 
-      const response = await request(app)
-        .get('/api/promotions')
-        .expect(200);
+      const response = await request(app).get('/api/promotions').expect(200);
 
       expect(response.body.data).toHaveLength(1);
       const promo = response.body.data[0];
@@ -379,9 +366,7 @@ describe('GET /api/promotions integration', () => {
     it('should return deleted_at as null for non-deleted promotions', async () => {
       await createPromotion({ status: 'Programada' });
 
-      const response = await request(app)
-        .get('/api/promotions')
-        .expect(200);
+      const response = await request(app).get('/api/promotions').expect(200);
 
       expect(response.body.data[0].deleted_at).toBeNull();
     });

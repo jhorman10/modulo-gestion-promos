@@ -26,9 +26,11 @@ export class ProductCategoryService {
     this.prisma = prismaClient || prisma;
   }
 
-  async listAll(params: ProductCategoryListParams = {} as ProductCategoryListParams): Promise<ProductCategoryListResult> {
+  async listAll(
+    params: ProductCategoryListParams = {} as ProductCategoryListParams
+  ): Promise<ProductCategoryListResult> {
     const { page = 1, size = 50, type } = params;
-    
+
     // Build where clause
     const where: Prisma.ProductCategoryWhereInput = {};
     if (type) {

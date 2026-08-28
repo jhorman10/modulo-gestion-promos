@@ -50,8 +50,18 @@ describe('PromotionService - update', () => {
   };
 
   const mockAssociations = [
-    { promotionId: 'promo-1', productCategoryId: 'cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT } },
-    { promotionId: 'promo-1', productCategoryId: 'cat-2', associationType: ProductCategoryType.CATEGORY, productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY } },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-1',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT },
+    },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-2',
+      associationType: ProductCategoryType.CATEGORY,
+      productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY },
+    },
   ];
 
   it('should update promotion name when status is Programada', async () => {
@@ -87,7 +97,9 @@ describe('PromotionService - update', () => {
     mockPrisma.$transaction.mockImplementation(async (callback: any) => {
       const tx = {
         promotion: {
-          update: vi.fn().mockResolvedValue({ ...activePromotion, discountValue: new Decimal('0.25') }),
+          update: vi
+            .fn()
+            .mockResolvedValue({ ...activePromotion, discountValue: new Decimal('0.25') }),
         },
         promotionProductCategory: {
           deleteMany: vi.fn().mockResolvedValue({ count: 2 }),
@@ -111,8 +123,9 @@ describe('PromotionService - update', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(finalizedPromotion);
 
     // Act & Assert
-    await expect(service.update('promo-1', { name: 'Updated Name' }))
-      .rejects.toThrow('Finalizada promotions cannot be modified');
+    await expect(service.update('promo-1', { name: 'Updated Name' })).rejects.toThrow(
+      'Finalizada promotions cannot be modified'
+    );
   });
 
   it('should throw error when promotion not found', async () => {
@@ -120,8 +133,9 @@ describe('PromotionService - update', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(null);
 
     // Act & Assert
-    await expect(service.update('non-existent', { name: 'Updated Name' }))
-      .rejects.toThrow('Promotion not found');
+    await expect(service.update('non-existent', { name: 'Updated Name' })).rejects.toThrow(
+      'Promotion not found'
+    );
   });
 
   it('should update associations when provided', async () => {
@@ -129,7 +143,7 @@ describe('PromotionService - update', () => {
     const newProduct = { id: 'new-cat-1', name: 'New Product', type: ProductCategoryType.PRODUCT };
     mockPrisma.promotion.findUnique.mockResolvedValue(mockPromotion);
     mockPrisma.productCategory.findMany.mockResolvedValue([newProduct]);
-    
+
     const updatedPromotion = { ...mockPromotion };
     mockPrisma.$transaction.mockImplementation(async (callback: any) => {
       const tx = {
@@ -144,11 +158,19 @@ describe('PromotionService - update', () => {
       return callback(tx);
     });
     mockPrisma.promotionProductCategory.findMany.mockResolvedValue([
-      { promotionId: 'promo-1', productCategoryId: 'new-cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: newProduct },
+      {
+        promotionId: 'promo-1',
+        productCategoryId: 'new-cat-1',
+        associationType: ProductCategoryType.PRODUCT,
+        productCategory: newProduct,
+      },
     ]);
 
     // Act
-    const result = await service.update('promo-1', { product_ids: ['new-cat-1'], category_ids: [] });
+    const result = await service.update('promo-1', {
+      product_ids: ['new-cat-1'],
+      category_ids: [],
+    });
 
     // Assert
     expect(result.products).toHaveLength(1);
@@ -161,8 +183,9 @@ describe('PromotionService - update', () => {
     mockPrisma.productCategory.findMany.mockResolvedValue([]);
 
     // Act & Assert
-    await expect(service.update('promo-1', { product_ids: ['non-existent'] }))
-      .rejects.toThrow('Product or category not found');
+    await expect(service.update('promo-1', { product_ids: ['non-existent'] })).rejects.toThrow(
+      'Product or category not found'
+    );
   });
 });
 
@@ -190,13 +213,21 @@ describe('PromotionService - activate', () => {
   };
 
   const mockAssociations = [
-    { promotionId: 'promo-1', productCategoryId: 'cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT } },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-1',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT },
+    },
   ];
 
   it('should activate promotion when status is Programada and date is within range', async () => {
     // Arrange
     mockPrisma.promotion.findUnique.mockResolvedValue(mockPromotion);
-    mockPrisma.promotion.update.mockResolvedValue({ ...mockPromotion, status: PromotionStatus.ACTIVA });
+    mockPrisma.promotion.update.mockResolvedValue({
+      ...mockPromotion,
+      status: PromotionStatus.ACTIVA,
+    });
     mockPrisma.promotionProductCategory.findMany.mockResolvedValue(mockAssociations);
 
     // Act
@@ -215,8 +246,7 @@ describe('PromotionService - activate', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(null);
 
     // Act & Assert
-    await expect(service.activate('non-existent'))
-      .rejects.toThrow('Promotion not found');
+    await expect(service.activate('non-existent')).rejects.toThrow('Promotion not found');
   });
 
   it('should throw error when promotion is not Programada', async () => {
@@ -225,8 +255,9 @@ describe('PromotionService - activate', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(activePromotion);
 
     // Act & Assert
-    await expect(service.activate('promo-1'))
-      .rejects.toThrow('Only Programada promotions can be activated');
+    await expect(service.activate('promo-1')).rejects.toThrow(
+      'Only Programada promotions can be activated'
+    );
   });
 
   it('should throw error when current date is before start_date', async () => {
@@ -238,8 +269,9 @@ describe('PromotionService - activate', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(futurePromotion);
 
     // Act & Assert
-    await expect(service.activate('promo-1'))
-      .rejects.toThrow('Promotion cannot be activated outside its validity period');
+    await expect(service.activate('promo-1')).rejects.toThrow(
+      'Promotion cannot be activated outside its validity period'
+    );
   });
 
   it('should throw error when current date is after end_date', async () => {
@@ -251,8 +283,9 @@ describe('PromotionService - activate', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(pastPromotion);
 
     // Act & Assert
-    await expect(service.activate('promo-1'))
-      .rejects.toThrow('Promotion cannot be activated outside its validity period');
+    await expect(service.activate('promo-1')).rejects.toThrow(
+      'Promotion cannot be activated outside its validity period'
+    );
   });
 
   it('should throw error when promotion is Finalizada', async () => {
@@ -261,8 +294,9 @@ describe('PromotionService - activate', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(finalizedPromotion);
 
     // Act & Assert
-    await expect(service.activate('promo-1'))
-      .rejects.toThrow('Only Programada promotions can be activated');
+    await expect(service.activate('promo-1')).rejects.toThrow(
+      'Only Programada promotions can be activated'
+    );
   });
 });
 
@@ -290,13 +324,21 @@ describe('PromotionService - finalize', () => {
   };
 
   const mockAssociations = [
-    { promotionId: 'promo-1', productCategoryId: 'cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT } },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-1',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT },
+    },
   ];
 
   it('should finalize promotion when status is Activa', async () => {
     // Arrange
     mockPrisma.promotion.findUnique.mockResolvedValue(mockPromotion);
-    mockPrisma.promotion.update.mockResolvedValue({ ...mockPromotion, status: PromotionStatus.FINALIZADA });
+    mockPrisma.promotion.update.mockResolvedValue({
+      ...mockPromotion,
+      status: PromotionStatus.FINALIZADA,
+    });
     mockPrisma.promotionProductCategory.findMany.mockResolvedValue(mockAssociations);
 
     // Act
@@ -315,8 +357,7 @@ describe('PromotionService - finalize', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(null);
 
     // Act & Assert
-    await expect(service.finalize('non-existent'))
-      .rejects.toThrow('Promotion not found');
+    await expect(service.finalize('non-existent')).rejects.toThrow('Promotion not found');
   });
 
   it('should throw error when promotion is not Activa (Programada)', async () => {
@@ -325,8 +366,9 @@ describe('PromotionService - finalize', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(scheduledPromotion);
 
     // Act & Assert
-    await expect(service.finalize('promo-1'))
-      .rejects.toThrow('Only Activa promotions can be finalized');
+    await expect(service.finalize('promo-1')).rejects.toThrow(
+      'Only Activa promotions can be finalized'
+    );
   });
 
   it('should throw error when promotion is already Finalizada', async () => {
@@ -335,8 +377,9 @@ describe('PromotionService - finalize', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(finalizedPromotion);
 
     // Act & Assert
-    await expect(service.finalize('promo-1'))
-      .rejects.toThrow('Only Activa promotions can be finalized');
+    await expect(service.finalize('promo-1')).rejects.toThrow(
+      'Only Activa promotions can be finalized'
+    );
   });
 });
 
@@ -383,8 +426,7 @@ describe('PromotionService - softDelete', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(null);
 
     // Act & Assert
-    await expect(service.softDelete('non-existent'))
-      .rejects.toThrow('Promotion not found');
+    await expect(service.softDelete('non-existent')).rejects.toThrow('Promotion not found');
   });
 
   it('should throw error when promotion is Activa', async () => {
@@ -393,8 +435,9 @@ describe('PromotionService - softDelete', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(activePromotion);
 
     // Act & Assert
-    await expect(service.softDelete('promo-1'))
-      .rejects.toThrow('Only Programada promotions can be deleted');
+    await expect(service.softDelete('promo-1')).rejects.toThrow(
+      'Only Programada promotions can be deleted'
+    );
   });
 
   it('should throw error when promotion is Finalizada', async () => {
@@ -403,7 +446,8 @@ describe('PromotionService - softDelete', () => {
     mockPrisma.promotion.findUnique.mockResolvedValue(finalizedPromotion);
 
     // Act & Assert
-    await expect(service.softDelete('promo-1'))
-      .rejects.toThrow('Only Programada promotions can be deleted');
+    await expect(service.softDelete('promo-1')).rejects.toThrow(
+      'Only Programada promotions can be deleted'
+    );
   });
 });

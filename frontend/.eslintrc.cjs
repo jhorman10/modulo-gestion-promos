@@ -32,12 +32,9 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/consistent-type-imports': 'error',
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react/react-in-jsx-scope': 'off',
     'prefer-const': 'error',
   },
-  ignorePatterns: ['dist/', 'node_modules/', '*.config.*', 'public/'],
-}
+  ignorePatterns: ['dist/', 'node_modules/', '*.config.*', 'public/', 'src/test/'],
+};

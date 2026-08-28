@@ -1,7 +1,8 @@
 import toast, { Toaster } from 'react-hot-toast';
 
 export interface ToastProviderProps {
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+  position?:
+    'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
 }
 
 export function ToastProvider({ position = 'top-right' }: ToastProviderProps) {

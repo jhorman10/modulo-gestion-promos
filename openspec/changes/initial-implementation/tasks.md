@@ -2,14 +2,14 @@
 
 ## Review Workload Forecast
 
-| Field | Value |
-|-------|-------|
-| Estimated changed lines | 2200–2800 |
-| 400-line budget risk | High |
-| Chained PRs recommended | Yes |
-| Suggested split | PR 1 (Phase 0–1) → PR 2 (Phase 2–3) → PR 3 (Phase 4–5) → PR 4 (Phase 6–7) |
-| Delivery strategy | auto-forecast |
-| Chain strategy | pending |
+| Field                   | Value                                                                     |
+| ----------------------- | ------------------------------------------------------------------------- |
+| Estimated changed lines | 2200–2800                                                                 |
+| 400-line budget risk    | High                                                                      |
+| Chained PRs recommended | Yes                                                                       |
+| Suggested split         | PR 1 (Phase 0–1) → PR 2 (Phase 2–3) → PR 3 (Phase 4–5) → PR 4 (Phase 6–7) |
+| Delivery strategy       | auto-forecast                                                             |
+| Chain strategy          | pending                                                                   |
 
 Decision needed before apply: Yes
 Chained PRs recommended: Yes
@@ -18,12 +18,12 @@ Chain strategy: pending
 
 ### Suggested Work Units
 
-| Unit | Goal | Likely PR | Notes |
-|------|------|-----------|-------|
-| 1 | Monorepo scaffolding + backend health/registry + docker-compose + Prisma schema | PR 1 | Base branch; includes seed, health endpoint, product-category list |
-| 2 | Backend promotion CRUD + state machine + validations + summary | PR 2 | Depends on PR 1; all promotion endpoints, integration tests |
-| 3 | Frontend core + features (list, form, summary) + E2E | PR 3 | Depends on PR 2; React Query, components, Playwright flows |
-| 4 | CI/CD pipeline + docs (README, DECISIONS, .env.example) | PR 4 | Depends on PR 3; GitHub Actions, smoke test, documentation |
+| Unit | Goal                                                                            | Likely PR | Notes                                                              |
+| ---- | ------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------ |
+| 1    | Monorepo scaffolding + backend health/registry + docker-compose + Prisma schema | PR 1      | Base branch; includes seed, health endpoint, product-category list |
+| 2    | Backend promotion CRUD + state machine + validations + summary                  | PR 2      | Depends on PR 1; all promotion endpoints, integration tests        |
+| 3    | Frontend core + features (list, form, summary) + E2E                            | PR 3      | Depends on PR 2; React Query, components, Playwright flows         |
+| 4    | CI/CD pipeline + docs (README, DECISIONS, .env.example)                         | PR 4      | Depends on PR 3; GitHub Actions, smoke test, documentation         |
 
 ---
 
@@ -238,17 +238,17 @@ Chain strategy: pending
 
 ## Summary
 
-| Phase | Tasks | Focus |
-|-------|-------|-------|
-| Phase 0 | 11 | Project scaffolding, Docker, Prisma, configs |
-| Phase 1 | 17 | Backend core: health, pagination, errors, dates, product-category |
-| Phase 2 | 29 | Backend promotions: CRUD, state machine, validations, summary |
-| Phase 3 | 17 | Frontend core: API client, hooks, shared components |
-| Phase 4 | 17 | Frontend features: pages, mutations, E2E flows |
-| Phase 5 | 10 | Integration & E2E: docker compose, full flows |
-| Phase 6 | 12 | CI/CD pipeline: 4-stage GitHub Actions ✅ |
-| Phase 7 | 5 | Documentation: README, DECISIONS, env examples ✅ |
-| **Total** | **118** | **Full implementation** |
+| Phase     | Tasks   | Focus                                                             |
+| --------- | ------- | ----------------------------------------------------------------- |
+| Phase 0   | 11      | Project scaffolding, Docker, Prisma, configs                      |
+| Phase 1   | 17      | Backend core: health, pagination, errors, dates, product-category |
+| Phase 2   | 29      | Backend promotions: CRUD, state machine, validations, summary     |
+| Phase 3   | 17      | Frontend core: API client, hooks, shared components               |
+| Phase 4   | 17      | Frontend features: pages, mutations, E2E flows                    |
+| Phase 5   | 10      | Integration & E2E: docker compose, full flows                     |
+| Phase 6   | 12      | CI/CD pipeline: 4-stage GitHub Actions ✅                         |
+| Phase 7   | 5       | Documentation: README, DECISIONS, env examples ✅                 |
+| **Total** | **118** | **Full implementation**                                           |
 
 ### Implementation Order
 

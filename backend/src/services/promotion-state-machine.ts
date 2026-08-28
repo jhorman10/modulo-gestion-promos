@@ -39,7 +39,7 @@ export class StateTransitionError extends Error {
 
 /**
  * State machine for promotion lifecycle transitions
- * 
+ *
  * Valid transitions:
  * - Programada -> Activa (via activate, requires date validation)
  * - Programada -> Deleted (via soft delete)
@@ -87,11 +87,7 @@ export class PromotionStateMachine {
     if (fromState === toState) {
       return {
         allowed: false,
-        error: new StateTransitionError(
-          'Cannot transition to the same state',
-          fromState,
-          toState
-        ),
+        error: new StateTransitionError('Cannot transition to the same state', fromState, toState),
       };
     }
 

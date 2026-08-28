@@ -54,13 +54,7 @@ describe('ConfirmationDialog', () => {
   });
 
   it('should render custom confirm and cancel text', () => {
-    render(
-      <ConfirmationDialog
-        {...defaultProps}
-        confirmText="Delete"
-        cancelText="Keep"
-      />
-    );
+    render(<ConfirmationDialog {...defaultProps} confirmText="Delete" cancelText="Keep" />);
 
     expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /keep/i })).toBeInTheDocument();

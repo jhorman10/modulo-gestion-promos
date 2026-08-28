@@ -62,22 +62,30 @@ describe('apiClient', () => {
 
   describe('GET requests', () => {
     it('should call axios.get with correct URL and params', async () => {
-      const mockResponse = { data: { data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } } };
+      const mockResponse = {
+        data: { data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } },
+      };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const result = await api.get('/promotions', { page: 1, size: 10 });
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/promotions', { params: { page: 1, size: 10 } });
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/promotions', {
+        params: { page: 1, size: 10 },
+      });
       expect(result).toEqual(mockResponse.data);
     });
 
     it('should call axios.get without params when not provided', async () => {
-      const mockResponse = { data: { by_status: { Programada: 0, Activa: 0, Finalizada: 0 }, valid_today: 0 } };
+      const mockResponse = {
+        data: { by_status: { Programada: 0, Activa: 0, Finalizada: 0 }, valid_today: 0 },
+      };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const result = await api.get('/promotions/summary');
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/promotions/summary', { params: undefined });
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/promotions/summary', {
+        params: undefined,
+      });
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -155,7 +163,7 @@ describe('apiClient', () => {
 
       await expect(responseInterceptor(networkError)).rejects.toMatchObject({
         code: 'NETWORK_ERROR',
-        message: 'Network error - please check your connection',
+        message: 'Error de red - por favor verifique su conexión',
       });
     });
 
@@ -171,7 +179,7 @@ describe('apiClient', () => {
 
       await expect(responseInterceptor(timeoutError)).rejects.toMatchObject({
         code: 'TIMEOUT_ERROR',
-        message: 'Request timeout - please try again',
+        message: 'Tiempo de espera agotado - por favor intente de nuevo',
       });
     });
   });

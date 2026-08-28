@@ -164,7 +164,11 @@ describe('useProductsCategories', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockApiGet).toHaveBeenCalledWith('/products-categories', { page: 1, size: 50, type: undefined });
+    expect(mockApiGet).toHaveBeenCalledWith('/products-categories', {
+      page: 1,
+      size: 50,
+      type: undefined,
+    });
     expect(result.current.data).toEqual(mockData);
   });
 
@@ -181,6 +185,10 @@ describe('useProductsCategories', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockApiGet).toHaveBeenCalledWith('/products-categories', { page: 1, size: 50, type: 'PRODUCT' });
+    expect(mockApiGet).toHaveBeenCalledWith('/products-categories', {
+      page: 1,
+      size: 50,
+      type: 'PRODUCT',
+    });
   });
 });

@@ -72,10 +72,30 @@ describe('PromotionService - list', () => {
   ];
 
   const mockAssociations = [
-    { promotionId: 'promo-1', productCategoryId: 'cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT } },
-    { promotionId: 'promo-1', productCategoryId: 'cat-2', associationType: ProductCategoryType.CATEGORY, productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY } },
-    { promotionId: 'promo-2', productCategoryId: 'cat-3', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-3', name: 'Product 2', type: ProductCategoryType.PRODUCT } },
-    { promotionId: 'promo-3', productCategoryId: 'cat-4', associationType: ProductCategoryType.CATEGORY, productCategory: { id: 'cat-4', name: 'Category 2', type: ProductCategoryType.CATEGORY } },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-1',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT },
+    },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-2',
+      associationType: ProductCategoryType.CATEGORY,
+      productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY },
+    },
+    {
+      promotionId: 'promo-2',
+      productCategoryId: 'cat-3',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-3', name: 'Product 2', type: ProductCategoryType.PRODUCT },
+    },
+    {
+      promotionId: 'promo-3',
+      productCategoryId: 'cat-4',
+      associationType: ProductCategoryType.CATEGORY,
+      productCategory: { id: 'cat-4', name: 'Category 2', type: ProductCategoryType.CATEGORY },
+    },
   ];
 
   it('should return paginated promotions with default page and size', async () => {
@@ -134,7 +154,10 @@ describe('PromotionService - list', () => {
     // Arrange
     mockPrisma.promotion.findMany.mockResolvedValue([mockPromotions[0]]);
     mockPrisma.promotion.count.mockResolvedValue(1);
-    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([mockAssociations[0], mockAssociations[1]]);
+    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([
+      mockAssociations[0],
+      mockAssociations[1],
+    ]);
 
     // Act
     const result = await service.list({ page: 1, size: 10, status: 'Programada' });
@@ -209,7 +232,10 @@ describe('PromotionService - list', () => {
     const fromDate = new Date('2026-10-01T00:00:00.000Z');
     mockPrisma.promotion.findMany.mockResolvedValue([mockPromotions[1], mockPromotions[2]]);
     mockPrisma.promotion.count.mockResolvedValue(2);
-    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([mockAssociations[2], mockAssociations[3]]);
+    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([
+      mockAssociations[2],
+      mockAssociations[3],
+    ]);
 
     // Act
     const result = await service.list({ page: 1, size: 10, start_date_from: fromDate });
@@ -231,7 +257,11 @@ describe('PromotionService - list', () => {
     const toDate = new Date('2026-10-31T23:59:59.000Z');
     mockPrisma.promotion.findMany.mockResolvedValue([mockPromotions[0], mockPromotions[1]]);
     mockPrisma.promotion.count.mockResolvedValue(2);
-    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([mockAssociations[0], mockAssociations[1], mockAssociations[2]]);
+    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([
+      mockAssociations[0],
+      mockAssociations[1],
+      mockAssociations[2],
+    ]);
 
     // Act
     const result = await service.list({ page: 1, size: 10, end_date_to: toDate });
@@ -252,7 +282,10 @@ describe('PromotionService - list', () => {
     // Arrange - the middleware handles this, but we verify the where clause includes deletedAt: null
     mockPrisma.promotion.findMany.mockResolvedValue([mockPromotions[0]]);
     mockPrisma.promotion.count.mockResolvedValue(1);
-    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([mockAssociations[0], mockAssociations[1]]);
+    mockPrisma.promotionProductCategory.findMany.mockResolvedValue([
+      mockAssociations[0],
+      mockAssociations[1],
+    ]);
 
     // Act
     await service.list({ page: 1, size: 10 });

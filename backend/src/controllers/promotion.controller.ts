@@ -1,9 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import type { Request, Response } from 'express';
-import type { PromotionCreateInput, PromotionListQuery, PromotionUpdateInput } from '../services/promotion.service';
+import type {
+  PromotionCreateInput,
+  PromotionListQuery,
+  PromotionUpdateInput,
+} from '../services/promotion.service';
 import { PromotionService } from '../services/promotion.service';
 import { SummaryService } from '../services/summary.service';
-import { createPromotionSchema, promotionQuerySchema, promotionParamsSchema, updatePromotionSchema } from '../validators/promotion.validator';
+import {
+  createPromotionSchema,
+  promotionQuerySchema,
+  promotionParamsSchema,
+  updatePromotionSchema,
+} from '../validators/promotion.validator';
 import { validateBody, validateQuery, validateParams } from '../middleware/validate';
 
 export class PromotionController {
@@ -45,7 +54,9 @@ export class PromotionController {
         status: query.status,
         product_id: query.product_id,
         category_id: query.category_id,
-        start_date_from: query.start_date_from ? new Date(String(query.start_date_from)) : undefined,
+        start_date_from: query.start_date_from
+          ? new Date(String(query.start_date_from))
+          : undefined,
         end_date_to: query.end_date_to ? new Date(String(query.end_date_to)) : undefined,
       };
       const result = await this.service.list(listQuery);

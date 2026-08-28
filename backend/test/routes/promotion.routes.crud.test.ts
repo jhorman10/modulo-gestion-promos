@@ -17,7 +17,7 @@ describe('GET /api/promotions/:id integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -32,38 +32,41 @@ describe('GET /api/promotions/:id integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    name: string;
-    discount_type: 'percentage' | 'fixed';
-    discount_value: number;
-    start_date: string;
-    end_date: string;
-    status: 'Programada' | 'Activa' | 'Finalizada';
-    product_ids: string[];
-    category_ids: string[];
-    deleted_at: Date | null;
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      name: string;
+      discount_type: 'percentage' | 'fixed';
+      discount_value: number;
+      start_date: string;
+      end_date: string;
+      status: 'Programada' | 'Activa' | 'Finalizada';
+      product_ids: string[];
+      category_ids: string[];
+      deleted_at: Date | null;
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const productIds = overrides.product_ids || [];
     const categoryIds = overrides.category_ids || [];
-    
+
     const finalProductIds = [...productIds];
     const finalCategoryIds = [...categoryIds];
-    
+
     if (finalProductIds.length === 0 && finalCategoryIds.length === 0) {
       const product = await prisma.productCategory.create({
         data: { name: uniqueName('Default Product'), type: ProductCategoryType.PRODUCT },
       });
       finalProductIds.push(product.id);
     }
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: overrides.name || 'Test Promotion',
@@ -106,15 +109,13 @@ describe('GET /api/promotions/:id integration', () => {
     const category = await prisma.productCategory.create({
       data: { name: uniqueName('Get Category'), type: ProductCategoryType.CATEGORY },
     });
-    
+
     const promotion = await createPromotion({
       product_ids: [product.id],
       category_ids: [category.id],
     });
 
-    const response = await request(app)
-      .get(`/api/promotions/${promotion.id}`)
-      .expect(200);
+    const response = await request(app).get(`/api/promotions/${promotion.id}`).expect(200);
 
     expect(response.body).toMatchObject({
       id: promotion.id,
@@ -147,9 +148,7 @@ describe('GET /api/promotions/:id integration', () => {
       deleted_at: new Date(),
     });
 
-    const response = await request(app)
-      .get(`/api/promotions/${promotion.id}`)
-      .expect(404);
+    const response = await request(app).get(`/api/promotions/${promotion.id}`).expect(404);
 
     expect(response.body.error.code).toBe('NOT_FOUND');
   });
@@ -158,15 +157,13 @@ describe('GET /api/promotions/:id integration', () => {
     const product = await prisma.productCategory.create({
       data: { name: uniqueName('Only Product'), type: ProductCategoryType.PRODUCT },
     });
-    
+
     const promotion = await createPromotion({
       product_ids: [product.id],
       category_ids: [],
     });
 
-    const response = await request(app)
-      .get(`/api/promotions/${promotion.id}`)
-      .expect(200);
+    const response = await request(app).get(`/api/promotions/${promotion.id}`).expect(200);
 
     expect(response.body.products).toHaveLength(1);
     expect(response.body.categories).toHaveLength(0);
@@ -176,15 +173,13 @@ describe('GET /api/promotions/:id integration', () => {
     const category = await prisma.productCategory.create({
       data: { name: uniqueName('Only Category'), type: ProductCategoryType.CATEGORY },
     });
-    
+
     const promotion = await createPromotion({
       product_ids: [],
       category_ids: [category.id],
     });
 
-    const response = await request(app)
-      .get(`/api/promotions/${promotion.id}`)
-      .expect(200);
+    const response = await request(app).get(`/api/promotions/${promotion.id}`).expect(200);
 
     expect(response.body.products).toHaveLength(0);
     expect(response.body.categories).toHaveLength(1);
@@ -196,9 +191,7 @@ describe('GET /api/promotions/:id integration', () => {
       discount_value: 500,
     });
 
-    const response = await request(app)
-      .get(`/api/promotions/${promotion.id}`)
-      .expect(200);
+    const response = await request(app).get(`/api/promotions/${promotion.id}`).expect(200);
 
     expect(response.body.discount_type).toBe('fixed');
     expect(response.body.discount_value).toBe(500);
@@ -213,7 +206,7 @@ describe('PATCH /api/promotions/:id integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -228,37 +221,40 @@ describe('PATCH /api/promotions/:id integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    name: string;
-    discount_type: 'percentage' | 'fixed';
-    discount_value: number;
-    start_date: string;
-    end_date: string;
-    status: 'Programada' | 'Activa' | 'Finalizada';
-    product_ids: string[];
-    category_ids: string[];
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      name: string;
+      discount_type: 'percentage' | 'fixed';
+      discount_value: number;
+      start_date: string;
+      end_date: string;
+      status: 'Programada' | 'Activa' | 'Finalizada';
+      product_ids: string[];
+      category_ids: string[];
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const productIds = overrides.product_ids || [];
     const categoryIds = overrides.category_ids || [];
-    
+
     const finalProductIds = [...productIds];
     const finalCategoryIds = [...categoryIds];
-    
+
     if (finalProductIds.length === 0 && finalCategoryIds.length === 0) {
       const product = await prisma.productCategory.create({
         data: { name: uniqueName('Default Product'), type: ProductCategoryType.PRODUCT },
       });
       finalProductIds.push(product.id);
     }
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: overrides.name || 'Test Promotion',
@@ -372,7 +368,7 @@ describe('POST /api/promotions/:id/activate integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -387,26 +383,29 @@ describe('POST /api/promotions/:id/activate integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    name: string;
-    discount_type: 'percentage' | 'fixed';
-    discount_value: number;
-    start_date: string;
-    end_date: string;
-    status: 'Programada' | 'Activa' | 'Finalizada';
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      name: string;
+      discount_type: 'percentage' | 'fixed';
+      discount_value: number;
+      start_date: string;
+      end_date: string;
+      status: 'Programada' | 'Activa' | 'Finalizada';
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const product = await prisma.productCategory.create({
       data: { name: uniqueName('Act Product'), type: ProductCategoryType.PRODUCT },
     });
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: overrides.name || 'Test Promotion',
@@ -420,11 +419,13 @@ describe('POST /api/promotions/:id/activate integration', () => {
     });
 
     await prisma.promotionProductCategory.createMany({
-      data: [{
-        promotionId: promotion.id,
-        productCategoryId: product.id,
-        associationType: ProductCategoryType.PRODUCT,
-      }],
+      data: [
+        {
+          promotionId: promotion.id,
+          productCategoryId: product.id,
+          associationType: ProductCategoryType.PRODUCT,
+        },
+      ],
     });
 
     return promotion;
@@ -508,7 +509,7 @@ describe('POST /api/promotions/:id/finalize integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -523,21 +524,24 @@ describe('POST /api/promotions/:id/finalize integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    status: 'Programada' | 'Activa' | 'Finalizada';
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      status: 'Programada' | 'Activa' | 'Finalizada';
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const product = await prisma.productCategory.create({
       data: { name: uniqueName('Fin Product'), type: ProductCategoryType.PRODUCT },
     });
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: 'Test Promotion',
@@ -551,11 +555,13 @@ describe('POST /api/promotions/:id/finalize integration', () => {
     });
 
     await prisma.promotionProductCategory.createMany({
-      data: [{
-        promotionId: promotion.id,
-        productCategoryId: product.id,
-        associationType: ProductCategoryType.PRODUCT,
-      }],
+      data: [
+        {
+          promotionId: promotion.id,
+          productCategoryId: product.id,
+          associationType: ProductCategoryType.PRODUCT,
+        },
+      ],
     });
 
     return promotion;
@@ -609,7 +615,7 @@ describe('DELETE /api/promotions/:id integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -624,21 +630,24 @@ describe('DELETE /api/promotions/:id integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    status: 'Programada' | 'Activa' | 'Finalizada';
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      status: 'Programada' | 'Activa' | 'Finalizada';
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const product = await prisma.productCategory.create({
       data: { name: uniqueName('Del Product'), type: ProductCategoryType.PRODUCT },
     });
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: 'Test Promotion',
@@ -652,11 +661,13 @@ describe('DELETE /api/promotions/:id integration', () => {
     });
 
     await prisma.promotionProductCategory.createMany({
-      data: [{
-        promotionId: promotion.id,
-        productCategoryId: product.id,
-        associationType: ProductCategoryType.PRODUCT,
-      }],
+      data: [
+        {
+          promotionId: promotion.id,
+          productCategoryId: product.id,
+          associationType: ProductCategoryType.PRODUCT,
+        },
+      ],
     });
 
     return promotion;
@@ -665,14 +676,10 @@ describe('DELETE /api/promotions/:id integration', () => {
   it('should soft delete promotion when status is Programada', async () => {
     const promotion = await createPromotion({ status: 'Programada' });
 
-    await request(app)
-      .delete(`/api/promotions/${promotion.id}`)
-      .expect(204);
+    await request(app).delete(`/api/promotions/${promotion.id}`).expect(204);
 
     // Verify it's excluded from list
-    const listResponse = await request(app)
-      .get('/api/promotions')
-      .expect(200);
+    const listResponse = await request(app).get('/api/promotions').expect(200);
 
     expect(listResponse.body.data).toHaveLength(0);
   });
@@ -680,9 +687,7 @@ describe('DELETE /api/promotions/:id integration', () => {
   it('should return 409 when promotion is Activa', async () => {
     const promotion = await createPromotion({ status: 'Activa' });
 
-    const response = await request(app)
-      .delete(`/api/promotions/${promotion.id}`)
-      .expect(409);
+    const response = await request(app).delete(`/api/promotions/${promotion.id}`).expect(409);
 
     expect(response.body.error.code).toBe('INVALID_STATE_TRANSITION');
     expect(response.body.error.message).toContain('Programada');
@@ -691,9 +696,7 @@ describe('DELETE /api/promotions/:id integration', () => {
   it('should return 409 when promotion is Finalizada', async () => {
     const promotion = await createPromotion({ status: 'Finalizada' });
 
-    const response = await request(app)
-      .delete(`/api/promotions/${promotion.id}`)
-      .expect(409);
+    const response = await request(app).delete(`/api/promotions/${promotion.id}`).expect(409);
 
     expect(response.body.error.code).toBe('INVALID_STATE_TRANSITION');
   });
@@ -711,14 +714,10 @@ describe('DELETE /api/promotions/:id integration', () => {
     const promotion = await createPromotion({ status: 'Programada' });
 
     // Delete one
-    await request(app)
-      .delete(`/api/promotions/${promotion.id}`)
-      .expect(204);
+    await request(app).delete(`/api/promotions/${promotion.id}`).expect(204);
 
     // Check summary
-    const summaryResponse = await request(app)
-      .get('/api/promotions/summary')
-      .expect(200);
+    const summaryResponse = await request(app).get('/api/promotions/summary').expect(200);
 
     expect(summaryResponse.body.by_status.Programada).toBe(1);
   });
@@ -732,7 +731,7 @@ describe('GET /api/promotions/summary integration', () => {
     const healthService = new HealthService();
     const productCategoryService = new ProductCategoryService();
     const promotionService = new PromotionService();
-    
+
     app = createApp({ healthService, productCategoryService, promotionService });
     testRunId = Date.now();
   });
@@ -747,23 +746,26 @@ describe('GET /api/promotions/summary integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
-  async function createPromotion(overrides: Partial<{
-    status: 'Programada' | 'Activa' | 'Finalizada';
-    start_date: string;
-    end_date: string;
-  }> = {}) {
+  async function createPromotion(
+    overrides: Partial<{
+      status: 'Programada' | 'Activa' | 'Finalizada';
+      start_date: string;
+      end_date: string;
+    }> = {}
+  ) {
     const statusMap: Record<string, PromotionStatus> = {
       Programada: PromotionStatus.PROGRAMADA,
       Activa: PromotionStatus.ACTIVA,
       Finalizada: PromotionStatus.FINALIZADA,
     };
-    
+
     const product = await prisma.productCategory.create({
       data: { name: uniqueName('Sum Product'), type: ProductCategoryType.PRODUCT },
     });
-    
+
     const promotion = await prisma.promotion.create({
       data: {
         name: 'Test Promotion',
@@ -777,11 +779,13 @@ describe('GET /api/promotions/summary integration', () => {
     });
 
     await prisma.promotionProductCategory.createMany({
-      data: [{
-        promotionId: promotion.id,
-        productCategoryId: product.id,
-        associationType: ProductCategoryType.PRODUCT,
-      }],
+      data: [
+        {
+          promotionId: promotion.id,
+          productCategoryId: product.id,
+          associationType: ProductCategoryType.PRODUCT,
+        },
+      ],
     });
 
     return promotion;
@@ -799,9 +803,7 @@ describe('GET /api/promotions/summary integration', () => {
     await createPromotion({ status: 'Finalizada' });
     await createPromotion({ status: 'Finalizada' });
 
-    const response = await request(app)
-      .get('/api/promotions/summary')
-      .expect(200);
+    const response = await request(app).get('/api/promotions/summary').expect(200);
 
     expect(response.body.by_status).toEqual({
       Programada: 3,
@@ -813,9 +815,7 @@ describe('GET /api/promotions/summary integration', () => {
   });
 
   it('should return zeros when no promotions exist', async () => {
-    const response = await request(app)
-      .get('/api/promotions/summary')
-      .expect(200);
+    const response = await request(app).get('/api/promotions/summary').expect(200);
 
     expect(response.body.by_status).toEqual({
       Programada: 0,
@@ -826,12 +826,18 @@ describe('GET /api/promotions/summary integration', () => {
   });
 
   it('should return 0 valid_today when Activa promotions have future start_date', async () => {
-    await createPromotion({ status: 'Activa', start_date: '2026-10-01T00:00:00.000Z', end_date: '2026-10-30T23:59:59.000Z' });
-    await createPromotion({ status: 'Activa', start_date: '2026-10-01T00:00:00.000Z', end_date: '2026-10-30T23:59:59.000Z' });
+    await createPromotion({
+      status: 'Activa',
+      start_date: '2026-10-01T00:00:00.000Z',
+      end_date: '2026-10-30T23:59:59.000Z',
+    });
+    await createPromotion({
+      status: 'Activa',
+      start_date: '2026-10-01T00:00:00.000Z',
+      end_date: '2026-10-30T23:59:59.000Z',
+    });
 
-    const response = await request(app)
-      .get('/api/promotions/summary')
-      .expect(200);
+    const response = await request(app).get('/api/promotions/summary').expect(200);
 
     expect(response.body.by_status.Activa).toBe(2);
     expect(response.body.valid_today).toBe(0);
@@ -847,9 +853,7 @@ describe('GET /api/promotions/summary integration', () => {
       data: { deletedAt: new Date() },
     });
 
-    const response = await request(app)
-      .get('/api/promotions/summary')
-      .expect(200);
+    const response = await request(app).get('/api/promotions/summary').expect(200);
 
     expect(response.body.by_status.Activa).toBe(1);
     expect(response.body.valid_today).toBe(1);

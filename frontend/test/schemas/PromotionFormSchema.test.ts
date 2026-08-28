@@ -54,7 +54,7 @@ describe('PromotionFormSchema', () => {
     it('should accept 1.00 (maximum percentage)', () => {
       const result = PromotionFormSchema.safeParse({
         ...validBase,
-        discount_value: 1.00,
+        discount_value: 1.0,
       });
       expect(result.success).toBe(true);
     });
@@ -66,9 +66,7 @@ describe('PromotionFormSchema', () => {
       });
       expect(result.success).toBe(false);
       if (!result.success) {
-        const discountError = result.error.issues.find(
-          (i) => i.path.includes('discount_value')
-        );
+        const discountError = result.error.issues.find(i => i.path.includes('discount_value'));
         expect(discountError?.message).toContain('0.01');
       }
     });
@@ -80,9 +78,7 @@ describe('PromotionFormSchema', () => {
       });
       expect(result.success).toBe(false);
       if (!result.success) {
-        const discountError = result.error.issues.find(
-          (i) => i.path.includes('discount_value')
-        );
+        const discountError = result.error.issues.find(i => i.path.includes('discount_value'));
         expect(discountError?.message).toContain('1.00');
       }
     });
@@ -126,9 +122,7 @@ describe('PromotionFormSchema', () => {
       });
       expect(result.success).toBe(false);
       if (!result.success) {
-        const dateError = result.error.issues.find(
-          (i) => i.path.includes('end_date')
-        );
+        const dateError = result.error.issues.find(i => i.path.includes('end_date'));
         expect(dateError?.message).toContain('after');
       }
     });
@@ -185,9 +179,7 @@ describe('PromotionFormSchema', () => {
       });
       expect(result.success).toBe(false);
       if (!result.success) {
-        const assocError = result.error.issues.find(
-          (i) => i.path.includes('product_ids')
-        );
+        const assocError = result.error.issues.find(i => i.path.includes('product_ids'));
         expect(assocError?.message).toContain('At least one');
       }
     });

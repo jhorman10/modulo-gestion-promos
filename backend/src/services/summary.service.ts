@@ -1,4 +1,4 @@
-import type { PrismaClient} from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 import { PromotionStatus } from '@prisma/client';
 import { prisma } from '../prisma/client';
 
@@ -43,9 +43,12 @@ export class SummaryService {
 
     // Map Prisma enum to API format
     statusCounts.forEach(item => {
-      const status = item.status === PromotionStatus.PROGRAMADA ? 'Programada'
-        : item.status === PromotionStatus.ACTIVA ? 'Activa'
-        : 'Finalizada';
+      const status =
+        item.status === PromotionStatus.PROGRAMADA
+          ? 'Programada'
+          : item.status === PromotionStatus.ACTIVA
+            ? 'Activa'
+            : 'Finalizada';
       byStatus[status] = item._count.status;
     });
 

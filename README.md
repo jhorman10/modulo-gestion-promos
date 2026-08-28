@@ -18,17 +18,17 @@ This module allows users to register and manage promotions for POS products, con
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 18 + Vite + TypeScript |
-| Backend | Node.js + Express + TypeScript |
-| Database | PostgreSQL 16 + Prisma ORM |
-| Validation | Zod |
-| State Management | TanStack React Query |
-| Testing | Vitest (unit/integration) + Playwright (E2E) |
-| Containerization | Docker + docker-compose |
-| CI/CD | GitHub Actions (4-stage pipeline) |
-| Linting | ESLint + Prettier |
+| Layer            | Technology                                   |
+| ---------------- | -------------------------------------------- |
+| Frontend         | React 18 + Vite + TypeScript                 |
+| Backend          | Node.js + Express + TypeScript               |
+| Database         | PostgreSQL 16 + Prisma ORM                   |
+| Validation       | Zod                                          |
+| State Management | TanStack React Query                         |
+| Testing          | Vitest (unit/integration) + Playwright (E2E) |
+| Containerization | Docker + docker-compose                      |
+| CI/CD            | GitHub Actions (4-stage pipeline)            |
+| Linting          | ESLint + Prettier                            |
 
 ## Prerequisites
 
@@ -59,11 +59,11 @@ docker compose up -d
 
 ### Service Ports
 
-| Service | Port | Description |
-|---------|------|-------------|
-| Frontend | 5173 | React app served by Nginx |
-| Backend | 3001 | Express API server |
-| PostgreSQL | 5432 | Database |
+| Service    | Port | Description               |
+| ---------- | ---- | ------------------------- |
+| Frontend   | 5173 | React app served by Nginx |
+| Backend    | 3001 | Express API server        |
+| PostgreSQL | 5432 | Database                  |
 
 ## Local Development
 
@@ -220,18 +220,18 @@ modulo-gestion-promos/
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check (DB connectivity) |
-| `GET` | `/api/products-categories` | List products and categories |
-| `POST` | `/api/promotions` | Create a promotion |
-| `GET` | `/api/promotions` | List promotions (paginated, filterable) |
-| `GET` | `/api/promotions/summary` | Get summary stats |
-| `GET` | `/api/promotions/:id` | Get promotion by ID |
-| `PATCH` | `/api/promotions/:id` | Update a promotion |
-| `POST` | `/api/promotions/:id/activate` | Activate (Programada → Activa) |
-| `POST` | `/api/promotions/:id/finalize` | Finalize (Activa → Finalizada) |
-| `DELETE` | `/api/promotions/:id` | Soft delete (Programada only) |
+| Method   | Endpoint                       | Description                             |
+| -------- | ------------------------------ | --------------------------------------- |
+| `GET`    | `/health`                      | Health check (DB connectivity)          |
+| `GET`    | `/api/products-categories`     | List products and categories            |
+| `POST`   | `/api/promotions`              | Create a promotion                      |
+| `GET`    | `/api/promotions`              | List promotions (paginated, filterable) |
+| `GET`    | `/api/promotions/summary`      | Get summary stats                       |
+| `GET`    | `/api/promotions/:id`          | Get promotion by ID                     |
+| `PATCH`  | `/api/promotions/:id`          | Update a promotion                      |
+| `POST`   | `/api/promotions/:id/activate` | Activate (Programada → Activa)          |
+| `POST`   | `/api/promotions/:id/finalize` | Finalize (Activa → Finalizada)          |
+| `DELETE` | `/api/promotions/:id`          | Soft delete (Programada only)           |
 
 See [API documentation](./API.md) for detailed endpoint specs, request/response schemas, and error codes.
 

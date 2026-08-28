@@ -162,7 +162,10 @@ describe('useDeletePromotion', () => {
   });
 
   it('should handle deletion error', async () => {
-    mockApiDelete.mockRejectedValue({ code: 'INVALID_STATE_TRANSITION', message: 'Cannot delete active promotion' });
+    mockApiDelete.mockRejectedValue({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Cannot delete active promotion',
+    });
 
     const { useDeletePromotion } = await import('../../src/api/mutations');
     const { result } = renderHook(() => useDeletePromotion(), { wrapper });
@@ -172,7 +175,10 @@ describe('useDeletePromotion', () => {
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toEqual({ code: 'INVALID_STATE_TRANSITION', message: 'Cannot delete active promotion' });
+    expect(result.current.error).toEqual({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Cannot delete active promotion',
+    });
   });
 });
 
@@ -205,7 +211,10 @@ describe('useActivatePromotion', () => {
   });
 
   it('should handle activation error (invalid state)', async () => {
-    mockApiPost.mockRejectedValue({ code: 'INVALID_STATE_TRANSITION', message: 'Only Programada promotions can be activated' });
+    mockApiPost.mockRejectedValue({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Only Programada promotions can be activated',
+    });
 
     const { useActivatePromotion } = await import('../../src/api/mutations');
     const { result } = renderHook(() => useActivatePromotion(), { wrapper });
@@ -215,7 +224,10 @@ describe('useActivatePromotion', () => {
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toEqual({ code: 'INVALID_STATE_TRANSITION', message: 'Only Programada promotions can be activated' });
+    expect(result.current.error).toEqual({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Only Programada promotions can be activated',
+    });
   });
 });
 
@@ -248,7 +260,10 @@ describe('useFinalizePromotion', () => {
   });
 
   it('should handle finalization error (invalid state)', async () => {
-    mockApiPost.mockRejectedValue({ code: 'INVALID_STATE_TRANSITION', message: 'Only Activa promotions can be finalized' });
+    mockApiPost.mockRejectedValue({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Only Activa promotions can be finalized',
+    });
 
     const { useFinalizePromotion } = await import('../../src/api/mutations');
     const { result } = renderHook(() => useFinalizePromotion(), { wrapper });
@@ -258,6 +273,9 @@ describe('useFinalizePromotion', () => {
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toEqual({ code: 'INVALID_STATE_TRANSITION', message: 'Only Activa promotions can be finalized' });
+    expect(result.current.error).toEqual({
+      code: 'INVALID_STATE_TRANSITION',
+      message: 'Only Activa promotions can be finalized',
+    });
   });
 });

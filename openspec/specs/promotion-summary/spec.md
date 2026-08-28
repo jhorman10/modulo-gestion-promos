@@ -43,6 +43,7 @@ The system SHALL use server date (UTC) for "valid today" comparison.
 ### GET /api/promotions/summary
 
 **Response 200**:
+
 ```json
 {
   "by_status": {
@@ -58,20 +59,20 @@ The system SHALL use server date (UTC) for "valid today" comparison.
 
 ## Validation Rules
 
-| Rule |
-|------|
-| No query parameters accepted |
-| No authentication required |
-| Excludes soft-deleted promotions |
+| Rule                                                                                |
+| ----------------------------------------------------------------------------------- |
+| No query parameters accepted                                                        |
+| No authentication required                                                          |
+| Excludes soft-deleted promotions                                                    |
 | "valid_today" = Activa promotions WHERE server_date BETWEEN start_date AND end_date |
 
 ---
 
 ## Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| INTERNAL_ERROR | 500 | Unexpected server error |
+| Code           | HTTP Status | Description             |
+| -------------- | ----------- | ----------------------- |
+| INTERNAL_ERROR | 500         | Unexpected server error |
 
 ---
 

@@ -1,4 +1,5 @@
-import { forwardRef, ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import { forwardRef } from 'react';
 
 export interface DateTimePickerProps {
   label?: string;
@@ -22,7 +23,12 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
         {label && (
           <label htmlFor={inputId} className="form-label">
             {label}
-            {required && <span className="required" aria-hidden="true"> *</span>}
+            {required && (
+              <span className="required" aria-hidden="true">
+                {' '}
+                *
+              </span>
+            )}
           </label>
         )}
         <input

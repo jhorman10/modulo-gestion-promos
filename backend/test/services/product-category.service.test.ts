@@ -25,12 +25,13 @@ describe('ProductCategoryService integration', () => {
     await prisma.$executeRaw`DELETE FROM "products_categories"`;
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
   describe('listAll', () => {
     it('should return empty arrays when no products or categories exist', async () => {
       const result = await service.listAll();
-      
+
       expect(result).toEqual({
         products: [],
         categories: [],
@@ -49,7 +50,7 @@ describe('ProductCategoryService integration', () => {
       const category1 = uniqueName('Category 1');
       const category2 = uniqueName('Category 2');
       const category3 = uniqueName('Category 3');
-      
+
       // Create test products
       await prisma.productCategory.createMany({
         data: [
@@ -68,7 +69,7 @@ describe('ProductCategoryService integration', () => {
       });
 
       const result = await service.listAll();
-      
+
       expect(result.products).toHaveLength(2);
       expect(result.categories).toHaveLength(3);
       expect(result.products.every(p => p.type === 'PRODUCT')).toBe(true);
@@ -81,7 +82,7 @@ describe('ProductCategoryService integration', () => {
       const appleProduct = uniqueName('Apple Product');
       const bananaCategory = uniqueName('Banana Category');
       const appleCategory = uniqueName('Apple Category');
-      
+
       await prisma.productCategory.createMany({
         data: [
           { name: zebraProduct, type: ProductCategoryType.PRODUCT },
@@ -92,7 +93,7 @@ describe('ProductCategoryService integration', () => {
       });
 
       const result = await service.listAll();
-      
+
       expect(result.products.map(p => p.name)).toEqual([appleProduct, zebraProduct]);
       expect(result.categories.map(c => c.name)).toEqual([appleCategory, bananaCategory]);
     });
@@ -135,7 +136,7 @@ describe('ProductCategoryService integration', () => {
       const product1 = uniqueName('Product 1');
       const product2 = uniqueName('Product 2');
       const category1 = uniqueName('Category 1');
-      
+
       await prisma.productCategory.createMany({
         data: [
           { name: product1, type: ProductCategoryType.PRODUCT },
@@ -145,7 +146,7 @@ describe('ProductCategoryService integration', () => {
       });
 
       const result = await service.listAll({ type: 'PRODUCT' });
-      
+
       expect(result.products).toHaveLength(2);
       expect(result.categories).toHaveLength(0);
       expect(result.pagination.total).toBe(2);
@@ -155,7 +156,7 @@ describe('ProductCategoryService integration', () => {
       const product1 = uniqueName('Product 1');
       const category1 = uniqueName('Category 1');
       const category2 = uniqueName('Category 2');
-      
+
       await prisma.productCategory.createMany({
         data: [
           { name: product1, type: ProductCategoryType.PRODUCT },
@@ -165,7 +166,7 @@ describe('ProductCategoryService integration', () => {
       });
 
       const result = await service.listAll({ type: 'CATEGORY' });
-      
+
       expect(result.products).toHaveLength(0);
       expect(result.categories).toHaveLength(2);
       expect(result.pagination.total).toBe(2);
@@ -173,13 +174,13 @@ describe('ProductCategoryService integration', () => {
 
     it('should return each item with id, name, and type', async () => {
       const testProduct = uniqueName('Test Product');
-      
+
       await prisma.productCategory.create({
         data: { name: testProduct, type: ProductCategoryType.PRODUCT },
       });
 
       const result = await service.listAll();
-      
+
       expect(result.products[0]).toHaveProperty('id');
       expect(result.products[0]).toHaveProperty('name', testProduct);
       expect(result.products[0]).toHaveProperty('type', 'PRODUCT');

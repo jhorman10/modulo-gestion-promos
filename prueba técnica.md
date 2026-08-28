@@ -11,18 +11,21 @@ Se requiere una aplicación web sencilla que permita **registrar y gestionar pro
 ### 2. Requerimientos Funcionales
 
 **Gestión de Promociones**
+
 - Crear una promoción con: nombre, producto o categoría asociada, tipo de descuento (`Porcentaje` o `Monto fijo`), valor del descuento, fecha de inicio y fecha de fin.
 - Listar todas las promociones con sus datos principales.
 - Cambiar el estado de una promoción: `Programada` → `Activa` → `Finalizada`.
 - Eliminar una promoción (solo si está en estado `Programada`).
 
 **Validaciones**
+
 - No permitir crear una promoción sin nombre, producto/categoría ni valor de descuento.
 - La `fecha de fin` debe ser posterior a la `fecha de inicio`.
 - Si el tipo de descuento es `Porcentaje`, el valor debe estar entre 1 y 100.
 - Una promoción en estado `Finalizada` no puede modificarse.
 
 **Vista de resumen**
+
 - Mostrar un contador simple por estado: cuántas promociones hay en `Programada`, `Activa` y `Finalizada`.
 - Indicar cuántas promociones están vigentes **hoy** (fecha actual dentro del rango de vigencia).
 
@@ -33,6 +36,7 @@ Se requiere una aplicación web sencilla que permita **registrar y gestionar pro
 El candidato debe elegir las herramientas, pero debe justificar su elección en un archivo **`DECISIONS.md`**.
 
 **Obligatorio:**
+
 - **Frontend:** React + Vite.
 - **Backend:** Node.js **o** Laravel.
 - **Base de datos:** PostgreSQL, SQL Server o MongoDB — mínimo 2 tablas/colecciones.
@@ -50,6 +54,7 @@ Configure un flujo de GitHub Actions que automatice, en etapas dependientes (`li
 3. **Smoke test de integración:** el pipeline debe levantar la aplicación (`docker compose up`), esperar a que los contenedores estén listos y verificar mediante una petición al endpoint **`/health`** que la aplicación responde correctamente. Si `/health` no responde `200`, el pipeline debe fallar.
 
 **Manejo de secretos — obligatorio.**
+
 - **No debe existir ningún secreto ni credencial en el repositorio** (contraseñas de base de datos, tokens, llaves, etc.).
 - Debe incluirse un archivo **`.env.example`** con las variables necesarias, pero sin valores reales.
 - Las variables sensibles deben inyectarse mediante **GitHub Secrets** / variables de entorno.
@@ -67,6 +72,6 @@ Configure un flujo de GitHub Actions que automatice, en etapas dependientes (`li
 
 ---
 
-> **Nota sobre el alcance:** el objetivo no es una aplicación extensa. Prioriza la calidad sobre la cantidad. 
+> **Nota sobre el alcance:** el objetivo no es una aplicación extensa. Prioriza la calidad sobre la cantidad.
 
 > "no importa si el gato es blanco o negro siempre y cuando cace ratones"

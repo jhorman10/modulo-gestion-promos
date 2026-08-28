@@ -1,4 +1,5 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
 
 export interface ApiError {
   code: string;
@@ -42,7 +43,7 @@ const createApiClient = (): AxiosInstance => {
       }
       return config;
     },
-    (error) => Promise.reject(error)
+    error => Promise.reject(error)
   );
 
   // Response interceptor - normalize error responses
@@ -59,20 +60,20 @@ const createApiClient = (): AxiosInstance => {
       if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
         return Promise.reject({
           code: 'TIMEOUT_ERROR',
-          message: 'Request timeout - please try again',
+          message: 'Tiempo de espera agotado - por favor intente de nuevo',
         } as ApiError);
       }
 
       if (!error.response) {
         return Promise.reject({
           code: 'NETWORK_ERROR',
-          message: 'Network error - please check your connection',
+          message: 'Error de red - por favor verifique su conexión',
         } as ApiError);
       }
 
       return Promise.reject({
         code: 'INTERNAL_ERROR',
-        message: 'An unexpected error occurred',
+        message: 'Ocurrió un error inesperado',
       } as ApiError);
     }
   );

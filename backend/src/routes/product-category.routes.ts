@@ -8,7 +8,9 @@ export function createProductCategoryRoutes(
   const router = Router();
   const controller = new ProductCategoryController(productCategoryService);
 
-  router.get('/api/products-categories', (req, res) => { void controller.listAll(req, res); });
+  router.get('/api/products-categories', (req, res) => {
+    void controller.listAll(req, res);
+  });
 
   return router;
 }

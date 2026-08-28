@@ -42,8 +42,8 @@ describe('PromotionSummary', () => {
     });
 
     render(<PromotionSummary />, { wrapper });
-    expect(screen.getByLabelText('Loading summary...')).toBeInTheDocument();
-    expect(screen.getByText('Loading summary...')).toBeInTheDocument();
+    expect(screen.getByLabelText('Cargando resumen')).toBeInTheDocument();
+    expect(screen.getByText('Cargando resumen...')).toBeInTheDocument();
   });
 
   it('should render summary with data', async () => {
@@ -107,7 +107,7 @@ describe('PromotionSummary', () => {
     });
 
     render(<PromotionSummary />, { wrapper });
-    expect(screen.getByText('Promotion Summary')).toBeInTheDocument();
+    expect(screen.getByText('Resumen de Promociones')).toBeInTheDocument();
   });
 
   it('should show all four summary cards', () => {
@@ -123,9 +123,9 @@ describe('PromotionSummary', () => {
 
     render(<PromotionSummary />, { wrapper });
 
-    expect(screen.getByText('Scheduled')).toBeInTheDocument();
-    expect(screen.getByText('Active')).toBeInTheDocument();
-    expect(screen.getByText('Finalized')).toBeInTheDocument();
-    expect(screen.getByText('Valid Today')).toBeInTheDocument();
+    expect(screen.getByText('Programadas')).toBeInTheDocument();
+    expect(screen.getByText('Activas')).toBeInTheDocument();
+    expect(screen.getByText('Finalizadas')).toBeInTheDocument();
+    expect(screen.getByText('Válidas Hoy')).toBeInTheDocument();
   });
 });

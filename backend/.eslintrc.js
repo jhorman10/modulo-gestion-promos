@@ -27,4 +27,4 @@ module.exports = {
     'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
   ignorePatterns: ['dist/', 'node_modules/', '*.config.*', 'prisma/'],
-}
+};

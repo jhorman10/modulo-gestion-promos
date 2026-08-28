@@ -20,7 +20,7 @@ export function ConfirmationDialog({
   message,
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
-  variant = 'danger',
+  variant: _variant = 'danger',
   isLoading = false,
 }: ConfirmationDialogProps) {
   if (!isOpen) return null;

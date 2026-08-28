@@ -1,4 +1,5 @@
-import { SelectHTMLAttributes, forwardRef } from 'react';
+import type { SelectHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 
 export interface SelectOption {
   value: string;
@@ -22,7 +23,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label htmlFor={selectId} className="form-label">
             {label}
-            {props.required && <span className="required" aria-hidden="true"> *</span>}
+            {props.required && (
+              <span className="required" aria-hidden="true">
+                {' '}
+                *
+              </span>
+            )}
           </label>
         )}
         <select
@@ -38,7 +44,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               {placeholder}
             </option>
           )}
-          {options.map((option) => (
+          {options.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

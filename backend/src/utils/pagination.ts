@@ -19,13 +19,13 @@ export function calculatePagination(
 } {
   // Clamp page to minimum 1
   const currentPage = Math.max(1, Math.floor(page));
-  
+
   // Clamp size between 1 and 100
   const pageSize = Math.max(1, Math.min(100, Math.floor(size)));
-  
+
   // Calculate total pages
   const totalPages = total > 0 ? Math.ceil(total / pageSize) : 0;
-  
+
   return {
     total,
     page: currentPage,

@@ -55,14 +55,11 @@ The system SHALL include at least 5 products and 3 categories in seed data.
 **Query**: `page` (int, default 1), `size` (int, default 50, max 100), `type` (optional: "PRODUCT" | "CATEGORY")
 
 **Response 200**:
+
 ```json
 {
-  "products": [
-    { "id": "uuid", "name": "string", "type": "PRODUCT" }
-  ],
-  "categories": [
-    { "id": "uuid", "name": "string", "type": "CATEGORY" }
-  ],
+  "products": [{ "id": "uuid", "name": "string", "type": "PRODUCT" }],
+  "categories": [{ "id": "uuid", "name": "string", "type": "CATEGORY" }],
   "pagination": {
     "total": "integer",
     "page": "integer",
@@ -76,10 +73,10 @@ The system SHALL include at least 5 products and 3 categories in seed data.
 
 ## Validation Rules
 
-| Field | Rule |
-|-------|------|
-| name | Required, 1-200 chars, unique per type |
-| type | Required, enum: "PRODUCT" \| "CATEGORY" |
+| Field | Rule                                    |
+| ----- | --------------------------------------- |
+| name  | Required, 1-200 chars, unique per type  |
+| type  | Required, enum: "PRODUCT" \| "CATEGORY" |
 
 ---
 
@@ -87,23 +84,23 @@ The system SHALL include at least 5 products and 3 categories in seed data.
 
 ### products_categories table
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK, default gen_random_uuid() |
-| name | VARCHAR(200) | NOT NULL |
-| type | VARCHAR(20) | NOT NULL, CHECK IN ('PRODUCT', 'CATEGORY') |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() |
-| UNIQUE | (name, type) | |
+| Column     | Type         | Constraints                                |
+| ---------- | ------------ | ------------------------------------------ |
+| id         | UUID         | PK, default gen_random_uuid()              |
+| name       | VARCHAR(200) | NOT NULL                                   |
+| type       | VARCHAR(20)  | NOT NULL, CHECK IN ('PRODUCT', 'CATEGORY') |
+| created_at | TIMESTAMP    | NOT NULL, DEFAULT NOW()                    |
+| updated_at | TIMESTAMP    | NOT NULL, DEFAULT NOW()                    |
+| UNIQUE     | (name, type) |                                            |
 
 ---
 
 ## Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| VALIDATION_ERROR | 400 | Query parameter validation failed |
-| INTERNAL_ERROR | 500 | Unexpected server error |
+| Code             | HTTP Status | Description                       |
+| ---------------- | ----------- | --------------------------------- |
+| VALIDATION_ERROR | 400         | Query parameter validation failed |
+| INTERNAL_ERROR   | 500         | Unexpected server error           |
 
 ---
 

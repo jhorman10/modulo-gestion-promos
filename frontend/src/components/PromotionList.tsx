@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePromotions, Promotion } from '../api/promotions';
+import type { Promotion } from '../api/promotions';
+import { usePromotions } from '../api/promotions';
 
 interface PromotionListProps {
   onPromotionClick?: (promotion: Promotion) => void;
@@ -18,18 +19,13 @@ export function PromotionList({
   onDelete,
 }: PromotionListProps) {
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
+  const [size] = useState(10);
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error, refetch } = usePromotions({ page, size });
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-  };
-
-  const handleSizeChange = (newSize: number) => {
-    setSize(newSize);
-    setPage(1);
   };
 
   if (isLoading) {
@@ -50,8 +46,16 @@ export function PromotionList({
   if (isError) {
     return (
       <div className="promotion-list-error" role="alert">
-        <p>Error al cargar las promociones: {error instanceof Error ? error.message : 'Error desconocido'}</p>
-        <button onClick={() => refetch()} className="btn btn-secondary">
+        <p>
+          Error al cargar las promociones:{' '}
+          {error instanceof Error ? error.message : 'Error desconocido'}
+        </p>
+        <button
+          onClick={() => {
+            void refetch();
+          }}
+          className="btn btn-secondary"
+        >
           Reintentar
         </button>
       </div>
@@ -85,11 +89,17 @@ export function PromotionList({
             </tr>
           </thead>
           <tbody>
-            {promotions.map((promotion) => (
-              <tr key={promotion.id} onClick={() => onPromotionClick?.(promotion)} style={{ cursor: onPromotionClick ? 'pointer' : 'default' }}>
+            {promotions.map(promotion => (
+              <tr
+                key={promotion.id}
+                onClick={() => onPromotionClick?.(promotion)}
+                style={{ cursor: onPromotionClick ? 'pointer' : 'default' }}
+              >
                 <td>{promotion.name}</td>
                 <td>
-                  <span className="badge badge-info">{promotion.discount_type === 'percentage' ? 'Porcentaje' : 'Monto fijo'}</span>
+                  <span className="badge badge-info">
+                    {promotion.discount_type === 'percentage' ? 'Porcentaje' : 'Monto fijo'}
+                  </span>
                 </td>
                 <td>
                   {promotion.discount_type === 'percentage'
@@ -97,7 +107,8 @@ export function PromotionList({
                     : `$${promotion.discount_value.toLocaleString()}`}
                 </td>
                 <td>
-                  {new Date(promotion.start_date).toLocaleDateString()} - {new Date(promotion.end_date).toLocaleDateString()}
+                  {new Date(promotion.start_date).toLocaleDateString()} -{' '}
+                  {new Date(promotion.end_date).toLocaleDateString()}
                 </td>
                 <td>
                   <span className={`badge ${getStatusBadgeClass(promotion.status)}`}>
@@ -105,8 +116,16 @@ export function PromotionList({
                   </span>
                 </td>
                 <td>
-                  {promotion.products.map((p) => <span key={p.id} className="badge badge-product">{p.name}</span>)}
-                  {promotion.categories.map((c) => <span key={c.id} className="badge badge-category">{c.name}</span>)}
+                  {promotion.products.map(p => (
+                    <span key={p.id} className="badge badge-product">
+                      {p.name}
+                    </span>
+                  ))}
+                  {promotion.categories.map(c => (
+                    <span key={c.id} className="badge badge-category">
+                      {c.name}
+                    </span>
+                  ))}
                 </td>
                 <td>
                   <PromotionActions
@@ -178,7 +197,7 @@ function PromotionActions({
       {canEdit && (
         <button
           className="btn btn-sm btn-primary"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             if (onEdit) {
               onEdit(promotion);
@@ -194,7 +213,7 @@ function PromotionActions({
       {canActivate && (
         <button
           className="btn btn-sm btn-success"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             onActivate?.(promotion);
           }}
@@ -206,7 +225,7 @@ function PromotionActions({
       {canFinalize && (
         <button
           className="btn btn-sm btn-warning"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             onFinalize?.(promotion);
           }}
@@ -218,7 +237,7 @@ function PromotionActions({
       {canDelete && (
         <button
           className="btn btn-sm btn-danger"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             onDelete?.(promotion);
           }}

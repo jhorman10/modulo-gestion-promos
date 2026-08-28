@@ -1,4 +1,5 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -17,8 +18,8 @@ export function Modal({
   onClose,
   title,
   children,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   onConfirm,
   confirmDisabled = false,
   showCloseButton = true,
@@ -61,13 +62,17 @@ export function Modal({
       <div className="modal-content">
         {(title || showCloseButton) && (
           <div className="modal-header">
-            {title && <h2 id="modal-title" className="modal-title">{title}</h2>}
+            {title && (
+              <h2 id="modal-title" className="modal-title">
+                {title}
+              </h2>
+            )}
             {showCloseButton && (
               <button
                 type="button"
                 className="modal-close"
                 onClick={onClose}
-                aria-label="Close dialog"
+                aria-label="Cerrar diálogo"
               >
                 ×
               </button>

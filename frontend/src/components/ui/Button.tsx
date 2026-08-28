@@ -1,4 +1,5 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger';
@@ -7,7 +8,18 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', isLoading = false, loadingText, children, disabled, className = '', ...props }, ref) => {
+  (
+    {
+      variant = 'primary',
+      isLoading = false,
+      loadingText,
+      children,
+      disabled,
+      className = '',
+      ...props
+    },
+    ref
+  ) => {
     const baseClass = 'btn';
     const variantClass = `btn-${variant}`;
     const loadingClass = isLoading ? 'btn-loading' : '';

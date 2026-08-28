@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
 
 import { describe, it, expect } from 'vitest';
-import { 
-  createPromotionSchema, 
-  updatePromotionSchema, 
+import {
+  createPromotionSchema,
+  updatePromotionSchema,
   promotionParamsSchema,
-  promotionQuerySchema 
+  promotionQuerySchema,
 } from '../../src/validators/promotion.validator';
 
 describe('PromotionValidator', () => {
@@ -52,7 +52,7 @@ describe('PromotionValidator', () => {
     });
 
     it('should accept percentage value at upper boundary (1.00 = 100%)', () => {
-      const payload = { ...validBasePayload, discount_value: 1.00 };
+      const payload = { ...validBasePayload, discount_value: 1.0 };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(true);
     });
@@ -85,14 +85,18 @@ describe('PromotionValidator', () => {
     });
 
     it('should reject fixed amount with negative discount_value', () => {
-      const payload = { ...validBasePayload, discount_type: 'fixed' as const, discount_value: -100 };
+      const payload = {
+        ...validBasePayload,
+        discount_type: 'fixed' as const,
+        discount_value: -100,
+      };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(false);
     });
 
     it('should reject end_date equal to start_date', () => {
-      const payload = { 
-        ...validBasePayload, 
+      const payload = {
+        ...validBasePayload,
         start_date: '2026-09-01T00:00:00.000Z',
         end_date: '2026-09-01T00:00:00.000Z',
       };
@@ -104,8 +108,8 @@ describe('PromotionValidator', () => {
     });
 
     it('should reject end_date before start_date', () => {
-      const payload = { 
-        ...validBasePayload, 
+      const payload = {
+        ...validBasePayload,
         start_date: '2026-09-02T00:00:00.000Z',
         end_date: '2026-09-01T00:00:00.000Z',
       };
@@ -159,9 +163,14 @@ describe('PromotionValidator', () => {
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some(e => 
-          e.path.includes('product_ids') || e.path.includes('category_ids') || e.path.length === 0
-        )).toBe(true);
+        expect(
+          result.error.issues.some(
+            e =>
+              e.path.includes('product_ids') ||
+              e.path.includes('category_ids') ||
+              e.path.length === 0
+          )
+        ).toBe(true);
       }
     });
 
@@ -190,9 +199,17 @@ describe('PromotionValidator', () => {
     });
 
     it('should accept valid ISO 8601 date formats', () => {
-      const payload1 = { ...validBasePayload, start_date: '2026-09-01T10:30:00Z', end_date: '2026-09-30T10:30:00Z' };
-      const payload2 = { ...validBasePayload, start_date: '2026-09-01T10:30:00.000Z', end_date: '2026-09-30T10:30:00.000Z' };
-      
+      const payload1 = {
+        ...validBasePayload,
+        start_date: '2026-09-01T10:30:00Z',
+        end_date: '2026-09-30T10:30:00Z',
+      };
+      const payload2 = {
+        ...validBasePayload,
+        start_date: '2026-09-01T10:30:00.000Z',
+        end_date: '2026-09-30T10:30:00.000Z',
+      };
+
       expect(createPromotionSchema.safeParse(payload1).success).toBe(true);
       expect(createPromotionSchema.safeParse(payload2).success).toBe(true);
     });
@@ -211,28 +228,28 @@ describe('PromotionValidator', () => {
     });
 
     it('should accept partial update with only discount_value', () => {
-      const result = updatePromotionSchema.safeParse({ discount_value: 0.20 });
+      const result = updatePromotionSchema.safeParse({ discount_value: 0.2 });
       expect(result.success).toBe(true);
     });
 
     it('should reject percentage discount_value out of bounds in update', () => {
-      const result = updatePromotionSchema.safeParse({ 
+      const result = updatePromotionSchema.safeParse({
         discount_type: 'percentage',
-        discount_value: 1.5 
+        discount_value: 1.5,
       });
       expect(result.success).toBe(false);
     });
 
     it('should reject fixed discount_value <= 0 in update', () => {
-      const result = updatePromotionSchema.safeParse({ 
+      const result = updatePromotionSchema.safeParse({
         discount_type: 'fixed',
-        discount_value: 0 
+        discount_value: 0,
       });
       expect(result.success).toBe(false);
     });
 
     it('should reject end_date before start_date in update', () => {
-      const result = updatePromotionSchema.safeParse({ 
+      const result = updatePromotionSchema.safeParse({
         start_date: '2026-09-02T00:00:00.000Z',
         end_date: '2026-09-01T00:00:00.000Z',
       });
@@ -240,9 +257,9 @@ describe('PromotionValidator', () => {
     });
 
     it('should reject both product_ids and category_ids empty in update', () => {
-      const result = updatePromotionSchema.safeParse({ 
-        product_ids: [], 
-        category_ids: [] 
+      const result = updatePromotionSchema.safeParse({
+        product_ids: [],
+        category_ids: [],
       });
       expect(result.success).toBe(false);
     });
@@ -250,7 +267,9 @@ describe('PromotionValidator', () => {
 
   describe('promotionParamsSchema', () => {
     it('should accept valid UUID param', () => {
-      const result = promotionParamsSchema.safeParse({ id: '123e4567-e89b-12d3-a456-426614174000' });
+      const result = promotionParamsSchema.safeParse({
+        id: '123e4567-e89b-12d3-a456-426614174000',
+      });
       expect(result.success).toBe(true);
     });
 
@@ -308,17 +327,21 @@ describe('PromotionValidator', () => {
     });
 
     it('should accept product_id filter', () => {
-      const result = promotionQuerySchema.safeParse({ product_id: '123e4567-e89b-12d3-a456-426614174000' });
+      const result = promotionQuerySchema.safeParse({
+        product_id: '123e4567-e89b-12d3-a456-426614174000',
+      });
       expect(result.success).toBe(true);
     });
 
     it('should accept category_id filter', () => {
-      const result = promotionQuerySchema.safeParse({ category_id: '123e4567-e89b-12d3-a456-426614174000' });
+      const result = promotionQuerySchema.safeParse({
+        category_id: '123e4567-e89b-12d3-a456-426614174000',
+      });
       expect(result.success).toBe(true);
     });
 
     it('should accept date range filters', () => {
-      const result = promotionQuerySchema.safeParse({ 
+      const result = promotionQuerySchema.safeParse({
         start_date_from: '2026-09-01T00:00:00.000Z',
         end_date_to: '2026-09-30T23:59:59.000Z',
       });

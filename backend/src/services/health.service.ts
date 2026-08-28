@@ -17,7 +17,7 @@ export class HealthService {
     try {
       // Execute lightweight query to verify DB connectivity with 2s timeout
       await this.executeWithTimeout(this.prisma.$queryRaw`SELECT 1`);
-      
+
       return {
         status: 'ok',
         database: 'connected',

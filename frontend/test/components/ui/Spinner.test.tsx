@@ -11,7 +11,7 @@ describe('Spinner', () => {
 
     it('should have default aria-label', () => {
       render(<Spinner />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading...');
+      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Cargando...');
     });
 
     it('should use custom label', () => {

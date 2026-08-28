@@ -41,8 +41,18 @@ describe('PromotionService - getById', () => {
   };
 
   const mockAssociations = [
-    { promotionId: 'promo-1', productCategoryId: 'cat-1', associationType: ProductCategoryType.PRODUCT, productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT } },
-    { promotionId: 'promo-1', productCategoryId: 'cat-2', associationType: ProductCategoryType.CATEGORY, productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY } },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-1',
+      associationType: ProductCategoryType.PRODUCT,
+      productCategory: { id: 'cat-1', name: 'Product 1', type: ProductCategoryType.PRODUCT },
+    },
+    {
+      promotionId: 'promo-1',
+      productCategoryId: 'cat-2',
+      associationType: ProductCategoryType.CATEGORY,
+      productCategory: { id: 'cat-2', name: 'Category 1', type: ProductCategoryType.CATEGORY },
+    },
   ];
 
   it('should return promotion with associations when found', async () => {

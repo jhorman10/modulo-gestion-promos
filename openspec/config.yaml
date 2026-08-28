@@ -1,87 +1,87 @@
 project:
-  name: "modulo-gestion-promos"
-  description: "Promotions Management Module - Technical Test"
-  root: "/Users/jhormanorozco/Documents/Personal-Projects/Modulo-Gestion-Promos"
-  mode: "openspec"
+  name: 'modulo-gestion-promos'
+  description: 'Promotions Management Module - Technical Test'
+  root: '/Users/jhormanorozco/Documents/Personal-Projects/Modulo-Gestion-Promos'
+  mode: 'openspec'
 
 stack:
   frontend:
-    framework: "React"
-    build_tool: "Vite"
-    language: "TypeScript"
-    package_manager: "npm"
+    framework: 'React'
+    build_tool: 'Vite'
+    language: 'TypeScript'
+    package_manager: 'npm'
   backend:
-    framework: "Node.js (Express)"
-    language: "TypeScript"
-    package_manager: "npm"
+    framework: 'Node.js (Express)'
+    language: 'TypeScript'
+    package_manager: 'npm'
   database:
-    primary: "PostgreSQL"
-    orm: "Prisma"
+    primary: 'PostgreSQL'
+    orm: 'Prisma'
   infrastructure:
-    containerization: "Docker + docker-compose"
-    ci_cd: "GitHub Actions"
-    health_endpoint: "/health"
+    containerization: 'Docker + docker-compose'
+    ci_cd: 'GitHub Actions'
+    health_endpoint: '/health'
 
 conventions:
-  code_style: "ESLint + Prettier"
-  commit_style: "Conventional Commits"
-  branch_strategy: "main + feature branches"
-  testing_philosophy: "Strict TDD"
-  api_style: "REST"
+  code_style: 'ESLint + Prettier'
+  commit_style: 'Conventional Commits'
+  branch_strategy: 'main + feature branches'
+  testing_philosophy: 'Strict TDD'
+  api_style: 'REST'
 
 architecture:
-  pattern: "Monorepo (frontend + backend in separate folders)"
-  communication: "REST API"
-  state_management: "React Query / Context API"
-  validation: "Zod"
+  pattern: 'Monorepo (frontend + backend in separate folders)'
+  communication: 'REST API'
+  state_management: 'React Query / Context API'
+  validation: 'Zod'
 
 strict_tdd: true
 
 testing:
   capabilities:
     unit:
-      runner: "Vitest"
-      coverage: "v8"
-      status: "not_configured"
+      runner: 'Vitest'
+      coverage: 'v8'
+      status: 'not_configured'
     integration:
-      runner: "Vitest + Supertest"
-      status: "not_configured"
+      runner: 'Vitest + Supertest'
+      status: 'not_configured'
     e2e:
-      runner: "Playwright"
-      status: "not_configured"
+      runner: 'Playwright'
+      status: 'not_configured'
     lint:
-      tool: "ESLint"
-      status: "not_configured"
+      tool: 'ESLint'
+      status: 'not_configured'
     typecheck:
-      tool: "TypeScript (tsc --noEmit)"
-      status: "not_configured"
+      tool: 'TypeScript (tsc --noEmit)'
+      status: 'not_configured'
     format:
-      tool: "Prettier"
-      status: "not_configured"
+      tool: 'Prettier'
+      status: 'not_configured'
 
 ci_cd:
   pipeline_stages:
-    - "lint"
-    - "test"
-    - "build"
-    - "smoke_test"
-  secrets_management: "GitHub Secrets"
+    - 'lint'
+    - 'test'
+    - 'build'
+    - 'smoke_test'
+  secrets_management: 'GitHub Secrets'
   env_example_required: true
 
 persistence:
-  mode: "openspec"
+  mode: 'openspec'
   paths:
-    config: "openspec/config.yaml"
-    context: "openspec/context.md"
-    registry: ".atl/skill-registry.md"
-    decisions: "openspec/decisions.md"
-    proposals: "openspec/proposals/"
-    specs: "openspec/specs/"
-    designs: "openspec/designs/"
-    tasks: "openspec/tasks/"
-    verify: "openspec/verify/"
-    archive: "openspec/archive/"
+    config: 'openspec/config.yaml'
+    context: 'openspec/context.md'
+    registry: '.atl/skill-registry.md'
+    decisions: 'openspec/decisions.md'
+    proposals: 'openspec/proposals/'
+    specs: 'openspec/specs/'
+    designs: 'openspec/designs/'
+    tasks: 'openspec/tasks/'
+    verify: 'openspec/verify/'
+    archive: 'openspec/archive/'
 
 registry:
-  path: ".atl/skill-registry.md"
-  last_updated: "2025-08-27T09:25:00Z"
+  path: '.atl/skill-registry.md'
+  last_updated: '2025-08-27T09:25:00Z'

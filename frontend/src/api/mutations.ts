@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
-import { Promotion, PROMOTIONS_QUERY_KEY } from './promotions';
+import type { Promotion } from './promotions';
+import { PROMOTIONS_QUERY_KEY } from './promotions';
 import { SUMMARY_QUERY_KEY } from './summary';
 
 export interface CreatePromotionPayload {
@@ -31,11 +32,10 @@ export function useCreatePromotion() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreatePromotionPayload) =>
-      api.post<Promotion>('/promotions', payload),
+    mutationFn: (payload: CreatePromotionPayload) => api.post<Promotion>('/promotions', payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -51,8 +51,10 @@ export function useUpdatePromotion() {
     mutationFn: ({ id, data }: { id: string; data: UpdatePromotionPayload }) =>
       api.patch<Promotion>(`/promotions/${id}`, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: [...PROMOTIONS_QUERY_KEY, 'detail', variables.id] });
+      void queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
+      void queryClient.invalidateQueries({
+        queryKey: [...PROMOTIONS_QUERY_KEY, 'detail', variables.id],
+      });
     },
   });
 }
@@ -67,8 +69,8 @@ export function useDeletePromotion() {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/promotions/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -81,11 +83,10 @@ export function useActivatePromotion() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      api.post<Promotion>(`/promotions/${id}/activate`),
+    mutationFn: (id: string) => api.post<Promotion>(`/promotions/${id}/activate`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -98,11 +99,10 @@ export function useFinalizePromotion() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      api.post<Promotion>(`/promotions/${id}/finalize`),
+    mutationFn: (id: string) => api.post<Promotion>(`/promotions/${id}/finalize`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: PROMOTIONS_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
     },
   });
 }

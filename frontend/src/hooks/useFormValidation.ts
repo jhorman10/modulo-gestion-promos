@@ -1,6 +1,7 @@
-import { useForm, UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import type { UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ZodSchema } from 'zod';
+import type { ZodSchema } from 'zod';
 
 export interface UseFormValidationReturn<T extends FieldValues> extends UseFormReturn<T> {
   getFieldError: (name: Path<T>) => string | undefined;
@@ -13,10 +14,11 @@ export interface UseFormValidationReturn<T extends FieldValues> extends UseFormR
  */
 export function useFormValidation<T extends FieldValues>(
   schema: ZodSchema<T>,
-  defaultValues?: Partial<T>,
+  defaultValues?: Partial<T>
 ): UseFormValidationReturn<T> {
   const form = useForm<T>({
     resolver: zodResolver(schema),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     defaultValues: defaultValues as any,
     mode: 'onChange',
   });

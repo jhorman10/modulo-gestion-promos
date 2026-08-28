@@ -7,6 +7,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 ## Scope
 
 ### In Scope
+
 - **Backend**: Node.js/Express/TypeScript API with Prisma ORM
 - **Frontend**: React+Vite/TypeScript with React Query
 - **Database**: PostgreSQL schema (promotions, products_categories tables)
@@ -16,6 +17,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 - **Deliverables**: DECISIONS.md, README.md, .env.example, public GitHub repo
 
 ### Out of Scope
+
 - Authentication/authorization (summary endpoint is public per decision)
 - Admin UI for products/categories management (seed data only)
 - Real-time updates / WebSockets
@@ -25,6 +27,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 ## Capabilities
 
 ### New Capabilities
+
 - `promotion-management`: CRUD + state transitions (Programada → Activa → Finalizada), validations, soft delete
 - `product-category-registry`: Managed list of products/categories with dual association support
 - `promotion-summary`: Public endpoint with counters by status + valid-today count
@@ -32,6 +35,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 - `ci-cd-pipeline`: GitHub Actions with dependent stages, secrets management, smoke test
 
 ### Modified Capabilities
+
 - None (greenfield project)
 
 ## Approach
@@ -39,6 +43,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 **Architecture**: Monorepo with separate `frontend/` and `backend/` directories sharing a docker-compose. REST API with Zod validation. React Query for server state. State machine enforced at API layer for promotions (explicit `/activate`, `/finalize` endpoints).
 
 **Database**: PostgreSQL + Prisma. Two core tables + junction for dual association:
+
 - `promotions` (id, name, discount_type, discount_value[decimal], start_date[datetime], end_date[datetime], status, deleted_at, timestamps)
 - `products_categories` (id, name, type[PRODUCT|CATEGORY], timestamps)
 - `promotion_product_category` (promotion_id, product_category_id, association_type[PRODUCT|CATEGORY]) — enables dual link
@@ -59,26 +64,26 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 
 ## Affected Areas
 
-| Area | Impact | Description |
-|------|--------|-------------|
-| `backend/src` | New | Express app, routes, services, Prisma schema, Zod validators |
-| `frontend/src` | New | React app, components, hooks, React Query setup |
-| `backend/prisma/schema.prisma` | New | Database models, enums, relations |
-| `docker-compose.yml` | New | 3 services, networks, volumes, healthchecks |
-| `.github/workflows/ci.yml` | New | 4-stage pipeline with secrets validation |
-| `.env.example` | New | Required env vars without values |
-| `DECISIONS.md` | Modified | Append implementation decisions |
-| `README.md` | New | Setup, run, test instructions |
+| Area                           | Impact   | Description                                                  |
+| ------------------------------ | -------- | ------------------------------------------------------------ |
+| `backend/src`                  | New      | Express app, routes, services, Prisma schema, Zod validators |
+| `frontend/src`                 | New      | React app, components, hooks, React Query setup              |
+| `backend/prisma/schema.prisma` | New      | Database models, enums, relations                            |
+| `docker-compose.yml`           | New      | 3 services, networks, volumes, healthchecks                  |
+| `.github/workflows/ci.yml`     | New      | 4-stage pipeline with secrets validation                     |
+| `.env.example`                 | New      | Required env vars without values                             |
+| `DECISIONS.md`                 | Modified | Append implementation decisions                              |
+| `README.md`                    | New      | Setup, run, test instructions                                |
 
 ## Risks
 
-| Risk | Likelihood | Mitigation |
-|------|------------|------------|
-| State transition race conditions | Medium | Optimistic locking via `updated_at` version check in transition endpoints |
-| Date/timezone handling for "valid today" | Medium | Store UTC, compare using `CURRENT_DATE` in DB query |
-| Docker healthcheck timing (backend before DB) | High | `depends_on: condition: service_healthy` + retry logic in backend startup |
-| CI smoke test flakiness | Medium | Robust wait-for-health script with 60s timeout and retries |
-| Percentage decimal precision | Low | Use `Decimal` in Prisma, validate 2 decimal places max |
+| Risk                                          | Likelihood | Mitigation                                                                |
+| --------------------------------------------- | ---------- | ------------------------------------------------------------------------- |
+| State transition race conditions              | Medium     | Optimistic locking via `updated_at` version check in transition endpoints |
+| Date/timezone handling for "valid today"      | Medium     | Store UTC, compare using `CURRENT_DATE` in DB query                       |
+| Docker healthcheck timing (backend before DB) | High       | `depends_on: condition: service_healthy` + retry logic in backend startup |
+| CI smoke test flakiness                       | Medium     | Robust wait-for-health script with 60s timeout and retries                |
+| Percentage decimal precision                  | Low        | Use `Decimal` in Prisma, validate 2 decimal places max                    |
 
 ## Rollback Plan
 

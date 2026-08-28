@@ -59,9 +59,7 @@ The system SHALL use RFC 7807-style structure.
     "error": {
       "code": "VALIDATION_ERROR",
       "message": "Request validation failed",
-      "details": [
-        { "field": "discount_value", "message": "Must be between 0.01 and 1.00" }
-      ]
+      "details": [{ "field": "discount_value", "message": "Must be between 0.01 and 1.00" }]
     }
   }
   ```
@@ -144,13 +142,13 @@ The system SHALL filter `WHERE deleted_at IS NULL` on all queries.
 
 ## Error Code Registry
 
-| Code | HTTP Status | Used By | Description |
-|------|-------------|---------|-------------|
-| VALIDATION_ERROR | 400 | All endpoints | Request validation failed |
-| NOT_FOUND | 404 | All GET/PATCH/DELETE by ID | Resource not found or soft deleted |
-| INVALID_STATE_TRANSITION | 409 | Promotion state endpoints | Transition not allowed per state machine |
-| SERVICE_UNAVAILABLE | 503 | Health endpoint | Database connectivity failed |
-| INTERNAL_ERROR | 500 | All endpoints | Unexpected server error |
+| Code                     | HTTP Status | Used By                    | Description                              |
+| ------------------------ | ----------- | -------------------------- | ---------------------------------------- |
+| VALIDATION_ERROR         | 400         | All endpoints              | Request validation failed                |
+| NOT_FOUND                | 404         | All GET/PATCH/DELETE by ID | Resource not found or soft deleted       |
+| INVALID_STATE_TRANSITION | 409         | Promotion state endpoints  | Transition not allowed per state machine |
+| SERVICE_UNAVAILABLE      | 503         | Health endpoint            | Database connectivity failed             |
+| INTERNAL_ERROR           | 500         | All endpoints              | Unexpected server error                  |
 
 ---
 

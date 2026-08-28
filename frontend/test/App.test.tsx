@@ -35,7 +35,10 @@ vi.mock('react-hot-toast', () => ({
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockApiGet.mockResolvedValue({ data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } });
+    mockApiGet.mockResolvedValue({
+      data: [],
+      pagination: { total: 0, page: 1, size: 10, total_pages: 0 },
+    });
   });
 
   it('should render without crashing', async () => {
@@ -44,7 +47,7 @@ describe('App', () => {
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByText('Promotions Management')).toBeInTheDocument();
+    expect(screen.getByText('Gestión de Promociones')).toBeInTheDocument();
   });
 
   it('should redirect / to /promotions', async () => {
@@ -54,7 +57,7 @@ describe('App', () => {
       </MemoryRouter>
     );
     await waitFor(() => {
-      expect(screen.getByText('Promotions Management')).toBeInTheDocument();
+      expect(screen.getByText('Gestión de Promociones')).toBeInTheDocument();
     });
   });
 
@@ -64,9 +67,9 @@ describe('App', () => {
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByRole('menuitem', { name: /promotions/i })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: /new promotion/i })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: /summary/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /promociones/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /nueva promoción/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /resumen/i })).toBeInTheDocument();
   });
 
   it('should render summary page at /summary', async () => {
@@ -82,7 +85,7 @@ describe('App', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Promotion Summary')).toBeInTheDocument();
+      expect(screen.getByText('Resumen de Promociones')).toBeInTheDocument();
     });
   });
 });

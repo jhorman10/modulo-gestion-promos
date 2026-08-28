@@ -4,13 +4,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { Header } from '../../../src/components/layout/Header';
 
 describe('Header', () => {
-  const renderWithRouter = (ui: React.ReactElement) =>
-    render(<MemoryRouter>{ui}</MemoryRouter>);
+  const renderWithRouter = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
   describe('rendering', () => {
     it('should render default title', () => {
       renderWithRouter(<Header />);
-      expect(screen.getByText('Promotions Management')).toBeInTheDocument();
+      expect(screen.getByText('Gestión de Promociones')).toBeInTheDocument();
     });
 
     it('should render custom title', () => {
@@ -25,7 +24,7 @@ describe('Header', () => {
 
     it('should link title to /promotions', () => {
       renderWithRouter(<Header />);
-      const link = screen.getByRole('link', { name: /promotions management/i });
+      const link = screen.getByRole('link', { name: /gestión de promociones/i });
       expect(link).toHaveAttribute('href', '/promotions');
     });
   });

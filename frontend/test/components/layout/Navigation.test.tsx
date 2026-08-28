@@ -10,9 +10,9 @@ describe('Navigation', () => {
   describe('rendering', () => {
     it('should render default navigation items', () => {
       renderWithRouter(<Navigation />);
-      expect(screen.getByRole('menuitem', { name: /promotions/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /new promotion/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /summary/i })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: /promociones/i })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: /nueva promoción/i })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: /resumen/i })).toBeInTheDocument();
     });
 
     it('should render custom navigation items', () => {
@@ -34,13 +34,13 @@ describe('Navigation', () => {
   describe('active state', () => {
     it('should apply active class to current route', () => {
       renderWithRouter(<Navigation />, ['/promotions']);
-      const promotionsLink = screen.getByRole('menuitem', { name: /promotions$/i });
+      const promotionsLink = screen.getByRole('menuitem', { name: /promociones$/i });
       expect(promotionsLink.className).toContain('nav-link-active');
     });
 
     it('should not apply active class to non-current route', () => {
       renderWithRouter(<Navigation />, ['/summary']);
-      const promotionsLink = screen.getByRole('menuitem', { name: /promotions$/i });
+      const promotionsLink = screen.getByRole('menuitem', { name: /promociones$/i });
       expect(promotionsLink.className).not.toContain('nav-link-active');
     });
   });
@@ -48,9 +48,18 @@ describe('Navigation', () => {
   describe('links', () => {
     it('should link to correct routes', () => {
       renderWithRouter(<Navigation />);
-      expect(screen.getByRole('menuitem', { name: /promotions$/i })).toHaveAttribute('href', '/promotions');
-      expect(screen.getByRole('menuitem', { name: /new promotion/i })).toHaveAttribute('href', '/promotions/new');
-      expect(screen.getByRole('menuitem', { name: /summary/i })).toHaveAttribute('href', '/summary');
+      expect(screen.getByRole('menuitem', { name: /promociones$/i })).toHaveAttribute(
+        'href',
+        '/promotions'
+      );
+      expect(screen.getByRole('menuitem', { name: /nueva promoción/i })).toHaveAttribute(
+        'href',
+        '/promotions/new'
+      );
+      expect(screen.getByRole('menuitem', { name: /resumen/i })).toHaveAttribute(
+        'href',
+        '/summary'
+      );
     });
   });
 });

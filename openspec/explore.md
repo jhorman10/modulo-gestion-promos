@@ -1,6 +1,7 @@
 ## Exploration: modulo-gestion-promos - Initial Implementation
 
 ### Current State
+
 This is a greenfield project for a Promotions Management Module (technical test for Kódigo Fuente). The SDD context has been initialized in openspec mode with key architectural decisions already documented:
 
 - **Stack**: React+Vite+TS frontend, Node.js/Express+TS backend, PostgreSQL+Prisma ORM
@@ -14,6 +15,7 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 ---
 
 ### Affected Areas
+
 - `frontend/` — New React+Vite application (to be created)
 - `backend/` — New Node.js/Express API with Prisma (to be created)
 - `docker-compose.yml` — Service orchestration (to be created)
@@ -29,11 +31,11 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 
 #### 1. Domain Model: Promocion Entity & States
 
-| Approach | Pros | Cons | Complexity |
-|----------|------|------|------------|
-| **Single `promotions` table with `status` enum (Programada/Activa/Finalizada)** | Simple, matches requirements directly, easy state transitions | Status logic in application layer | Low |
-| **Separate tables per state** | Clean separation | Over-engineered for this scope, complex queries | High |
-| **State machine pattern with explicit transition validation** | Prevents invalid transitions, auditable | More code upfront | Medium |
+| Approach                                                                        | Pros                                                          | Cons                                            | Complexity |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------- | ---------- |
+| **Single `promotions` table with `status` enum (Programada/Activa/Finalizada)** | Simple, matches requirements directly, easy state transitions | Status logic in application layer               | Low        |
+| **Separate tables per state**                                                   | Clean separation                                              | Over-engineered for this scope, complex queries | High       |
+| **State machine pattern with explicit transition validation**                   | Prevents invalid transitions, auditable                       | More code upfront                               | Medium     |
 
 **Selected**: Single table with `status` enum + application-layer state machine validation.
 
@@ -41,11 +43,11 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 
 #### 2. Discount Types: Porcentaje vs Monto fijo
 
-| Approach | Pros | Cons | Complexity |
-|----------|------|------|------------|
-| **Single `discount_type` enum + `discount_value` numeric** | Simple, flexible | Application must interpret based on type | Low |
-| **Separate columns: `percentage_value`, `fixed_amount`** | Type-safe at DB level | Nullable columns, migration complexity if types change | Medium |
-| **Polymorphic/JSON column for discount config** | Extensible for future types | Less queryable, no DB constraints | Medium |
+| Approach                                                   | Pros                        | Cons                                                   | Complexity |
+| ---------------------------------------------------------- | --------------------------- | ------------------------------------------------------ | ---------- |
+| **Single `discount_type` enum + `discount_value` numeric** | Simple, flexible            | Application must interpret based on type               | Low        |
+| **Separate columns: `percentage_value`, `fixed_amount`**   | Type-safe at DB level       | Nullable columns, migration complexity if types change | Medium     |
+| **Polymorphic/JSON column for discount config**            | Extensible for future types | Less queryable, no DB constraints                      | Medium     |
 
 **Selected**: Single `discount_type` enum ('PERCENTAGE' | 'FIXED_AMOUNT') + `discount_value` decimal. Validation at API layer (Zod).
 
@@ -53,11 +55,11 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 
 #### 3. Product/Category Association
 
-| Approach | Pros | Cons | Complexity |
-|----------|------|------|------------|
-| **Single `product_category` string field** | Simplest, matches "producto o categoría" requirement | No referential integrity, no autocomplete | Low |
-| **Separate `products_categories` table with `type` enum (PRODUCT/CATEGORY) + FK** | Referential integrity, supports future filtering | Requires seed data or admin UI | Medium |
-| **Two separate tables: `products`, `categories` + polymorphic FK** | Clean normalization | Over-engineered for scope | High |
+| Approach                                                                          | Pros                                                 | Cons                                      | Complexity |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------- | ---------- |
+| **Single `product_category` string field**                                        | Simplest, matches "producto o categoría" requirement | No referential integrity, no autocomplete | Low        |
+| **Separate `products_categories` table with `type` enum (PRODUCT/CATEGORY) + FK** | Referential integrity, supports future filtering     | Requires seed data or admin UI            | Medium     |
+| **Two separate tables: `products`, `categories` + polymorphic FK**                | Clean normalization                                  | Over-engineered for scope                 | High       |
 
 **Selected**: Single `products_categories` table with `type` enum ('PRODUCT' | 'CATEGORY') + FK from `promotions`. Minimum viable referential integrity.
 
@@ -65,13 +67,14 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 
 #### 4. API Endpoints Design
 
-| Approach | Pros | Cons | Complexity |
-|----------|------|------|------------|
-| **RESTful CRUD + custom state transition endpoints** | Standard, clear semantics | More endpoints | Low |
-| **Single PATCH /promotions/:id with `action` field** | Fewer endpoints | Less RESTful, action-based | Low |
-| **GraphQL** | Flexible queries | Overkill, not required | High |
+| Approach                                             | Pros                      | Cons                       | Complexity |
+| ---------------------------------------------------- | ------------------------- | -------------------------- | ---------- |
+| **RESTful CRUD + custom state transition endpoints** | Standard, clear semantics | More endpoints             | Low        |
+| **Single PATCH /promotions/:id with `action` field** | Fewer endpoints           | Less RESTful, action-based | Low        |
+| **GraphQL**                                          | Flexible queries          | Overkill, not required     | High       |
 
 **Selected**: RESTful with explicit state transition endpoints:
+
 - `POST /api/promotions` — Create
 - `GET /api/promotions` — List (with filters)
 - `GET /api/promotions/:id` — Get one
@@ -86,6 +89,7 @@ No source code exists yet — only the requirements document (`prueba técnica.m
 #### 5. Database Schema (Minimum 2 Tables)
 
 **Table 1: `promotions`**
+
 ```sql
 id UUID PK
 name VARCHAR(255) NOT NULL
@@ -100,6 +104,7 @@ updated_at TIMESTAMP DEFAULT NOW()
 ```
 
 **Table 2: `products_categories`**
+
 ```sql
 id UUID PK
 name VARCHAR(255) NOT NULL
@@ -113,11 +118,11 @@ created_at TIMESTAMP DEFAULT NOW()
 
 #### 6. Docker Compose Services
 
-| Service | Image | Ports | Depends On | Healthcheck |
-|---------|-------|-------|------------|-------------|
-| `postgres` | `postgres:16-alpine` | 5432 | — | `pg_isready` |
-| `backend` | Local build | 3001 | `postgres` | `curl /health` |
-| `frontend` | Local build | 5173 | `backend` | `curl /` |
+| Service    | Image                | Ports | Depends On | Healthcheck    |
+| ---------- | -------------------- | ----- | ---------- | -------------- |
+| `postgres` | `postgres:16-alpine` | 5432  | —          | `pg_isready`   |
+| `backend`  | Local build          | 3001  | `postgres` | `curl /health` |
+| `frontend` | Local build          | 5173  | `backend`  | `curl /`       |
 
 **Networks**: Single `app-network` bridge
 **Volumes**: `postgres_data` for persistence, `./backend:/app` (dev), `./frontend:/app` (dev)
@@ -187,18 +192,19 @@ Proceed with the following implementation approach:
 
 ### Ambiguities / Decisions Needed Before Proposal
 
-| # | Question | Impact |
-|---|----------|--------|
-| 1 | Should `discount_value` for percentage be stored as integer (1-100) or decimal (0.01-1.00)? | API contract, frontend input |
-| 2 | Is "producto o categoría" a free-text field or a managed list? Current decision: managed list via `products_categories` table. Confirm? | DB schema, UI (select vs input) |
-| 3 | Can a promotion be associated with BOTH a product AND a category? Requirement says "producto **o** categoría" (singular). | Schema: single FK vs two nullable FKs |
-| 4 | Should the summary endpoint (`/summary`) be public or authenticated? | Auth design (currently none specified) |
-| 5 | What date format for API? ISO 8601 (`YYYY-MM-DDTHH:mm:ss.sssZ`) or date-only (`YYYY-MM-DD`)? | Zod schemas, frontend date pickers |
-| 6 | Soft delete for promotions or hard delete? Requirement says "eliminar" only for `Programada`. | Implementation complexity |
-| 7 | Pagination for listing promotions? Not specified. Default to page/limit? | API design |
-| 8 | Should `start_date` / `end_date` include time component or be date-only? "Fecha de inicio/fin" suggests date-only, but "vigente hoy" implies datetime comparison. | DB type (DATE vs TIMESTAMP), validation |
+| #   | Question                                                                                                                                                          | Impact                                  |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 1   | Should `discount_value` for percentage be stored as integer (1-100) or decimal (0.01-1.00)?                                                                       | API contract, frontend input            |
+| 2   | Is "producto o categoría" a free-text field or a managed list? Current decision: managed list via `products_categories` table. Confirm?                           | DB schema, UI (select vs input)         |
+| 3   | Can a promotion be associated with BOTH a product AND a category? Requirement says "producto **o** categoría" (singular).                                         | Schema: single FK vs two nullable FKs   |
+| 4   | Should the summary endpoint (`/summary`) be public or authenticated?                                                                                              | Auth design (currently none specified)  |
+| 5   | What date format for API? ISO 8601 (`YYYY-MM-DDTHH:mm:ss.sssZ`) or date-only (`YYYY-MM-DD`)?                                                                      | Zod schemas, frontend date pickers      |
+| 6   | Soft delete for promotions or hard delete? Requirement says "eliminar" only for `Programada`.                                                                     | Implementation complexity               |
+| 7   | Pagination for listing promotions? Not specified. Default to page/limit?                                                                                          | API design                              |
+| 8   | Should `start_date` / `end_date` include time component or be date-only? "Fecha de inicio/fin" suggests date-only, but "vigente hoy" implies datetime comparison. | DB type (DATE vs TIMESTAMP), validation |
 
 ---
 
 ### Ready for Proposal
+
 **Yes** — The exploration clarifies the domain model, API surface, database schema, infrastructure, and CI/CD pipeline. The main ambiguities (#1-8 above) should be resolved with the user before or during the proposal phase. The orchestrator should present these decisions to the user and then proceed to `sdd-propose` for the initial implementation change.

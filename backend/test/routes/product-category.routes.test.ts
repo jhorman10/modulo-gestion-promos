@@ -29,7 +29,8 @@ describe('GET /api/products-categories integration', () => {
     await prisma.productCategory.deleteMany();
   });
 
-  const uniqueName = (base: string) => `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
+  const uniqueName = (base: string) =>
+    `${base}_${testRunId}_${Math.random().toString(36).slice(2, 8)}`;
 
   it('should return 200 with products and categories separated by type', async () => {
     const product1 = uniqueName('Product 1');
@@ -37,7 +38,7 @@ describe('GET /api/products-categories integration', () => {
     const category1 = uniqueName('Category 1');
     const category2 = uniqueName('Category 2');
     const category3 = uniqueName('Category 3');
-    
+
     await prisma.productCategory.createMany({
       data: [
         { name: product1, type: ProductCategoryType.PRODUCT },
@@ -48,9 +49,7 @@ describe('GET /api/products-categories integration', () => {
       ],
     });
 
-    const response = await request(server)
-      .get('/api/products-categories')
-      .expect(200);
+    const response = await request(server).get('/api/products-categories').expect(200);
 
     expect(response.body).toEqual({
       products: expect.arrayContaining([
@@ -72,9 +71,7 @@ describe('GET /api/products-categories integration', () => {
   });
 
   it('should return 200 with empty arrays when no data exists', async () => {
-    const response = await request(server)
-      .get('/api/products-categories')
-      .expect(200);
+    const response = await request(server).get('/api/products-categories').expect(200);
 
     expect(response.body).toEqual({
       products: [],
@@ -113,9 +110,7 @@ describe('GET /api/products-categories integration', () => {
     }));
     await prisma.productCategory.createMany({ data: products });
 
-    const response = await request(server)
-      .get('/api/products-categories?size=200')
-      .expect(400);
+    const response = await request(server).get('/api/products-categories?size=200').expect(400);
 
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
   });
@@ -124,7 +119,7 @@ describe('GET /api/products-categories integration', () => {
     const product1 = uniqueName('Product 1');
     const product2 = uniqueName('Product 2');
     const category1 = uniqueName('Category 1');
-    
+
     await prisma.productCategory.createMany({
       data: [
         { name: product1, type: ProductCategoryType.PRODUCT },
@@ -133,9 +128,7 @@ describe('GET /api/products-categories integration', () => {
       ],
     });
 
-    const response = await request(server)
-      .get('/api/products-categories?type=PRODUCT')
-      .expect(200);
+    const response = await request(server).get('/api/products-categories?type=PRODUCT').expect(200);
 
     expect(response.body.products).toHaveLength(2);
     expect(response.body.categories).toHaveLength(0);
@@ -146,7 +139,7 @@ describe('GET /api/products-categories integration', () => {
     const product1 = uniqueName('Product 1');
     const category1 = uniqueName('Category 1');
     const category2 = uniqueName('Category 2');
-    
+
     await prisma.productCategory.createMany({
       data: [
         { name: product1, type: ProductCategoryType.PRODUCT },
@@ -165,29 +158,19 @@ describe('GET /api/products-categories integration', () => {
   });
 
   it('should return 400 for invalid page parameter', async () => {
-    await request(server)
-      .get('/api/products-categories?page=0')
-      .expect(400);
+    await request(server).get('/api/products-categories?page=0').expect(400);
 
-    await request(server)
-      .get('/api/products-categories?page=-1')
-      .expect(400);
+    await request(server).get('/api/products-categories?page=-1').expect(400);
   });
 
   it('should return 400 for invalid size parameter', async () => {
-    await request(server)
-      .get('/api/products-categories?size=0')
-      .expect(400);
+    await request(server).get('/api/products-categories?size=0').expect(400);
 
-    await request(server)
-      .get('/api/products-categories?size=101')
-      .expect(400);
+    await request(server).get('/api/products-categories?size=101').expect(400);
   });
 
   it('should return 400 for invalid type parameter', async () => {
-    await request(server)
-      .get('/api/products-categories?type=INVALID')
-      .expect(400);
+    await request(server).get('/api/products-categories?type=INVALID').expect(400);
   });
 
   it('should order results by name ascending', async () => {
@@ -195,7 +178,7 @@ describe('GET /api/products-categories integration', () => {
     const appleProduct = uniqueName('Apple Product');
     const bananaCategory = uniqueName('Banana Category');
     const appleCategory = uniqueName('Apple Category');
-    
+
     await prisma.productCategory.createMany({
       data: [
         { name: zebraProduct, type: ProductCategoryType.PRODUCT },
@@ -205,11 +188,12 @@ describe('GET /api/products-categories integration', () => {
       ],
     });
 
-    const response = await request(server)
-      .get('/api/products-categories')
-      .expect(200);
+    const response = await request(server).get('/api/products-categories').expect(200);
 
     expect(response.body.products.map((p: any) => p.name)).toEqual([appleProduct, zebraProduct]);
-    expect(response.body.categories.map((c: any) => c.name)).toEqual([appleCategory, bananaCategory]);
+    expect(response.body.categories.map((c: any) => c.name)).toEqual([
+      appleCategory,
+      bananaCategory,
+    ]);
   });
 });

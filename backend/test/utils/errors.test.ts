@@ -9,21 +9,22 @@ describe('error formatter', () => {
       const result = formatError('VALIDATION_ERROR', 'Request validation failed', [
         { field: 'discount_value', message: 'Must be between 0.01 and 1.00' },
       ]);
-      
+
       expect(result).toEqual({
         error: {
           code: 'VALIDATION_ERROR',
           message: 'Request validation failed',
-          details: [
-            { field: 'discount_value', message: 'Must be between 0.01 and 1.00' },
-          ],
+          details: [{ field: 'discount_value', message: 'Must be between 0.01 and 1.00' }],
         },
       });
     });
 
     it('should produce RFC 7807 structure for state transition error', () => {
-      const result = formatError('INVALID_STATE_TRANSITION', 'Only Programada promotions can be activated');
-      
+      const result = formatError(
+        'INVALID_STATE_TRANSITION',
+        'Only Programada promotions can be activated'
+      );
+
       expect(result).toEqual({
         error: {
           code: 'INVALID_STATE_TRANSITION',
@@ -34,7 +35,7 @@ describe('error formatter', () => {
 
     it('should produce RFC 7807 structure for not found error', () => {
       const result = formatError('NOT_FOUND', 'Promotion not found');
-      
+
       expect(result).toEqual({
         error: {
           code: 'NOT_FOUND',
@@ -45,7 +46,7 @@ describe('error formatter', () => {
 
     it('should produce RFC 7807 structure for service unavailable error', () => {
       const result = formatError('SERVICE_UNAVAILABLE', 'Database connectivity check failed');
-      
+
       expect(result).toEqual({
         error: {
           code: 'SERVICE_UNAVAILABLE',
@@ -56,7 +57,7 @@ describe('error formatter', () => {
 
     it('should produce RFC 7807 structure for internal error', () => {
       const result = formatError('INTERNAL_ERROR', 'An unexpected error occurred');
-      
+
       expect(result).toEqual({
         error: {
           code: 'INTERNAL_ERROR',
@@ -67,7 +68,7 @@ describe('error formatter', () => {
 
     it('should omit details when not provided', () => {
       const result = formatError('VALIDATION_ERROR', 'Request validation failed');
-      
+
       expect(result).toEqual({
         error: {
           code: 'VALIDATION_ERROR',
@@ -78,7 +79,7 @@ describe('error formatter', () => {
 
     it('should omit details when empty array', () => {
       const result = formatError('VALIDATION_ERROR', 'Request validation failed', []);
-      
+
       expect(result).toEqual({
         error: {
           code: 'VALIDATION_ERROR',
@@ -101,7 +102,7 @@ describe('error formatter', () => {
   describe('createAppError', () => {
     it('should create error with status code and code', () => {
       const error = createAppError('NOT_FOUND', 'Promotion not found', 404);
-      
+
       expect(error).toBeInstanceOf(Error);
       expect(error.message).toBe('Promotion not found');
       expect(error.code).toBe('NOT_FOUND');
@@ -109,13 +110,10 @@ describe('error formatter', () => {
     });
 
     it('should create error with details', () => {
-      const error = createAppError(
-        'VALIDATION_ERROR', 
-        'Validation failed', 
-        400,
-        [{ field: 'name', message: 'Name is required' }]
-      );
-      
+      const error = createAppError('VALIDATION_ERROR', 'Validation failed', 400, [
+        { field: 'name', message: 'Name is required' },
+      ]);
+
       expect(error.details).toEqual([{ field: 'name', message: 'Name is required' }]);
     });
   });

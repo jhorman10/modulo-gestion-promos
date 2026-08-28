@@ -88,12 +88,13 @@ export class PromotionService {
     }
 
     // Create promotion and junction records in a transaction
-    const promotion = await this.prisma.$transaction(async (tx) => {
+    const promotion = await this.prisma.$transaction(async tx => {
       // Create promotion
       const created = await tx.promotion.create({
         data: {
           name: input.name,
-          discountType: input.discount_type === 'percentage' ? DiscountType.PERCENTAGE : DiscountType.FIXED,
+          discountType:
+            input.discount_type === 'percentage' ? DiscountType.PERCENTAGE : DiscountType.FIXED,
           discountValue: new Decimal(input.discount_value.toFixed(2)),
           startDate: input.start_date,
           endDate: input.end_date,
@@ -151,7 +152,7 @@ export class PromotionService {
     return this.mapPromotionToResponse(promotion, products, categories);
   }
 
-/**
+  /**
    * Map Prisma enum status to API format
    */
   private mapStatusToApi(status: PromotionStatus): 'Programada' | 'Activa' | 'Finalizada' {
@@ -186,9 +187,10 @@ export class PromotionService {
       id: promotion.id,
       name: promotion.name,
       discount_type: promotion.discountType === DiscountType.PERCENTAGE ? 'percentage' : 'fixed',
-      discount_value: promotion.discountValue instanceof Decimal 
-        ? Number(promotion.discountValue.toFixed(2))
-        : Number(promotion.discountValue),
+      discount_value:
+        promotion.discountValue instanceof Decimal
+          ? Number(promotion.discountValue.toFixed(2))
+          : Number(promotion.discountValue),
       start_date: promotion.startDate.toISOString(),
       end_date: promotion.endDate.toISOString(),
       status: statusMap[promotion.status] || promotion.status,
@@ -213,9 +215,12 @@ export class PromotionService {
     };
 
     if (query.status) {
-      where.status = query.status === 'Programada' ? PromotionStatus.PROGRAMADA
-        : query.status === 'Activa' ? PromotionStatus.ACTIVA
-        : PromotionStatus.FINALIZADA;
+      where.status =
+        query.status === 'Programada'
+          ? PromotionStatus.PROGRAMADA
+          : query.status === 'Activa'
+            ? PromotionStatus.ACTIVA
+            : PromotionStatus.FINALIZADA;
     }
 
     if (query.product_id) {
@@ -285,7 +290,7 @@ export class PromotionService {
       return this.mapPromotionToResponse(promotion, products, categories);
     });
 
-return {
+    return {
       data,
       pagination: calculatePagination(page, size, total),
     };
@@ -363,12 +368,13 @@ return {
     }
 
     // Update promotion and associations in a transaction
-    const promotion = await this.prisma.$transaction(async (tx) => {
+    const promotion = await this.prisma.$transaction(async tx => {
       // Build update data
       const updateData: Prisma.PromotionUpdateInput = {};
       if (input.name !== undefined) updateData.name = input.name;
       if (input.discount_type !== undefined) {
-        updateData.discountType = input.discount_type === 'percentage' ? DiscountType.PERCENTAGE : DiscountType.FIXED;
+        updateData.discountType =
+          input.discount_type === 'percentage' ? DiscountType.PERCENTAGE : DiscountType.FIXED;
       }
       if (input.discount_value !== undefined) {
         updateData.discountValue = new Decimal(input.discount_value.toFixed(2));

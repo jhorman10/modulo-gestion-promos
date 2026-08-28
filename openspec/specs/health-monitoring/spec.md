@@ -45,6 +45,7 @@ The system SHALL NOT require authentication.
 ### GET /health
 
 **Response 200**:
+
 ```json
 {
   "status": "ok",
@@ -54,6 +55,7 @@ The system SHALL NOT require authentication.
 ```
 
 **Response 503**:
+
 ```json
 {
   "status": "error",
@@ -66,20 +68,20 @@ The system SHALL NOT require authentication.
 
 ## Validation Rules
 
-| Rule |
-|------|
-| No query parameters |
-| No authentication |
+| Rule                                                                    |
+| ----------------------------------------------------------------------- |
+| No query parameters                                                     |
+| No authentication                                                       |
 | Must execute `SELECT 1` or Prisma `$queryRaw` to verify DB connectivity |
-| Response must include ISO 8601 timestamp |
+| Response must include ISO 8601 timestamp                                |
 
 ---
 
 ## Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| SERVICE_UNAVAILABLE | 503 | Database connectivity check failed |
+| Code                | HTTP Status | Description                        |
+| ------------------- | ----------- | ---------------------------------- |
+| SERVICE_UNAVAILABLE | 503         | Database connectivity check failed |
 
 ---
 

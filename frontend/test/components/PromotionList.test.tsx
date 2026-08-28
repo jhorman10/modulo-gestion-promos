@@ -80,7 +80,16 @@ describe('PromotionList', () => {
   });
 
   it('should render loading skeleton while fetching', async () => {
-    mockApiGet.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } }), 100)));
+    mockApiGet.mockImplementation(
+      () =>
+        new Promise(resolve =>
+          setTimeout(
+            () =>
+              resolve({ data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } }),
+            100
+          )
+        )
+    );
 
     const { PromotionList } = await import('../../src/components/PromotionList');
     render(<PromotionList />, { wrapper });
@@ -89,12 +98,17 @@ describe('PromotionList', () => {
   });
 
   it('should render empty state when no promotions', async () => {
-    mockApiGet.mockResolvedValue({ data: [], pagination: { total: 0, page: 1, size: 10, total_pages: 0 } });
+    mockApiGet.mockResolvedValue({
+      data: [],
+      pagination: { total: 0, page: 1, size: 10, total_pages: 0 },
+    });
 
     const { PromotionList } = await import('../../src/components/PromotionList');
     render(<PromotionList />, { wrapper });
 
-    await waitFor(() => expect(screen.getByText(/no hay promociones|no promotions/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/no hay promociones|no promotions/i)).toBeInTheDocument()
+    );
   });
 
   it('should render error state when fetch fails', async () => {
@@ -146,7 +160,7 @@ describe('PromotionList', () => {
 
     // Wait for initial data to load
     await waitFor(() => expect(screen.getByText('Promo 1')).toBeInTheDocument());
-    
+
     // Now click next page
     const nextButton = screen.getByRole('button', { name: /siguiente|next/i });
     await waitFor(() => {
@@ -154,7 +168,9 @@ describe('PromotionList', () => {
     });
 
     // Should fetch page 2
-    await waitFor(() => expect(mockApiGet).toHaveBeenCalledWith('/promotions', { page: 2, size: 10 }));
+    await waitFor(() =>
+      expect(mockApiGet).toHaveBeenCalledWith('/promotions', { page: 2, size: 10 })
+    );
   });
 
   it('should show Edit button for Programada promotions', async () => {

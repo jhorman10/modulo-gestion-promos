@@ -44,7 +44,7 @@ async function waitForHealth(): Promise<void> {
     }
 
     console.log(`Attempt ${attempt}: not ready, retrying in ${interval}ms...`);
-    await new Promise((resolve) => setTimeout(resolve, interval));
+    await new Promise(resolve => setTimeout(resolve, interval));
 
     // Exponential backoff with cap
     interval = Math.min(interval * 1.5, MAX_INTERVAL_MS);
@@ -54,7 +54,7 @@ async function waitForHealth(): Promise<void> {
   process.exit(1);
 }
 
-waitForHealth().catch((err) => {
+waitForHealth().catch(err => {
   console.error('Unexpected error:', err);
   process.exit(1);
 });

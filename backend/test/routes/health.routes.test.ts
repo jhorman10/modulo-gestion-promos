@@ -24,9 +24,7 @@ describe('GET /health integration', () => {
   });
 
   it('should return 200 with ok status when database is connected', async () => {
-    const response = await request(server)
-      .get('/health')
-      .expect(200);
+    const response = await request(server).get('/health').expect(200);
 
     expect(response.body).toEqual({
       status: 'ok',
@@ -44,9 +42,7 @@ describe('GET /health integration', () => {
   });
 
   it('should not require authentication', async () => {
-    await request(server)
-      .get('/health')
-      .expect(200);
+    await request(server).get('/health').expect(200);
     // No auth headers sent, should still work
   });
 });

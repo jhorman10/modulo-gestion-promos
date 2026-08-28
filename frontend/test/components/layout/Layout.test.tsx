@@ -4,8 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Layout } from '../../../src/components/layout/Layout';
 
 describe('Layout', () => {
-  const renderWithRouter = (ui: React.ReactElement) =>
-    render(<MemoryRouter>{ui}</MemoryRouter>);
+  const renderWithRouter = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
   it('should render children', () => {
     renderWithRouter(
@@ -22,7 +21,7 @@ describe('Layout', () => {
         <div>Content</div>
       </Layout>
     );
-    expect(screen.getByText('Promotions Management')).toBeInTheDocument();
+    expect(screen.getByText('Gestión de Promociones')).toBeInTheDocument();
   });
 
   it('should render navigation links', () => {
@@ -31,8 +30,8 @@ describe('Layout', () => {
         <div>Content</div>
       </Layout>
     );
-    expect(screen.getByRole('menuitem', { name: /promotions/i })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: /summary/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /promociones/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /resumen/i })).toBeInTheDocument();
   });
 
   it('should have main element with role="main"', () => {

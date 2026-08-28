@@ -17,7 +17,7 @@ export class ProductCategoryController {
   async listAll(req: Request, res: Response): Promise<void> {
     // Validate query parameters
     const validationResult = productCategoryQuerySchema.safeParse(req.query);
-    
+
     if (!validationResult.success) {
       res.status(400).json({
         error: {

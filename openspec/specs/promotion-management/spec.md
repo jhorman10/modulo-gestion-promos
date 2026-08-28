@@ -261,6 +261,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 ```
 
 **Transitions**:
+
 - Programada → Activa: POST /activate (requires current date within [start_date, end_date])
 - Activa → Finalizada: POST /finalize
 - Programada → Deleted: DELETE (soft delete, sets deleted_at)
@@ -273,6 +274,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 ### POST /api/promotions
 
 **Request**:
+
 ```json
 {
   "name": "string (1-200 chars)",
@@ -286,6 +288,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 ```
 
 **Response 201**:
+
 ```json
 {
   "id": "uuid",
@@ -295,8 +298,8 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
   "start_date": "ISO 8601 datetime",
   "end_date": "ISO 8601 datetime",
   "status": "Programada",
-  "products": [{"id": "uuid", "name": "string", "type": "PRODUCT"}],
-  "categories": [{"id": "uuid", "name": "string", "type": "CATEGORY"}],
+  "products": [{ "id": "uuid", "name": "string", "type": "PRODUCT" }],
+  "categories": [{ "id": "uuid", "name": "string", "type": "CATEGORY" }],
   "created_at": "ISO 8601 datetime",
   "updated_at": "ISO 8601 datetime",
   "deleted_at": null
@@ -308,6 +311,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 **Query**: `page` (int, default 1), `size` (int, default 10, max 100)
 
 **Response 200**:
+
 ```json
 {
   "data": [...promotion objects...],
@@ -342,27 +346,27 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 
 ## Validation Rules Summary
 
-| Field | Rule |
-|-------|------|
-| name | Required, 1-200 chars |
-| discount_type | Required, enum: "percentage" \| "fixed" |
-| discount_value | Required, number. Percentage: 0.01-1.00 (2 decimals max). Fixed: > 0 |
-| start_date | Required, valid ISO 8601 datetime |
-| end_date | Required, valid ISO 8601 datetime, > start_date |
-| product_ids | Optional array of UUIDs, must exist in products_categories |
-| category_ids | Optional array of UUIDs, must exist in products_categories |
-| At least one association | Required: product_ids.length + category_ids.length > 0 |
+| Field                    | Rule                                                                 |
+| ------------------------ | -------------------------------------------------------------------- |
+| name                     | Required, 1-200 chars                                                |
+| discount_type            | Required, enum: "percentage" \| "fixed"                              |
+| discount_value           | Required, number. Percentage: 0.01-1.00 (2 decimals max). Fixed: > 0 |
+| start_date               | Required, valid ISO 8601 datetime                                    |
+| end_date                 | Required, valid ISO 8601 datetime, > start_date                      |
+| product_ids              | Optional array of UUIDs, must exist in products_categories           |
+| category_ids             | Optional array of UUIDs, must exist in products_categories           |
+| At least one association | Required: product_ids.length + category_ids.length > 0               |
 
 ---
 
 ## Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| VALIDATION_ERROR | 400 | Request body/query validation failed |
-| NOT_FOUND | 404 | Promotion not found (or soft deleted) |
-| INVALID_STATE_TRANSITION | 409 | State transition not allowed per state machine |
-| INTERNAL_ERROR | 500 | Unexpected server error |
+| Code                     | HTTP Status | Description                                    |
+| ------------------------ | ----------- | ---------------------------------------------- |
+| VALIDATION_ERROR         | 400         | Request body/query validation failed           |
+| NOT_FOUND                | 404         | Promotion not found (or soft deleted)          |
+| INVALID_STATE_TRANSITION | 409         | State transition not allowed per state machine |
+| INTERNAL_ERROR           | 500         | Unexpected server error                        |
 
 ---
 
@@ -370,27 +374,27 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 
 ### promotions table
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK, default gen_random_uuid() |
-| name | VARCHAR(200) | NOT NULL |
-| discount_type | VARCHAR(20) | NOT NULL, CHECK IN ('percentage', 'fixed') |
-| discount_value | DECIMAL(10,2) | NOT NULL |
-| start_date | TIMESTAMP | NOT NULL |
-| end_date | TIMESTAMP | NOT NULL |
-| status | VARCHAR(20) | NOT NULL, DEFAULT 'Programada', CHECK IN ('Programada', 'Activa', 'Finalizada') |
-| deleted_at | TIMESTAMP | NULLABLE |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() |
+| Column         | Type          | Constraints                                                                     |
+| -------------- | ------------- | ------------------------------------------------------------------------------- |
+| id             | UUID          | PK, default gen_random_uuid()                                                   |
+| name           | VARCHAR(200)  | NOT NULL                                                                        |
+| discount_type  | VARCHAR(20)   | NOT NULL, CHECK IN ('percentage', 'fixed')                                      |
+| discount_value | DECIMAL(10,2) | NOT NULL                                                                        |
+| start_date     | TIMESTAMP     | NOT NULL                                                                        |
+| end_date       | TIMESTAMP     | NOT NULL                                                                        |
+| status         | VARCHAR(20)   | NOT NULL, DEFAULT 'Programada', CHECK IN ('Programada', 'Activa', 'Finalizada') |
+| deleted_at     | TIMESTAMP     | NULLABLE                                                                        |
+| created_at     | TIMESTAMP     | NOT NULL, DEFAULT NOW()                                                         |
+| updated_at     | TIMESTAMP     | NOT NULL, DEFAULT NOW()                                                         |
 
 ### promotion_product_category junction table
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| promotion_id | UUID | FK → promotions.id, CASCADE DELETE |
-| product_category_id | UUID | FK → products_categories.id, CASCADE DELETE |
-| association_type | VARCHAR(20) | NOT NULL, CHECK IN ('PRODUCT', 'CATEGORY') |
-| PRIMARY KEY | (promotion_id, product_category_id, association_type) | |
+| Column              | Type                                                  | Constraints                                 |
+| ------------------- | ----------------------------------------------------- | ------------------------------------------- |
+| promotion_id        | UUID                                                  | FK → promotions.id, CASCADE DELETE          |
+| product_category_id | UUID                                                  | FK → products_categories.id, CASCADE DELETE |
+| association_type    | VARCHAR(20)                                           | NOT NULL, CHECK IN ('PRODUCT', 'CATEGORY')  |
+| PRIMARY KEY         | (promotion_id, product_category_id, association_type) |                                             |
 
 ---
 

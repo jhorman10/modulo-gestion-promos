@@ -8,13 +8,13 @@ export function parseISODate(dateString: string): Date {
   if (!dateString || typeof dateString !== 'string') {
     throw new Error('Invalid date string: empty or not a string');
   }
-  
+
   const date = new Date(dateString);
-  
+
   if (isNaN(date.getTime())) {
     throw new Error(`Invalid date string: ${dateString}`);
   }
-  
+
   return date;
 }
 
@@ -27,7 +27,7 @@ export function formatISODate(date: Date): string {
   if (!(date instanceof Date) || isNaN(date.getTime())) {
     throw new Error('Invalid Date object');
   }
-  
+
   return date.toISOString();
 }
 
@@ -40,7 +40,7 @@ export function isValidISODate(dateString: string): boolean {
   if (!dateString || typeof dateString !== 'string') {
     return false;
   }
-  
+
   const date = new Date(dateString);
   return !isNaN(date.getTime());
 }
@@ -82,6 +82,6 @@ export function isValidToday(
   const startOfDay = startOfDayUTC(startDate);
   const endOfDay = endOfDayUTC(endDate);
   const serverDay = startOfDayUTC(serverDate);
-  
+
   return serverDay >= startOfDay && serverDay <= endOfDay;
 }
