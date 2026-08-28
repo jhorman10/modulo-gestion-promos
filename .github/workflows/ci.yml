@@ -42,7 +42,7 @@ jobs:
         working-directory: frontend
 
       - name: Generate Prisma Client
-        run: npx prisma generate --schema=backend/prisma/schema.prisma
+        run: node_modules/.bin/prisma generate --schema=backend/prisma/schema.prisma
 
       - name: Run Prettier check
         run: npx prettier --check .
@@ -102,10 +102,10 @@ jobs:
         working-directory: backend
 
       - name: Generate Prisma Client
-        run: npx prisma generate --schema=backend/prisma/schema.prisma
+        run: node_modules/.bin/prisma generate --schema=backend/prisma/schema.prisma
 
       - name: Run Prisma migrations
-        run: npx prisma migrate deploy --schema=backend/prisma/schema.prisma
+        run: node_modules/.bin/prisma migrate deploy --schema=backend/prisma/schema.prisma
 
       - name: Run backend tests with coverage
         run: npm run test:coverage
