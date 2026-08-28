@@ -206,15 +206,13 @@ jobs:
 
       - name: Create .env for smoke test
         run: |
-          cat > .env <<EOF
-          DATABASE_URL=postgresql://promos:${{ secrets.POSTGRES_PASSWORD || 'changeme' }}@postgres:5432/promos?schema=public
-          NODE_ENV=test
-          PORT=3001
-          FRONTEND_URL=http://localhost:5173
-          POSTGRES_DB=promos
-          POSTGRES_USER=promos
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD || 'changeme' }}
-          EOF
+          echo "DATABASE_URL=postgresql://promos:changeme@postgres:5432/promos?schema=public" > .env
+          echo "NODE_ENV=test" >> .env
+          echo "PORT=3001" >> .env
+          echo "FRONTEND_URL=http://localhost:5173" >> .env
+          echo "POSTGRES_DB=promos" >> .env
+          echo "POSTGRES_USER=promos" >> .env
+          echo "POSTGRES_PASSWORD=changeme" >> .env
 
       - name: Start docker-compose services
         run: docker compose up -d
