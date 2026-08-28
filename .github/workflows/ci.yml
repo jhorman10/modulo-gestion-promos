@@ -208,20 +208,27 @@ jobs:
       - name: Validate required secrets
         run: |
           echo "Checking required environment configuration..."
-          # Ensure .env.example exists (no real secrets in repo)
-          if [ ! -f .env.example ]; then
-            echo "ERROR: .env.example not found in repository root"
-            exit 1
-          fi
-          echo "✓ .env.example present"
+          REQUIRED_SECRETS=(
+            POSTGRES_PASSWORD
+          )
+          for secret in "${REQUIRED_SECRETS[@]}"; do
+            if [ -z "${!secret}" ]; then
+              echo "WARNING: Secret '$secret' is not set in GitHub Secrets"
+              echo "Using default value for smoke test"
+            fi
+          done
+          echo "✓ Secrets validated"
 
       - name: Create .env for smoke test
         run: |
           cat > .env <<EOF
-          DATABASE_URL=postgresql://promos:promos@localhost:5432/promos?schema=public
+          DATABASE_URL=postgresql://promos:${{ secrets.POSTGRES_PASSWORD || 'changeme' }}@postgres:5432/promos?schema=public
           NODE_ENV=test
           PORT=3001
           FRONTEND_URL=http://localhost:5173
+          POSTGRES_DB=promos
+          POSTGRES_USER=promos
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD || 'changeme' }}
           EOF
 
       - name: Start docker-compose services

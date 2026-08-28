@@ -134,7 +134,7 @@ describe('apiClient', () => {
             error: {
               code: 'VALIDATION_ERROR',
               message: 'Validation failed',
-              details: [{ field: 'discount_value', message: 'Must be between 0.01 and 1.00' }],
+              details: [{ field: 'discount_value', message: 'Must be between 1 and 100' }],
             },
           },
           status: 400,
@@ -148,7 +148,7 @@ describe('apiClient', () => {
       await expect(responseInterceptor(errorResponse)).rejects.toMatchObject({
         code: 'VALIDATION_ERROR',
         message: 'Validation failed',
-        details: [{ field: 'discount_value', message: 'Must be between 0.01 and 1.00' }],
+        details: [{ field: 'discount_value', message: 'Must be between 1 and 100' }],
       });
     });
 

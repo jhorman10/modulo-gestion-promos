@@ -129,7 +129,7 @@ describe('PromotionForm', () => {
     });
   });
 
-  it('should validate percentage bounds (0.01 - 1.00)', async () => {
+  it('should validate percentage bounds (1 - 100)', async () => {
     const { PromotionForm } = await import('../../src/components/PromotionForm');
     render(<PromotionForm />, { wrapper });
 
@@ -141,27 +141,27 @@ describe('PromotionForm', () => {
     fireEvent.click(screen.getByLabelText(/tipo de descuento/i));
     fireEvent.click(screen.getByRole('option', { name: /porcentaje/i }));
 
-    // Enter invalid percentage (0.005)
+    // Enter invalid percentage (0.99)
     const discountValueInput = screen.getByLabelText(/valor del descuento/i);
-    fireEvent.change(discountValueInput, { target: { value: '0.005' } });
+    fireEvent.change(discountValueInput, { target: { value: '0.99' } });
     fireEvent.click(screen.getByRole('button', { name: /crear|crear promoción/i }));
 
     await waitFor(() =>
       expect(
         screen.getByText(
-          /porcentaje debe estar entre 0.01 y 1.00|percentage must be between 0.01 and 1.00/i
+          /porcentaje debe estar entre 1 y 100|percentage must be between 1 and 100/i
         )
       ).toBeInTheDocument()
     );
 
-    // Enter invalid percentage (1.01)
-    fireEvent.change(discountValueInput, { target: { value: '1.01' } });
+    // Enter invalid percentage (101)
+    fireEvent.change(discountValueInput, { target: { value: '101' } });
     fireEvent.click(screen.getByRole('button', { name: /crear|crear promoción/i }));
 
     await waitFor(() =>
       expect(
         screen.getByText(
-          /porcentaje debe estar entre 0.01 y 1.00|percentage must be between 0.01 and 1.00/i
+          /porcentaje debe estar entre 1 y 100|percentage must be between 1 and 100/i
         )
       ).toBeInTheDocument()
     );
@@ -228,7 +228,7 @@ describe('PromotionForm', () => {
     fireEvent.change(screen.getByLabelText(/nombre/i), { target: { value: 'Test Promo' } });
     fireEvent.click(screen.getByLabelText(/tipo de descuento/i));
     fireEvent.click(screen.getByRole('option', { name: /porcentaje/i }));
-    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '0.15' } });
+    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '15' } });
     fireEvent.change(screen.getByLabelText(/fecha de inicio/i), {
       target: { value: '2026-09-01T10:00' },
     });
@@ -249,7 +249,7 @@ describe('PromotionForm', () => {
       id: 'new-id',
       name: 'Test Promo',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       status: 'Programada',
@@ -273,7 +273,7 @@ describe('PromotionForm', () => {
     fireEvent.change(screen.getByLabelText(/nombre/i), { target: { value: 'Test Promo' } });
     fireEvent.click(screen.getByLabelText(/tipo de descuento/i));
     fireEvent.click(screen.getByRole('option', { name: /porcentaje/i }));
-    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '0.15' } });
+    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '15' } });
     fireEvent.change(screen.getByLabelText(/fecha de inicio/i), {
       target: { value: '2026-09-01T10:00' },
     });
@@ -295,7 +295,7 @@ describe('PromotionForm', () => {
         expect.objectContaining({
           name: 'Test Promo',
           discount_type: 'percentage',
-          discount_value: 0.15,
+          discount_value: 15,
           product_ids: ['p1'],
           category_ids: [],
         })
@@ -323,7 +323,7 @@ describe('PromotionForm', () => {
     fireEvent.change(screen.getByLabelText(/nombre/i), { target: { value: 'Test Promo' } });
     fireEvent.click(screen.getByLabelText(/tipo de descuento/i));
     fireEvent.click(screen.getByRole('option', { name: /porcentaje/i }));
-    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '0.15' } });
+    fireEvent.change(screen.getByLabelText(/valor del descuento/i), { target: { value: '15' } });
     fireEvent.change(screen.getByLabelText(/fecha de inicio/i), {
       target: { value: '2026-09-01T10:00' },
     });
@@ -348,7 +348,7 @@ describe('PromotionForm', () => {
       id: 'new-id',
       name: 'Test Promo',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       status: 'Programada',
@@ -369,7 +369,7 @@ describe('PromotionForm', () => {
       id: '1',
       name: 'Existing Promo',
       discount_type: 'percentage',
-      discount_value: 0.2,
+      discount_value: 20,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       status: 'Programada',
@@ -403,7 +403,7 @@ describe('PromotionForm', () => {
       id: '1',
       name: 'Existing Promo',
       discount_type: 'percentage',
-      discount_value: 0.2,
+      discount_value: 20,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       status: 'Programada',

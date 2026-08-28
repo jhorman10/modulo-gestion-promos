@@ -20,10 +20,10 @@ const PromotionFormSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.discount_type === 'percentage') {
-      if (data.discount_value < 0.01 || data.discount_value > 1.0) {
+      if (data.discount_value < 1 || data.discount_value > 100) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Porcentaje debe estar entre 0.01 y 1.00',
+          message: 'Porcentaje debe estar entre 1 y 100',
           path: ['discount_value'],
         });
       }
@@ -95,7 +95,7 @@ export function PromotionForm({
     defaultValues: {
       name: '',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '',
       end_date: '',
       product_ids: [],
@@ -247,12 +247,12 @@ export function PromotionForm({
           <input
             id="discount_value"
             type="number"
-            step={discountType === 'percentage' ? '0.01' : '1'}
-            min={discountType === 'percentage' ? '0.01' : '1'}
-            max={discountType === 'percentage' ? '1' : undefined}
+            step={discountType === 'percentage' ? '1' : '1'}
+            min={discountType === 'percentage' ? '1' : '1'}
+            max={discountType === 'percentage' ? '100' : undefined}
             className={`form-input ${errors.discount_value ? 'error' : ''}`}
             {...register('discount_value', { valueAsNumber: true })}
-            placeholder={discountType === 'percentage' ? 'Ej: 0.15 (15%)' : 'Ej: 500'}
+            placeholder={discountType === 'percentage' ? 'Ej: 15 (15%)' : 'Ej: 500'}
             aria-describedby={
               errors.discount_value ? 'discount-value-error' : 'discount-value-hint'
             }
@@ -260,7 +260,7 @@ export function PromotionForm({
           />
           <p id="discount-value-hint" className="form-hint">
             {discountType === 'percentage'
-              ? 'Ingrese un valor entre 0.01 y 1.00 (ej: 0.15 para 15%)'
+              ? 'Ingrese un valor entre 1 y 100 (ej: 15 para 15%)'
               : 'Ingrese el monto fijo en pesos (ej: 500)'}
           </p>
           {errors.discount_value && (

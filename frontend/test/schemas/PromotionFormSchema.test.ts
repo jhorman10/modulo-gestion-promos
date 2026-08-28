@@ -5,7 +5,7 @@ describe('PromotionFormSchema', () => {
   const validBase = {
     name: 'Test Promotion',
     discount_type: 'percentage' as const,
-    discount_value: 0.15,
+    discount_value: 15,
     start_date: '2026-09-01T00:00:00Z',
     end_date: '2026-09-30T23:59:59Z',
     product_ids: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -19,7 +19,7 @@ describe('PromotionFormSchema', () => {
       if (result.success) {
         expect(result.data.name).toBe('Test Promotion');
         expect(result.data.discount_type).toBe('percentage');
-        expect(result.data.discount_value).toBe(0.15);
+        expect(result.data.discount_value).toBe(15);
       }
     });
 
@@ -43,43 +43,43 @@ describe('PromotionFormSchema', () => {
   });
 
   describe('percentage boundaries', () => {
-    it('should accept 0.01 (minimum percentage)', () => {
+    it('should accept 1 (minimum percentage)', () => {
       const result = PromotionFormSchema.safeParse({
         ...validBase,
-        discount_value: 0.01,
+        discount_value: 1,
       });
       expect(result.success).toBe(true);
     });
 
-    it('should accept 1.00 (maximum percentage)', () => {
+    it('should accept 100 (maximum percentage)', () => {
       const result = PromotionFormSchema.safeParse({
         ...validBase,
-        discount_value: 1.0,
+        discount_value: 100,
       });
       expect(result.success).toBe(true);
     });
 
-    it('should reject 0.005 (below minimum)', () => {
+    it('should reject 0.99 (below minimum)', () => {
       const result = PromotionFormSchema.safeParse({
         ...validBase,
-        discount_value: 0.005,
+        discount_value: 0.99,
       });
       expect(result.success).toBe(false);
       if (!result.success) {
         const discountError = result.error.issues.find(i => i.path.includes('discount_value'));
-        expect(discountError?.message).toContain('0.01');
+        expect(discountError?.message).toContain('1');
       }
     });
 
-    it('should reject 1.01 (above maximum)', () => {
+    it('should reject 101 (above maximum)', () => {
       const result = PromotionFormSchema.safeParse({
         ...validBase,
-        discount_value: 1.01,
+        discount_value: 101,
       });
       expect(result.success).toBe(false);
       if (!result.success) {
         const discountError = result.error.issues.find(i => i.path.includes('discount_value'));
-        expect(discountError?.message).toContain('1.00');
+        expect(discountError?.message).toContain('100');
       }
     });
   });

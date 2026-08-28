@@ -13,7 +13,7 @@ describe('PromotionValidator', () => {
     const validBasePayload = {
       name: 'Test Promotion',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '2026-09-01T00:00:00.000Z',
       end_date: '2026-09-30T23:59:59.000Z',
       product_ids: ['123e4567-e89b-12d3-a456-426614174000'],
@@ -25,7 +25,7 @@ describe('PromotionValidator', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.discount_type).toBe('percentage');
-        expect(result.data.discount_value).toBe(0.15);
+        expect(result.data.discount_value).toBe(15);
       }
     });
 
@@ -45,20 +45,20 @@ describe('PromotionValidator', () => {
       }
     });
 
-    it('should accept percentage value at lower boundary (0.01 = 1%)', () => {
-      const payload = { ...validBasePayload, discount_value: 0.01 };
+    it('should accept percentage value at lower boundary (1 = 1%)', () => {
+      const payload = { ...validBasePayload, discount_value: 1 };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(true);
     });
 
-    it('should accept percentage value at upper boundary (1.00 = 100%)', () => {
-      const payload = { ...validBasePayload, discount_value: 1.0 };
+    it('should accept percentage value at upper boundary (100 = 100%)', () => {
+      const payload = { ...validBasePayload, discount_value: 100 };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(true);
     });
 
-    it('should reject percentage value below lower boundary (0.005)', () => {
-      const payload = { ...validBasePayload, discount_value: 0.005 };
+    it('should reject percentage value below lower boundary (0.99)', () => {
+      const payload = { ...validBasePayload, discount_value: 0.99 };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -66,8 +66,8 @@ describe('PromotionValidator', () => {
       }
     });
 
-    it('should reject percentage value above upper boundary (1.01)', () => {
-      const payload = { ...validBasePayload, discount_value: 1.01 };
+    it('should reject percentage value above upper boundary (101)', () => {
+      const payload = { ...validBasePayload, discount_value: 101 };
       const result = createPromotionSchema.safeParse(payload);
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -228,14 +228,14 @@ describe('PromotionValidator', () => {
     });
 
     it('should accept partial update with only discount_value', () => {
-      const result = updatePromotionSchema.safeParse({ discount_value: 0.2 });
+      const result = updatePromotionSchema.safeParse({ discount_value: 20 });
       expect(result.success).toBe(true);
     });
 
     it('should reject percentage discount_value out of bounds in update', () => {
       const result = updatePromotionSchema.safeParse({
         discount_type: 'percentage',
-        discount_value: 1.5,
+        discount_value: 150,
       });
       expect(result.success).toBe(false);
     });

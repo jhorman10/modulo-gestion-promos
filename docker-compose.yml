@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     container_name: promos-db
     environment:
-      POSTGRES_DB: promos
-      POSTGRES_USER: promos
-      POSTGRES_PASSWORD: promos
+      POSTGRES_DB: ${POSTGRES_DB:-promos}
+      POSTGRES_USER: ${POSTGRES_USER:-promos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
     ports:
       - '5432:5432'
     volumes:
@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: promos-backend
     environment:
-      DATABASE_URL: postgresql://promos:promos@postgres:5432/promos?schema=public
+      DATABASE_URL: postgresql://promos:${POSTGRES_PASSWORD:-changeme}@postgres:5432/promos?schema=public
       NODE_ENV: production
       PORT: '3001'
       FRONTEND_URL: http://localhost:5173

@@ -19,10 +19,10 @@ export const PromotionFormSchema = z
   .superRefine((data, ctx) => {
     // Validate discount_value bounds based on discount_type
     if (data.discount_type === 'percentage') {
-      if (data.discount_value < 0.01 || data.discount_value > 1.0) {
+      if (data.discount_value < 1 || data.discount_value > 100) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Percentage discount_value must be between 0.01 and 1.00',
+          message: 'Percentage discount_value must be between 1 and 100',
           path: ['discount_value'],
         });
       }

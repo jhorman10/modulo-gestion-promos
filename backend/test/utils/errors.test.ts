@@ -7,14 +7,14 @@ describe('error formatter', () => {
   describe('formatError', () => {
     it('should produce RFC 7807 structure for validation error', () => {
       const result = formatError('VALIDATION_ERROR', 'Request validation failed', [
-        { field: 'discount_value', message: 'Must be between 0.01 and 1.00' },
+        { field: 'discount_value', message: 'Must be between 1 and 100' },
       ]);
 
       expect(result).toEqual({
         error: {
           code: 'VALIDATION_ERROR',
           message: 'Request validation failed',
-          details: [{ field: 'discount_value', message: 'Must be between 0.01 and 1.00' }],
+          details: [{ field: 'discount_value', message: 'Must be between 1 and 100' }],
         },
       });
     });

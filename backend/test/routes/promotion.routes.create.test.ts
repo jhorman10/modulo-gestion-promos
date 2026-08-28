@@ -54,7 +54,7 @@ describe('POST /api/promotions integration', () => {
   const validPayload = {
     name: 'Test Promotion',
     discount_type: 'percentage',
-    discount_value: 0.15,
+    discount_value: 15,
     start_date: '2026-09-01T00:00:00.000Z',
     end_date: '2026-09-30T23:59:59.000Z',
     product_ids: [],
@@ -74,7 +74,7 @@ describe('POST /api/promotions integration', () => {
         id: expect.any(String),
         name: 'Test Promotion',
         discount_type: 'percentage',
-        discount_value: 0.15,
+        discount_value: 15,
         status: 'Programada',
         products: expect.arrayContaining([
           expect.objectContaining({ id: testProductId, type: 'PRODUCT' }),
@@ -103,36 +103,36 @@ describe('POST /api/promotions integration', () => {
       expect(response.body.discount_value).toBe(500);
     });
 
-    it('should accept percentage value at lower boundary (0.01)', async () => {
+    it('should accept percentage value at lower boundary (1)', async () => {
       const payload = {
         ...validPayload,
-        discount_value: 0.01,
+        discount_value: 1,
         product_ids: [testProductId],
       };
 
       const response = await request(app).post('/api/promotions').send(payload).expect(201);
 
-      expect(response.body.discount_value).toBe(0.01);
+      expect(response.body.discount_value).toBe(1);
     });
 
-    it('should accept percentage value at upper boundary (1.00)', async () => {
+    it('should accept percentage value at upper boundary (100)', async () => {
       const payload = {
         ...validPayload,
-        discount_value: 1.0,
+        discount_value: 100,
         product_ids: [testProductId],
       };
 
       const response = await request(app).post('/api/promotions').send(payload).expect(201);
 
-      expect(response.body.discount_value).toBe(1.0);
+      expect(response.body.discount_value).toBe(100);
     });
   });
 
   describe('Error scenarios', () => {
-    it('should reject percentage value below lower boundary (0.005)', async () => {
+    it('should reject percentage value below lower boundary (0.99)', async () => {
       const payload = {
         ...validPayload,
-        discount_value: 0.005,
+        discount_value: 0.99,
         product_ids: [testProductId],
       };
 
@@ -145,10 +145,10 @@ describe('POST /api/promotions integration', () => {
       );
     });
 
-    it('should reject percentage value above upper boundary (1.01)', async () => {
+    it('should reject percentage value above upper boundary (101)', async () => {
       const payload = {
         ...validPayload,
-        discount_value: 1.01,
+        discount_value: 101,
         product_ids: [testProductId],
       };
 

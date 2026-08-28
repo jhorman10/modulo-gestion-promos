@@ -103,7 +103,7 @@ export function PromotionList({
                 </td>
                 <td>
                   {promotion.discount_type === 'percentage'
-                    ? `${(promotion.discount_value * 100).toFixed(0)}%`
+                    ? `${promotion.discount_value.toFixed(0)}%`
                     : `$${promotion.discount_value.toLocaleString()}`}
                 </td>
                 <td>
