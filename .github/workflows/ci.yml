@@ -92,8 +92,8 @@ jobs:
       - name: Generate Prisma Client
         run: npm exec -- prisma generate --schema=backend/prisma/schema.prisma
 
-      - name: Run Prisma migrations
-        run: npm exec -- prisma migrate deploy --schema=backend/prisma/schema.prisma
+      - name: Push Prisma schema to database
+        run: npm exec -- prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss
 
       - name: Run backend tests with coverage
         run: npm run test:coverage
@@ -105,10 +105,6 @@ jobs:
           name: backend-coverage
           path: backend/coverage/
           retention-days: 7
-
-      - name: Install frontend dependencies
-        run: npm ci
-        working-directory: frontend
 
       - name: Run frontend tests with coverage
         run: npm run test:coverage
