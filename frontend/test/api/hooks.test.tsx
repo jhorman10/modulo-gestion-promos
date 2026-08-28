@@ -37,10 +37,11 @@ const createWrapper = () => {
 };
 
 describe('usePromotions', () => {
-  const wrapper = createWrapper();
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    wrapper = createWrapper();
   });
 
   afterEach(() => {
@@ -98,10 +99,11 @@ describe('usePromotions', () => {
 });
 
 describe('usePromotionSummary', () => {
-  const wrapper = createWrapper();
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    wrapper = createWrapper();
   });
 
   afterEach(() => {
@@ -141,10 +143,11 @@ describe('usePromotionSummary', () => {
 });
 
 describe('useProductsCategories', () => {
-  const wrapper = createWrapper();
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    wrapper = createWrapper();
   });
 
   afterEach(() => {
