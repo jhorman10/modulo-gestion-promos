@@ -115,7 +115,7 @@ describe('PromotionForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/nombre es requerido|name is required/i)).toBeInTheDocument();
-      // discount_type defaults to 'percentage' and discount_value defaults to 0.15,
+      // discount_type defaults to 'percentage' and discount_value defaults to 15,
       // so those validations pass with default values
       expect(
         screen.getByText(/fecha de inicio es requerida|start date is required/i)

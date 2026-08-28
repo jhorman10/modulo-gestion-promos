@@ -35,7 +35,7 @@ const mockPromotion = {
   id: '1',
   name: 'Test Promo',
   discount_type: 'percentage' as const,
-  discount_value: 0.15,
+  discount_value: 15,
   start_date: '2026-09-01T00:00:00Z',
   end_date: '2026-09-30T23:59:59Z',
   status: 'Programada' as const,
@@ -66,7 +66,7 @@ describe('useCreatePromotion', () => {
     const payload = {
       name: 'Test Promo',
       discount_type: 'percentage' as const,
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       product_ids: ['p1'],
@@ -93,7 +93,7 @@ describe('useCreatePromotion', () => {
       result.current.mutate({
         name: '',
         discount_type: 'percentage',
-        discount_value: 0.15,
+        discount_value: 15,
         start_date: '2026-09-01T00:00:00Z',
         end_date: '2026-09-30T23:59:59Z',
         product_ids: ['p1'],

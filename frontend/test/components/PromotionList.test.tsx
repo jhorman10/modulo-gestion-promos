@@ -42,7 +42,7 @@ const mockPromotions: Promotion[] = [
     id: '1',
     name: 'Promo 1',
     discount_type: 'percentage',
-    discount_value: 0.15,
+    discount_value: 15,
     start_date: '2026-09-01T00:00:00Z',
     end_date: '2026-09-30T23:59:59Z',
     status: 'Programada',
@@ -69,10 +69,11 @@ const mockPromotions: Promotion[] = [
 ];
 
 describe('PromotionList', () => {
-  const wrapper = createWrapper();
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    wrapper = createWrapper();
   });
 
   afterEach(() => {
@@ -237,7 +238,7 @@ describe('PromotionList', () => {
       id: '3',
       name: 'Finalized Promo',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       start_date: '2026-09-01T00:00:00Z',
       end_date: '2026-09-30T23:59:59Z',
       status: 'Finalizada',
