@@ -1,11 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Generating Prisma Client..."
-npx prisma generate
-
-echo "Running database migrations..."
-npx prisma migrate deploy
+echo "Syncing database schema..."
+npx prisma db push --skip-generate
 
 echo "Seeding database with initial products and categories..."
 npx tsx prisma/seed.ts
