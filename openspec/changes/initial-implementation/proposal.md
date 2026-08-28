@@ -44,11 +44,11 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 
 **Database**: PostgreSQL + Prisma. Two core tables + junction for dual association:
 
-- `promotions` (id, name, discount_type, discount_value[decimal], start_date[datetime], end_date[datetime], status, deleted_at, timestamps)
+- `promotions` (id, name, discount_type, discount_value[decimal; integer 1-100 for percentage], start_date[datetime], end_date[datetime], status, deleted_at, timestamps)
 - `products_categories` (id, name, type[PRODUCT|CATEGORY], timestamps)
 - `promotion_product_category` (promotion_id, product_category_id, association_type[PRODUCT|CATEGORY]) — enables dual link
 
-**Discount value**: Stored as decimal (0.01–1.00) per decision. API accepts 1–100 for percentage, converts to decimal.
+**Discount value**: Percentage values are integers 1–100; the API accepts and stores them directly (no decimal conversion). Fixed amounts are stored as positive numbers.
 
 **Dates**: ISO 8601 datetime (TIMESTAMP in DB). "Valid today" compares server date against start/end date range.
 
@@ -83,7 +83,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 | Date/timezone handling for "valid today"      | Medium     | Store UTC, compare using `CURRENT_DATE` in DB query                       |
 | Docker healthcheck timing (backend before DB) | High       | `depends_on: condition: service_healthy` + retry logic in backend startup |
 | CI smoke test flakiness                       | Medium     | Robust wait-for-health script with 60s timeout and retries                |
-| Percentage decimal precision                  | Low        | Use `Decimal` in Prisma, validate 2 decimal places max                    |
+| Percentage validation range | Low        | Validate integer 1–100 in backend and frontend Zod schemas              |
 
 ## Rollback Plan
 

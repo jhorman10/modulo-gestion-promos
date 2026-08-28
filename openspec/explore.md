@@ -194,7 +194,7 @@ Proceed with the following implementation approach:
 
 | #   | Question                                                                                                                                                          | Impact                                  |
 | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| 1   | Should `discount_value` for percentage be stored as integer (1-100) or decimal (0.01-1.00)?                                                                       | API contract, frontend input            |
+| 1   | Should `discount_value` for percentage be stored as integer (1-100)? **Resolved: yes** — API accepts and stores integer 1-100 directly.                                                    | API contract, frontend input            |
 | 2   | Is "producto o categoría" a free-text field or a managed list? Current decision: managed list via `products_categories` table. Confirm?                           | DB schema, UI (select vs input)         |
 | 3   | Can a promotion be associated with BOTH a product AND a category? Requirement says "producto **o** categoría" (singular).                                         | Schema: single FK vs two nullable FKs   |
 | 4   | Should the summary endpoint (`/summary`) be public or authenticated?                                                                                              | Auth design (currently none specified)  |

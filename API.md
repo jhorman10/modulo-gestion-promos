@@ -70,7 +70,7 @@ Create a new promotion.
 {
   "name": "Summer Sale",
   "discount_type": "percentage",
-  "discount_value": 0.25,
+  "discount_value": 25,
   "start_date": "2025-06-01T00:00:00Z",
   "end_date": "2025-08-31T23:59:59Z",
   "product_ids": ["uuid-1", "uuid-2"],
@@ -84,7 +84,7 @@ Create a new promotion.
 | ---------------- | --------------------------- | ------------------------------------------- |
 | `name`           | string                      | Required, 1–200 characters                  |
 | `discount_type`  | `"percentage"` \| `"fixed"` | Required                                    |
-| `discount_value` | number                      | Required. Percentage: 0.01–1.00. Fixed: > 0 |
+| `discount_value` | number                      | Required. Percentage: integer 1–100. Fixed: > 0 |
 | `start_date`     | ISO 8601                    | Required, must end with `Z` (UTC)           |
 | `end_date`       | ISO 8601                    | Required, must be after `start_date`        |
 | `product_ids`    | UUID[]                      | At least one product or category required   |
@@ -97,7 +97,7 @@ Create a new promotion.
   "id": "uuid",
   "name": "Summer Sale",
   "discount_type": "percentage",
-  "discount_value": 0.25,
+  "discount_value": 25,
   "start_date": "2025-06-01T00:00:00.000Z",
   "end_date": "2025-08-31T23:59:59.000Z",
   "status": "Programada",
@@ -136,7 +136,7 @@ List promotions with pagination and optional filters.
       "id": "uuid",
       "name": "Summer Sale",
       "discount_type": "percentage",
-      "discount_value": 0.25,
+      "discount_value": 25,
       "start_date": "2025-06-01T00:00:00.000Z",
       "end_date": "2025-08-31T23:59:59.000Z",
       "status": "Programada",

@@ -59,7 +59,7 @@ The system SHALL use RFC 7807-style structure.
     "error": {
       "code": "VALIDATION_ERROR",
       "message": "Request validation failed",
-      "details": [{ "field": "discount_value", "message": "Must be between 0.01 and 1.00" }]
+      "details": [{ "field": "discount_value", "message": "Percentage discount_value must be between 1 and 100" }]
     }
   }
   ```

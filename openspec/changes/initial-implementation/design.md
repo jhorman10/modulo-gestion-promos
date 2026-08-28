@@ -13,7 +13,7 @@ Monorepo: `frontend/` (React+Vite+TS), `backend/` (Express+TS+Prisma), `docker-c
 | **Validation**       | Zod schemas → infer TS types                            | Runtime + compile-time, composable, matches spec contracts |
 | **Server State**     | TanStack Query v5                                       | Caching, deduping, invalidation built-in                   |
 | **Soft Delete**      | Prisma middleware `deleted_at: null` filter             | Single enforcement point, impossible to forget             |
-| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts 1–100      | Spec requires 0.01–1.00; avoids float precision            |
+| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts/stores integer 1–100    | Spec requires integer 1–100; avoids float precision              |
 | **Docker**           | Multi-stage: builder → nginx (FE) / node:20-alpine (BE) | ~20MB FE, ~50MB BE, no dev deps in prod                    |
 
 ## Data Flow
@@ -38,7 +38,7 @@ Browser → Nginx:80 → Frontend (Vite) → API calls → Backend:3001 → Pris
 
 ## Interfaces / Contracts
 
-**Promotion Create**: `{ name, discount_type: "percentage"|"fixed", discount_value: number, start_date, end_date, product_ids?, category_ids? }` → **Response 201**: Full promotion with `status: "Programada"`, associations.
+**Promotion Create**: `{ name, discount_type: "percentage"|"fixed", discount_value: number (integer 1–100 for percentage, > 0 for fixed), start_date, end_date, product_ids?, category_ids? }` → **Response 201**: Full promotion with `status: "Programada"`, associations.
 
 **List**: `GET /api/promotions?page&size` → `{ data: Promotion[], pagination: {total,page,size,total_pages} }`
 

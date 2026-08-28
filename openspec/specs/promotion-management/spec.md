@@ -10,7 +10,7 @@ Manages the complete lifecycle of promotions: creation, listing, state transitio
 
 The system MUST allow creating a promotion with all required fields.
 
-The system SHALL validate that discount_value is a decimal between 0.01 and 1.00 for percentage type.
+The system SHALL validate that discount_value is an integer between 1 and 100 for percentage type.
 
 The system SHALL validate that end_date is strictly after start_date (ISO 8601 datetime).
 
@@ -20,11 +20,11 @@ The system SHALL set initial status to "Programada" and deleted_at to null.
 
 #### Scenario: Happy path - create percentage promotion with product and category
 
-- GIVEN a valid promotion payload with discount_type "percentage", discount_value 0.15, start_date "2026-09-01T00:00:00Z", end_date "2026-09-30T23:59:59Z", and associations to product "Coca Cola 500ml" and category "Beverages"
+- GIVEN a valid promotion payload with discount_type "percentage", discount_value 15, start_date "2026-09-01T00:00:00Z", end_date "2026-09-30T23:59:59Z", and associations to product "Coca Cola 500ml" and category "Beverages"
 - WHEN POST /api/promotions is called
 - THEN response status is 201
 - AND response body contains promotion with id, status "Programada", and all provided fields
-- AND promotion is persisted with discount_value stored as decimal 0.15
+- AND promotion is persisted with discount_value 15 (percentage stored as integer)
 
 #### Scenario: Happy path - create fixed amount promotion
 
@@ -35,17 +35,17 @@ The system SHALL set initial status to "Programada" and deleted_at to null.
 
 #### Scenario: Edge case - percentage value at boundaries
 
-- GIVEN discount_value 0.01 (1%) or 1.00 (100%)
+- GIVEN discount_value 1 (1%) or 100 (100%)
 - WHEN POST /api/promotions is called
 - THEN promotion is created successfully
 
 #### Scenario: Error - percentage value out of range
 
-- GIVEN discount_value 0.005 or 1.01 for percentage type
+- GIVEN discount_value 0 or 101 for percentage type
 - WHEN POST /api/promotions is called
 - THEN response status is 400
 - AND error code is "VALIDATION_ERROR"
-- AND error message indicates percentage must be between 0.01 and 1.00
+- AND error message indicates percentage must be between 1 and 100
 
 #### Scenario: Error - end_date before or equal to start_date
 
@@ -279,7 +279,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 {
   "name": "string (1-200 chars)",
   "discount_type": "percentage | fixed",
-  "discount_value": "number (0.01-1.00 for percentage, >0 for fixed)",
+  "discount_value": "integer (1-100 for percentage, >0 for fixed)",
   "start_date": "ISO 8601 datetime",
   "end_date": "ISO 8601 datetime",
   "product_ids": "string[] (optional)",
@@ -350,7 +350,7 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 | ------------------------ | -------------------------------------------------------------------- |
 | name                     | Required, 1-200 chars                                                |
 | discount_type            | Required, enum: "percentage" \| "fixed"                              |
-| discount_value           | Required, number. Percentage: 0.01-1.00 (2 decimals max). Fixed: > 0 |
+| discount_value           | Required, number. Percentage: integer 1-100. Fixed: > 0 |
 | start_date               | Required, valid ISO 8601 datetime                                    |
 | end_date                 | Required, valid ISO 8601 datetime, > start_date                      |
 | product_ids              | Optional array of UUIDs, must exist in products_categories           |

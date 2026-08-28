@@ -11,7 +11,7 @@ This module allows users to register and manage promotions for POS products, con
 - **Promotion CRUD** — Create, list, edit, and soft-delete promotions
 - **State Machine** — Enforced lifecycle: Programada → Activa → Finalizada
 - **Dual Associations** — Promotions linked to products and/or categories via junction table
-- **Discount Types** — Percentage (0.01–1.00) and fixed amount discounts
+- **Discount Types** — Percentage (1–100) and fixed amount discounts
 - **Summary Dashboard** — Count by status + promotions valid today
 - **Validation** — Zod schemas on both frontend and backend
 - **Health Endpoint** — `GET /health` checks database connectivity

@@ -77,11 +77,11 @@ Chain strategy: pending
 
 ## Phase 2: Backend Promotions (CRUD, State Machine, Validations, Summary)
 
-- [x] 2.1 **RED** Write unit tests for PromotionValidator (Zod): 7+ scenarios — discount_value bounds (0.01–1.00), date ordering, required fields, enum values, at least one association, fixed amount > 0
+- [x] 2.1 **RED** Write unit tests for PromotionValidator (Zod): 7+ scenarios — discount_value bounds (1–100), date ordering, required fields, enum values, at least one association, fixed amount > 0
 - [x] 2.2 **GREEN** Implement `backend/src/validators/promotion.validator.ts` with Zod schemas (create, query, params)
 - [x] 2.3 **RED** Write unit tests for PromotionStateMachine: valid/invalid transitions per state (Programada→Activa, Activa→Finalizada, Programada→Deleted, Finalizada immutable)
 - [x] 2.4 **GREEN** Implement `backend/src/services/promotion-state-machine.ts` with transition validation logic
-- [x] 2.5 **RED** Write unit tests for PromotionService.create: valid payload → 201 with status Programada, associations persisted, decimal storage for percentage
+- [x] 2.5 **RED** Write unit tests for PromotionService.create: valid payload → 201 with status Programada, associations persisted, percentage stored as integer 1–100
 - [x] 2.6 **GREEN** Implement `backend/src/services/promotion.service.ts` create method (transaction: promotion + junction records)
 - [x] 2.7 **RED** Write integration tests for POST /api/promotions (7 scenarios from spec)
 - [x] 2.8 **GREEN** Implement controller + routes for create promotion
@@ -189,7 +189,7 @@ Chain strategy: pending
 - [x] 5.3 **RED** Write Playwright test: Soft delete exclusion — delete Programada → verify removed from list and summary
 - [x] 5.4 **RED** Write Playwright test: Invalid transitions blocked in UI — activate Finalizada, finalize Programada, delete Activa
 - [x] 5.5 **RED** Write Playwright test: Pagination — create 15 promotions, verify page 2 shows 5 items
-- [x] 5.6 **RED** Write Playwright test: Percentage boundary values (0.01, 1.00) accepted, 0.005 rejected
+- [x] 5.6 **RED** Write Playwright test: Percentage boundary values (1, 100) accepted, 0 and 101 rejected
 - [x] 5.7 **GREEN** Fix any integration issues found (CORS, env vars, healthcheck timing)
 - [x] 5.8 **REFACTOR** Add wait-for-health script `backend/scripts/wait-for-health.ts` (60s timeout, 2s interval, exponential backoff)
 - [x] 5.9 **REFACTOR** Verify `docker compose up -d` starts all 3 services healthy, `docker compose down -v` cleans up

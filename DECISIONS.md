@@ -150,7 +150,7 @@ Programada ──→ Activa ──→ Finalizada
 
 **Date**: 2025-08-27
 **Status**: Accepted
-**Context**: Discount values need precise decimal storage for percentages (0.01–1.00) and fixed amounts.
+**Context**: Discount values need precise numeric storage for percentages (integer 1–100) and fixed amounts.
 
 **Decision**: Store as `Decimal(10, 2)` in PostgreSQL, map to `number` in API responses.
 
@@ -159,7 +159,7 @@ Programada ──→ Activa ──→ Finalizada
 - Prisma `Decimal` type preserves precision (no floating-point errors)
 - `toFixed(2)` on input ensures consistent 2-decimal storage
 - API returns plain `number` for JSON serialization
-- Validation enforces bounds: percentage `0.01–1.00`, fixed `> 0`
+- Validation enforces bounds: percentage `1–100` (integer), fixed `> 0`
 
 **Consequences**:
 
