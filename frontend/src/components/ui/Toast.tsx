@@ -11,19 +11,31 @@ export function ToastProvider({ position = 'top-right' }: ToastProviderProps) {
       toastOptions={{
         duration: 4000,
         style: {
-          background: '#363636',
-          color: '#fff',
+          background: 'rgba(15, 10, 42, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          color: '#e2e8f0',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         },
         success: {
           iconTheme: {
             primary: '#22c55e',
             secondary: '#fff',
           },
+          style: {
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+          },
         },
         error: {
           iconTheme: {
             primary: '#ef4444',
             secondary: '#fff',
+          },
+          style: {
+            border: '1px solid rgba(239, 68, 68, 0.3)',
           },
         },
       }}
