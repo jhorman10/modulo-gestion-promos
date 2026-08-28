@@ -107,7 +107,7 @@ describe('GET /api/promotions integration', () => {
       data: {
         name: overrides.name || 'Test Promotion',
         discountType: overrides.discount_type === 'fixed' ? 'FIXED' : 'PERCENTAGE',
-        discountValue: overrides.discount_value || 0.15,
+        discountValue: overrides.discount_value || 15,
         startDate: new Date(overrides.start_date || '2026-09-01T00:00:00.000Z'),
         endDate: new Date(overrides.end_date || '2026-09-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],

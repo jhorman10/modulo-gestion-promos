@@ -71,7 +71,7 @@ describe('GET /api/promotions/:id integration', () => {
       data: {
         name: overrides.name || 'Test Promotion',
         discountType: overrides.discount_type === 'fixed' ? 'FIXED' : 'PERCENTAGE',
-        discountValue: overrides.discount_value || 0.15,
+        discountValue: overrides.discount_value || 15,
         startDate: new Date(overrides.start_date || '2026-09-01T00:00:00.000Z'),
         endDate: new Date(overrides.end_date || '2026-09-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],
@@ -121,7 +121,7 @@ describe('GET /api/promotions/:id integration', () => {
       id: promotion.id,
       name: 'Test Promotion',
       discount_type: 'percentage',
-      discount_value: 0.15,
+      discount_value: 15,
       status: 'Programada',
       products: expect.arrayContaining([
         expect.objectContaining({ id: product.id, type: 'PRODUCT' }),
@@ -259,7 +259,7 @@ describe('PATCH /api/promotions/:id integration', () => {
       data: {
         name: overrides.name || 'Test Promotion',
         discountType: overrides.discount_type === 'fixed' ? 'FIXED' : 'PERCENTAGE',
-        discountValue: overrides.discount_value || 0.15,
+        discountValue: overrides.discount_value || 15,
         startDate: new Date(overrides.start_date || '2026-09-01T00:00:00.000Z'),
         endDate: new Date(overrides.end_date || '2026-09-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],
@@ -306,10 +306,10 @@ describe('PATCH /api/promotions/:id integration', () => {
 
     const response = await request(app)
       .patch(`/api/promotions/${promotion.id}`)
-      .send({ discount_value: 0.25 })
+      .send({ discount_value: 25 })
       .expect(200);
 
-    expect(response.body.discount_value).toBe(0.25);
+    expect(response.body.discount_value).toBe(25);
   });
 
   it('should return 409 when updating Finalizada promotion', async () => {
@@ -353,7 +353,7 @@ describe('PATCH /api/promotions/:id integration', () => {
 
     const response = await request(app)
       .patch(`/api/promotions/${promotion.id}`)
-      .send({ discount_type: 'percentage', discount_value: 1.5 })
+      .send({ discount_type: 'percentage', discount_value: 0.5 })
       .expect(400);
 
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
@@ -410,7 +410,7 @@ describe('POST /api/promotions/:id/activate integration', () => {
       data: {
         name: overrides.name || 'Test Promotion',
         discountType: overrides.discount_type === 'fixed' ? 'FIXED' : 'PERCENTAGE',
-        discountValue: overrides.discount_value || 0.15,
+        discountValue: overrides.discount_value || 15,
         startDate: new Date(overrides.start_date || '2026-08-01T00:00:00.000Z'),
         endDate: new Date(overrides.end_date || '2026-08-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],
@@ -546,7 +546,7 @@ describe('POST /api/promotions/:id/finalize integration', () => {
       data: {
         name: 'Test Promotion',
         discountType: 'PERCENTAGE',
-        discountValue: 0.15,
+        discountValue: 15,
         startDate: new Date('2026-09-01T00:00:00.000Z'),
         endDate: new Date('2026-09-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Activa'],
@@ -652,7 +652,7 @@ describe('DELETE /api/promotions/:id integration', () => {
       data: {
         name: 'Test Promotion',
         discountType: 'PERCENTAGE',
-        discountValue: 0.15,
+        discountValue: 15,
         startDate: new Date('2026-09-01T00:00:00.000Z'),
         endDate: new Date('2026-09-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],
@@ -770,7 +770,7 @@ describe('GET /api/promotions/summary integration', () => {
       data: {
         name: 'Test Promotion',
         discountType: 'PERCENTAGE',
-        discountValue: 0.15,
+        discountValue: 15,
         startDate: new Date(overrides.start_date || '2026-08-01T00:00:00.000Z'),
         endDate: new Date(overrides.end_date || '2026-08-30T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],

@@ -41,7 +41,7 @@ describe('PromotionService - create', () => {
   const validCreateInput = {
     name: 'Test Promotion',
     discount_type: 'percentage' as const,
-    discount_value: 0.15,
+    discount_value: 15,
     start_date: new Date('2026-09-01T00:00:00.000Z'),
     end_date: new Date('2026-09-30T23:59:59.000Z'),
     product_ids: ['123e4567-e89b-12d3-a456-426614174000'],
@@ -52,7 +52,7 @@ describe('PromotionService - create', () => {
     id: 'promo-123',
     name: 'Test Promotion',
     discountType: 'PERCENTAGE',
-    discountValue: new Decimal('0.15'),
+    discountValue: new Decimal('15'),
     startDate: new Date('2026-09-01T00:00:00.000Z'),
     endDate: new Date('2026-09-30T23:59:59.000Z'),
     status: 'PROGRAMADA',
@@ -110,7 +110,7 @@ describe('PromotionService - create', () => {
       id: 'promo-123',
       name: 'Test Promotion',
       discount_type: 'percentage',
-      discount_value: 0.15,
+    discount_value: 15,
       start_date: '2026-09-01T00:00:00.000Z',
       end_date: '2026-09-30T23:59:59.000Z',
       status: 'Programada',
@@ -267,12 +267,12 @@ describe('PromotionService - create', () => {
     const result = await service.create(validCreateInput);
 
     // Assert
-    expect(result.discount_value).toBe(0.15);
+    expect(result.discount_value).toBe(15);
     // Verify Prisma was called with correct discount type and value
     const callArgs = mockTx.promotion.create.mock.calls[0][0];
     expect(callArgs.data.discountType).toBe('PERCENTAGE');
-    // Decimal object - check it represents 0.15
-    expect(Number(callArgs.data.discountValue)).toBe(0.15);
+    // Decimal object - check it represents 15
+    expect(Number(callArgs.data.discountValue)).toBe(15);
   });
 
   it('should set initial status to Programada', async () => {

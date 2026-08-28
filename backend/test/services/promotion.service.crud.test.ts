@@ -40,7 +40,7 @@ describe('PromotionService - update', () => {
     id: 'promo-1',
     name: 'Test Promotion',
     discountType: DiscountType.PERCENTAGE,
-    discountValue: new Decimal('0.15'),
+    discountValue: new Decimal('15'),
     startDate: new Date('2026-09-01T00:00:00.000Z'),
     endDate: new Date('2026-09-30T23:59:59.000Z'),
     status: PromotionStatus.PROGRAMADA,
@@ -99,7 +99,7 @@ describe('PromotionService - update', () => {
         promotion: {
           update: vi
             .fn()
-            .mockResolvedValue({ ...activePromotion, discountValue: new Decimal('0.25') }),
+            .mockResolvedValue({ ...activePromotion, discountValue: new Decimal('25') }),
         },
         promotionProductCategory: {
           deleteMany: vi.fn().mockResolvedValue({ count: 2 }),
@@ -111,10 +111,10 @@ describe('PromotionService - update', () => {
     mockPrisma.promotionProductCategory.findMany.mockResolvedValue(mockAssociations);
 
     // Act
-    const result = await service.update('promo-1', { discount_value: 0.25 });
+    const result = await service.update('promo-1', { discount_value: 25 });
 
     // Assert
-    expect(result.discount_value).toBe(0.25);
+    expect(result.discount_value).toBe(25);
   });
 
   it('should throw error when updating Finalizada promotion', async () => {
@@ -203,7 +203,7 @@ describe('PromotionService - activate', () => {
     id: 'promo-1',
     name: 'Test Promotion',
     discountType: DiscountType.PERCENTAGE,
-    discountValue: new Decimal('0.15'),
+    discountValue: new Decimal('15'),
     startDate: new Date('2026-08-01T00:00:00.000Z'),
     endDate: new Date('2026-08-30T23:59:59.000Z'),
     status: PromotionStatus.PROGRAMADA,
@@ -314,7 +314,7 @@ describe('PromotionService - finalize', () => {
     id: 'promo-1',
     name: 'Test Promotion',
     discountType: DiscountType.PERCENTAGE,
-    discountValue: new Decimal('0.15'),
+    discountValue: new Decimal('15'),
     startDate: new Date('2026-09-01T00:00:00.000Z'),
     endDate: new Date('2026-09-30T23:59:59.000Z'),
     status: PromotionStatus.ACTIVA,
@@ -397,7 +397,7 @@ describe('PromotionService - softDelete', () => {
     id: 'promo-1',
     name: 'Test Promotion',
     discountType: DiscountType.PERCENTAGE,
-    discountValue: new Decimal('0.15'),
+    discountValue: new Decimal('15'),
     startDate: new Date('2026-09-01T00:00:00.000Z'),
     endDate: new Date('2026-09-30T23:59:59.000Z'),
     status: PromotionStatus.PROGRAMADA,
