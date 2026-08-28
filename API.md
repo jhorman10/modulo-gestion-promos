@@ -80,15 +80,15 @@ Create a new promotion.
 
 **Validation Rules**
 
-| Field            | Type                        | Rules                                       |
-| ---------------- | --------------------------- | ------------------------------------------- |
-| `name`           | string                      | Required, 1–200 characters                  |
-| `discount_type`  | `"percentage"` \| `"fixed"` | Required                                    |
+| Field            | Type                        | Rules                                           |
+| ---------------- | --------------------------- | ----------------------------------------------- |
+| `name`           | string                      | Required, 1–200 characters                      |
+| `discount_type`  | `"percentage"` \| `"fixed"` | Required                                        |
 | `discount_value` | number                      | Required. Percentage: integer 1–100. Fixed: > 0 |
-| `start_date`     | ISO 8601                    | Required, must end with `Z` (UTC)           |
-| `end_date`       | ISO 8601                    | Required, must be after `start_date`        |
-| `product_ids`    | UUID[]                      | At least one product or category required   |
-| `category_ids`   | UUID[]                      | At least one product or category required   |
+| `start_date`     | ISO 8601                    | Required, must end with `Z` (UTC)               |
+| `end_date`       | ISO 8601                    | Required, must be after `start_date`            |
+| `product_ids`    | UUID[]                      | At least one product or category required       |
+| `category_ids`   | UUID[]                      | At least one product or category required       |
 
 **Response** `201 Created`
 

@@ -31,7 +31,7 @@ export function PromotionListContainer() {
       onSuccess: () => {
         toastService.success(`"${promotion.name}" activada correctamente`);
       },
-      onError: (err) => {
+      onError: err => {
         toastService.error(getErrorMessage(err, 'Error al activar la promoción'));
       },
     });
@@ -42,7 +42,7 @@ export function PromotionListContainer() {
       onSuccess: () => {
         toastService.success(`"${promotion.name}" finalizada correctamente`);
       },
-      onError: (err) => {
+      onError: err => {
         toastService.error(getErrorMessage(err, 'Error al finalizar la promoción'));
       },
     });
@@ -60,7 +60,7 @@ export function PromotionListContainer() {
         toastService.success(`"${deleteTarget.name}" eliminada correctamente`);
         setDeleteTarget(null);
       },
-      onError: (err) => {
+      onError: err => {
         toastService.error(getErrorMessage(err, 'Error al eliminar la promoción'));
         setDeleteTarget(null);
       },

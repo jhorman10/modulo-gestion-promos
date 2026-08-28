@@ -346,16 +346,16 @@ Programada ──(activate)──→ Activa ──(finalize)──→ Finalizada
 
 ## Validation Rules Summary
 
-| Field                    | Rule                                                                 |
-| ------------------------ | -------------------------------------------------------------------- |
-| name                     | Required, 1-200 chars                                                |
-| discount_type            | Required, enum: "percentage" \| "fixed"                              |
-| discount_value           | Required, number. Percentage: integer 1-100. Fixed: > 0 |
-| start_date               | Required, valid ISO 8601 datetime                                    |
-| end_date                 | Required, valid ISO 8601 datetime, > start_date                      |
-| product_ids              | Optional array of UUIDs, must exist in products_categories           |
-| category_ids             | Optional array of UUIDs, must exist in products_categories           |
-| At least one association | Required: product_ids.length + category_ids.length > 0               |
+| Field                    | Rule                                                       |
+| ------------------------ | ---------------------------------------------------------- |
+| name                     | Required, 1-200 chars                                      |
+| discount_type            | Required, enum: "percentage" \| "fixed"                    |
+| discount_value           | Required, number. Percentage: integer 1-100. Fixed: > 0    |
+| start_date               | Required, valid ISO 8601 datetime                          |
+| end_date                 | Required, valid ISO 8601 datetime, > start_date            |
+| product_ids              | Optional array of UUIDs, must exist in products_categories |
+| category_ids             | Optional array of UUIDs, must exist in products_categories |
+| At least one association | Required: product_ids.length + category_ids.length > 0     |
 
 ---
 

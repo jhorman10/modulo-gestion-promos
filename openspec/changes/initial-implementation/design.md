@@ -6,15 +6,15 @@ Monorepo: `frontend/` (React+Vite+TS), `backend/` (Express+TS+Prisma), `docker-c
 
 ## Architecture Decisions
 
-| Decision             | Choice                                                  | Rationale                                                  |
-| -------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
-| **Monorepo**         | Single repo, `frontend/` `backend/` at root             | Atomic commits, shared docker-compose, simple CI           |
-| **State Machine**    | Explicit endpoints + service validation                 | Testable, observable, portable; no hidden DB triggers      |
-| **Validation**       | Zod schemas → infer TS types                            | Runtime + compile-time, composable, matches spec contracts |
-| **Server State**     | TanStack Query v5                                       | Caching, deduping, invalidation built-in                   |
-| **Soft Delete**      | Prisma middleware `deleted_at: null` filter             | Single enforcement point, impossible to forget             |
-| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts/stores integer 1–100    | Spec requires integer 1–100; avoids float precision              |
-| **Docker**           | Multi-stage: builder → nginx (FE) / node:20-alpine (BE) | ~20MB FE, ~50MB BE, no dev deps in prod                    |
+| Decision             | Choice                                                            | Rationale                                                  |
+| -------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Monorepo**         | Single repo, `frontend/` `backend/` at root                       | Atomic commits, shared docker-compose, simple CI           |
+| **State Machine**    | Explicit endpoints + service validation                           | Testable, observable, portable; no hidden DB triggers      |
+| **Validation**       | Zod schemas → infer TS types                                      | Runtime + compile-time, composable, matches spec contracts |
+| **Server State**     | TanStack Query v5                                                 | Caching, deduping, invalidation built-in                   |
+| **Soft Delete**      | Prisma middleware `deleted_at: null` filter                       | Single enforcement point, impossible to forget             |
+| **Discount Storage** | Prisma `Decimal` (NUMERIC 10,2); API accepts/stores integer 1–100 | Spec requires integer 1–100; avoids float precision        |
+| **Docker**           | Multi-stage: builder → nginx (FE) / node:20-alpine (BE)           | ~20MB FE, ~50MB BE, no dev deps in prod                    |
 
 ## Data Flow
 

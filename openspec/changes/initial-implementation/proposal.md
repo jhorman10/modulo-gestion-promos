@@ -83,7 +83,7 @@ Build the Promotions Management Module (technical test for Kódigo Fuente) — a
 | Date/timezone handling for "valid today"      | Medium     | Store UTC, compare using `CURRENT_DATE` in DB query                       |
 | Docker healthcheck timing (backend before DB) | High       | `depends_on: condition: service_healthy` + retry logic in backend startup |
 | CI smoke test flakiness                       | Medium     | Robust wait-for-health script with 60s timeout and retries                |
-| Percentage validation range | Low        | Validate integer 1–100 in backend and frontend Zod schemas              |
+| Percentage validation range                   | Low        | Validate integer 1–100 in backend and frontend Zod schemas                |
 
 ## Rollback Plan
 
