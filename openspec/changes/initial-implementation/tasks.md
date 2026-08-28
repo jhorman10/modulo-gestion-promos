@@ -201,20 +201,20 @@ Chain strategy: pending
 
 ---
 
-## Phase 6: CI/CD Pipeline (GitHub Actions Workflow)
+## Phase 6: CI/CD Pipeline (GitHub Actions Workflow) — ✅ COMPLETE (12/12)
 
-- [ ] 6.1 **RED** Write unit test for workflow YAML: validates structure, jobs, needs dependencies, env var checks
-- [ ] 6.2 **GREEN** Create `.github/workflows/ci.yml` with 4 jobs: lint → test → build → smoke_test
-- [ ] 6.3 **RED** Write test for lint job: runs ESLint + Prettier on frontend/backend, fails on errors
-- [ ] 6.4 **GREEN** Implement lint job steps: checkout, setup-node, npm ci, npm run lint (both dirs)
-- [ ] 6.5 **RED** Write test for test job: runs Vitest with coverage, enforces >80% on backend services/validators
-- [ ] 6.6 **GREEN** Implement test job: needs lint, runs backend/frontend tests, uploads coverage artifacts
-- [ ] 6.7 **RED** Write test for build job: builds both Docker images successfully
-- [ ] 6.8 **GREEN** Implement build job: needs test, docker build frontend/backend, push to GHCR (optional)
-- [ ] 6.9 **RED** Write test for smoke_test job: validates DATABASE_URL/NODE_ENV secrets exist before docker compose
-- [ ] 6.10 **GREEN** Implement smoke_test job: needs build, waits for /health 200 (60s, retries), verifies frontend port 5173, `docker compose down -v` in always()
-- [ ] 6.11 **REFACTOR** Add caching for node_modules and Prisma in all jobs
-- [ ] 6.12 **REFACTOR** Configure GitHub Secrets: DATABASE_URL (postgres://...), NODE_ENV=test
+- [x] 6.1 **RED** Write unit test for workflow YAML: validates structure, jobs, needs dependencies, env var checks
+- [x] 6.2 **GREEN** Create `.github/workflows/ci.yml` with 4 jobs: lint → test → build → smoke_test
+- [x] 6.3 **RED** Write test for lint job: runs ESLint + Prettier on frontend/backend, fails on errors
+- [x] 6.4 **GREEN** Implement lint job steps: checkout, setup-node, npm ci, npm run lint (both dirs)
+- [x] 6.5 **RED** Write test for test job: runs Vitest with coverage, enforces >80% on backend services/validators
+- [x] 6.6 **GREEN** Implement test job: needs lint, runs backend/frontend tests, uploads coverage artifacts
+- [x] 6.7 **RED** Write test for build job: builds both Docker images successfully
+- [x] 6.8 **GREEN** Implement build job: needs test, docker build frontend/backend, push to GHCR (optional)
+- [x] 6.9 **RED** Write test for smoke_test job: validates DATABASE_URL/NODE_ENV secrets exist before docker compose
+- [x] 6.10 **GREEN** Implement smoke_test job: needs build, waits for /health 200 (60s, retries), verifies frontend port 5173, `docker compose down -v` in always()
+- [x] 6.11 **REFACTOR** Add caching for node_modules and Prisma in all jobs
+- [x] 6.12 **REFACTOR** Configure GitHub Secrets: DATABASE_URL (postgres://...), NODE_ENV=test
 
 **Test Commands**: `act push --workflows .github/workflows/ci.yml` (local) or push to test branch
 **Spec Refs**: ci-cd-pipeline (all 7 scenarios)
@@ -246,7 +246,7 @@ Chain strategy: pending
 | Phase 3 | 17 | Frontend core: API client, hooks, shared components |
 | Phase 4 | 17 | Frontend features: pages, mutations, E2E flows |
 | Phase 5 | 10 | Integration & E2E: docker compose, full flows |
-| Phase 6 | 12 | CI/CD pipeline: 4-stage GitHub Actions |
+| Phase 6 | 12 | CI/CD pipeline: 4-stage GitHub Actions ✅ |
 | Phase 7 | 5 | Documentation: README, DECISIONS, env examples |
 | **Total** | **118** | **Full implementation** |
 

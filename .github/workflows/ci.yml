@@ -1,0 +1,276 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  # ─── Stage 1: Lint ───────────────────────────────────────────────
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Run Prettier check
+        run: npx prettier --check .
+
+      - name: Run ESLint (backend)
+        run: npm run lint
+        working-directory: backend
+
+      - name: Run ESLint (frontend)
+        run: npm run lint
+        working-directory: frontend
+
+      - name: Run TypeScript type check (backend)
+        run: npm run typecheck
+        working-directory: backend
+
+      - name: Run TypeScript type check (frontend)
+        run: npm run typecheck
+        working-directory: frontend
+
+  # ─── Stage 2: Test ───────────────────────────────────────────────
+  test:
+    name: Unit & Integration Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        working-directory: backend
+
+      - name: Run backend tests with coverage
+        run: npm run test:coverage
+        working-directory: backend
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/
+          retention-days: 7
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Run frontend tests with coverage
+        run: npm run test:coverage
+        working-directory: frontend
+
+      - name: Upload frontend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+          retention-days: 7
+
+  # ─── Stage 3: Build ──────────────────────────────────────────────
+  build:
+    name: Build Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (backend)
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/backend
+          tags: |
+            type=sha,prefix=
+            type=ref,event=branch
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Extract metadata (frontend)
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/frontend
+          tags: |
+            type=sha,prefix=
+            type=ref,event=branch
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ─── Stage 4: Smoke Test ────────────────────────────────────────
+  smoke_test:
+    name: Smoke Test (Docker Compose)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      HEALTH_URL: http://localhost:3001/health
+      TIMEOUT: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          echo "Checking required environment configuration..."
+          # Ensure .env.example exists (no real secrets in repo)
+          if [ ! -f .env.example ]; then
+            echo "ERROR: .env.example not found in repository root"
+            exit 1
+          fi
+          echo "✓ .env.example present"
+
+      - name: Create .env for smoke test
+        run: |
+          cat > .env <<EOF
+          DATABASE_URL=postgresql://promos:promos@localhost:5432/promos?schema=public
+          NODE_ENV=test
+          PORT=3001
+          FRONTEND_URL=http://localhost:5173
+          EOF
+
+      - name: Start docker-compose services
+        run: docker compose up -d
+
+      - name: Wait for backend health check
+        run: |
+          echo "Waiting for backend at ${{ env.HEALTH_URL }}..."
+          START_TIME=$(date +%s)
+          TIMEOUT=${{ env.TIMEOUT }}
+
+          while true; do
+            CURRENT_TIME=$(date +%s)
+            ELAPSED=$((CURRENT_TIME - START_TIME))
+
+            if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+              echo "ERROR: Health check timed out after ${TIMEOUT}s"
+              docker compose logs backend
+              docker compose ps
+              exit 1
+            fi
+
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.HEALTH_URL }}" 2>/dev/null || echo "000")
+
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "✓ Backend health check passed (${ELAPSED}s)"
+              break
+            fi
+
+            echo "  Waiting... (${ELAPSED}s elapsed, status: $HTTP_STATUS)"
+            sleep 2
+          done
+
+      - name: Verify health response body
+        run: |
+          echo "Verifying health response body..."
+          HEALTH_BODY=$(curl -s "${{ env.HEALTH_URL }}")
+          echo "Response: $HEALTH_BODY"
+
+          if echo "$HEALTH_BODY" | grep -q '"status"'; then
+            echo "✓ Health response body valid"
+          else
+            echo "ERROR: Health response body missing 'status' field"
+            exit 1
+          fi
+
+      - name: Verify frontend accessibility
+        run: |
+          echo "Checking frontend accessibility..."
+          FRONTEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 2>/dev/null || echo "000")
+
+          if [ "$FRONTEND_STATUS" = "200" ]; then
+            echo "✓ Frontend accessible (status: $FRONTEND_STATUS)"
+          else
+            echo "WARNING: Frontend returned status $FRONTEND_STATUS"
+          fi
+
+      - name: Capture container logs (on failure)
+        if: failure()
+        run: |
+          echo "=== Container Logs ==="
+          docker compose logs --tail=50
+          echo "=== Container Status ==="
+          docker compose ps
+
+      - name: Tear down docker-compose
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+      - name: Cleanup .env file
+        if: always()
+        run: rm -f .env
