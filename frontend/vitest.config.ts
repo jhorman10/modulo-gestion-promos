@@ -10,6 +10,7 @@ export default defineConfig({
     include: ['test/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
+      all: true,
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
@@ -19,6 +20,8 @@ export default defineConfig({
         '**/*.e2e.{ts,tsx}',
         'src/main.tsx',
         'src/vite-env.d.ts',
+        '**/.eslintrc.*',
+        '**/*.config.*',
       ],
       thresholds: {
         lines: 85,

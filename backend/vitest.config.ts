@@ -13,8 +13,19 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
+      all: true,
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', '**/*.test.ts', '**/*.spec.ts', 'prisma/', 'src/main.ts'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+        'prisma/',
+        'src/main.ts',
+        'scripts/**',
+        '**/.eslintrc.*',
+        '**/*.config.*',
+      ],
       thresholds: {
         lines: 80,
         functions: 80,

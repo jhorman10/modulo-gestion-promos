@@ -1,3 +1,10 @@
+# CI/CD Pipeline — Hardening Notes
+# ──────────────────────────────────────────────────────────────────────
+# Pre-commit hooks (husky + lint-staged) enforce Prettier formatting and
+# ESLint --fix on every commit, preventing unformatted code from reaching CI.
+# Vitest coverage uses all: true so every source file counts toward thresholds —
+# new files without tests immediately and visibly lower coverage.
+# ──────────────────────────────────────────────────────────────────────
 name: CI/CD Pipeline
 
 on:
@@ -190,29 +197,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate required secrets
+      # The smoke test uses a disposable docker-compose DB (ephemeral, torn down
+      # at the end of this job). POSTGRES_PASSWORD defaults to 'changeme' ONLY
+      # for this throwaway test DB — safe because it is never exposed to the
+      # internet or used for persistent data. If a real secret is configured in
+      # GitHub Secrets it will be honored instead.
+      - name: Resolve smoke-test secrets
         run: |
-          echo "Checking required environment configuration..."
-          REQUIRED_SECRETS=(
-            POSTGRES_PASSWORD
-          )
-          for secret in "${REQUIRED_SECRETS[@]}"; do
-            if [ -z "${!secret}" ]; then
-              echo "WARNING: Secret '$secret' is not set in GitHub Secrets"
-              echo "Using default value for smoke test"
-            fi
-          done
-          echo "✓ Secrets validated"
+          POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+          if [ -n "$POSTGRES_PASSWORD" ]; then
+            echo "Using POSTGRES_PASSWORD from GitHub Secrets"
+          else
+            echo "POSTGRES_PASSWORD not set in GitHub Secrets — using default 'changeme'"
+            echo "This is safe: the smoke-test DB is disposable (docker compose down -v)"
+            POSTGRES_PASSWORD="changeme"
+          fi
+          echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Create .env for smoke test
         run: |
-          echo "DATABASE_URL=postgresql://promos:changeme@postgres:5432/promos?schema=public" > .env
+          echo "DATABASE_URL=postgresql://promos:${POSTGRES_PASSWORD}@postgres:5432/promos?schema=public" > .env
           echo "NODE_ENV=test" >> .env
           echo "PORT=3001" >> .env
           echo "FRONTEND_URL=http://localhost:5173" >> .env
           echo "POSTGRES_DB=promos" >> .env
           echo "POSTGRES_USER=promos" >> .env
-          echo "POSTGRES_PASSWORD=changeme" >> .env
+          echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
 
       - name: Start docker-compose services
         run: docker compose up -d

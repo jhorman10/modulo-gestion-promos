@@ -27,13 +27,21 @@
     "db:seed": "npm run db:seed --workspace=backend",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down -v",
-    "docker:logs": "docker compose logs -f"
+    "docker:logs": "docker compose logs -f",
+    "prepare": "husky"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.2.5",
     "prisma": "^5.12.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,md,yml,yaml,prisma,sh}": "prettier --write",
+    "frontend/**/*.{ts,tsx}": "eslint --fix --config frontend/.eslintrc.cjs",
+    "backend/**/*.{ts,tsx}": "eslint --fix --config backend/.eslintrc.js"
   },
   "engines": {
     "node": ">=20.0.0"
