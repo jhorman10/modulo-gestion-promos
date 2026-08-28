@@ -184,16 +184,16 @@ Chain strategy: pending
 
 ## Phase 5: Integration & E2E (Docker Compose, Full Flow Tests)
 
-- [ ] 5.1 **RED** Write Playwright E2E test: Full flow — create → activate → summary shows active → finalize → summary shows finalized
-- [ ] 5.2 **GREEN** Run E2E against local docker-compose (backend + postgres + frontend)
-- [ ] 5.3 **RED** Write Playwright test: Soft delete exclusion — delete Programada → verify removed from list and summary
-- [ ] 5.4 **RED** Write Playwright test: Invalid transitions blocked in UI — activate Finalizada, finalize Programada, delete Activa
-- [ ] 5.5 **RED** Write Playwright test: Pagination — create 15 promotions, verify page 2 shows 5 items
-- [ ] 5.6 **RED** Write Playwright test: Percentage boundary values (0.01, 1.00) accepted, 0.005 rejected
-- [ ] 5.7 **GREEN** Fix any integration issues found (CORS, env vars, healthcheck timing)
-- [ ] 5.8 **REFACTOR** Add wait-for-health script `backend/scripts/wait-for-health.ts` (60s timeout, 2s interval, exponential backoff)
-- [ ] 5.9 **REFACTOR** Verify `docker compose up -d` starts all 3 services healthy, `docker compose down -v` cleans up
-- [ ] 5.10 **REFACTOR** Run full backend test suite with coverage: `cd backend && npm run test:coverage` (target >80%)
+- [x] 5.1 **RED** Write Playwright E2E test: Full flow — create → activate → summary shows active → finalize → summary shows finalized
+- [x] 5.2 **GREEN** Run E2E against local docker-compose (backend + postgres + frontend)
+- [x] 5.3 **RED** Write Playwright test: Soft delete exclusion — delete Programada → verify removed from list and summary
+- [x] 5.4 **RED** Write Playwright test: Invalid transitions blocked in UI — activate Finalizada, finalize Programada, delete Activa
+- [x] 5.5 **RED** Write Playwright test: Pagination — create 15 promotions, verify page 2 shows 5 items
+- [x] 5.6 **RED** Write Playwright test: Percentage boundary values (0.01, 1.00) accepted, 0.005 rejected
+- [x] 5.7 **GREEN** Fix any integration issues found (CORS, env vars, healthcheck timing)
+- [x] 5.8 **REFACTOR** Add wait-for-health script `backend/scripts/wait-for-health.ts` (60s timeout, 2s interval, exponential backoff)
+- [x] 5.9 **REFACTOR** Verify `docker compose up -d` starts all 3 services healthy, `docker compose down -v` cleans up
+- [x] 5.10 **REFACTOR** Run full backend test suite with coverage: `cd backend && npm run test:coverage` (target >80%)
 
 **Test Commands**: `docker compose up -d && cd frontend && npx playwright test && docker compose down -v`
 **Spec Refs**: health-monitoring (E2E), promotion-management (E2E), promotion-summary (E2E), ci-cd-pipeline (smoke test)
