@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { ProductCategoryService } from '../services/product-category.service';
 import { paginationQuerySchema } from '../utils/pagination';
 import { z } from 'zod';

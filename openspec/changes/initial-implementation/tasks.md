@@ -222,13 +222,13 @@ Chain strategy: pending
 
 ---
 
-## Phase 7: Documentation (README, DECISIONS.md, .env.example)
+## Phase 7: Documentation (README, DECISIONS.md, .env.example) — ✅ COMPLETE (5/5)
 
-- [ ] 7.1 Create `README.md` with: project overview, prerequisites, quick start (`docker compose up`), local dev (backend/frontend separate), test commands, CI/CD overview, API reference links
-- [ ] 7.2 Update `DECISIONS.md` with: stack choices rationale, state machine design, discount decimal storage, soft delete approach, Docker multi-stage, CI/CD structure, testing strategy
-- [ ] 7.3 Verify `.env.example` completeness: DATABASE_URL, NODE_ENV, PORT, FRONTEND_URL, JWT_SECRET (placeholder)
-- [ ] 7.4 Create `backend/.env.example` and `frontend/.env.example` if service-specific vars needed
-- [ ] 7.5 Add API documentation (OpenAPI/Swagger) — optional: generate from Zod schemas
+- [x] 7.1 Create `README.md` with: project overview, prerequisites, quick start (`docker compose up`), local dev (backend/frontend separate), test commands, CI/CD overview, API reference links
+- [x] 7.2 Update `DECISIONS.md` with: stack choices rationale, state machine design, discount decimal storage, soft delete approach, Docker multi-stage, CI/CD structure, testing strategy
+- [x] 7.3 Verify `.env.example` completeness: DATABASE_URL, NODE_ENV, PORT, FRONTEND_URL, JWT_SECRET (placeholder)
+- [x] 7.4 Create `backend/.env.example` and `frontend/.env.example` if service-specific vars needed
+- [x] 7.5 Add API documentation (OpenAPI/Swagger) — optional: generate from Zod schemas
 
 **Test Commands**: Manual review — verify `docker compose up` works from clean clone using README
 **Spec Refs**: All specs (deliverables requirement), ci-cd-pipeline (secrets management)
@@ -247,7 +247,7 @@ Chain strategy: pending
 | Phase 4 | 17 | Frontend features: pages, mutations, E2E flows |
 | Phase 5 | 10 | Integration & E2E: docker compose, full flows |
 | Phase 6 | 12 | CI/CD pipeline: 4-stage GitHub Actions ✅ |
-| Phase 7 | 5 | Documentation: README, DECISIONS, env examples |
+| Phase 7 | 5 | Documentation: README, DECISIONS, env examples ✅ |
 | **Total** | **118** | **Full implementation** |
 
 ### Implementation Order

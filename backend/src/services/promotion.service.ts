@@ -1,6 +1,9 @@
-import { PrismaClient, PromotionStatus, DiscountType, ProductCategoryType, Prisma } from '@prisma/client';
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import type { PrismaClient, Prisma } from '@prisma/client';
+import { PromotionStatus, DiscountType, ProductCategoryType } from '@prisma/client';
 import { prisma } from '../prisma/client';
-import { PromotionStateMachine, PromotionStatus as PromotionStatusType } from './promotion-state-machine';
+import type { PromotionStatus as PromotionStatusType } from './promotion-state-machine';
+import { PromotionStateMachine } from './promotion-state-machine';
 import { Decimal } from '@prisma/client/runtime/library';
 import { createAppError, ErrorCode } from '../utils/errors';
 import { calculatePagination } from '../utils/pagination';
@@ -286,43 +289,6 @@ return {
       data,
       pagination: calculatePagination(page, size, total),
     };
-  }
-
-  /**
-   * Get promotion by ID with associations
-   */
-  async getById(id: string): Promise<PromotionWithAssociations | null> {
-    const promotion = await this.prisma.promotion.findUnique({
-      where: { id },
-    });
-
-    if (!promotion) {
-      return null;
-    }
-
-    // Fetch associations
-    const associations = await this.prisma.promotionProductCategory.findMany({
-      where: { promotionId: promotion.id },
-      include: { productCategory: true },
-    });
-
-    const products = associations
-      .filter(a => a.associationType === ProductCategoryType.PRODUCT)
-      .map(a => ({
-        id: a.productCategory.id,
-        name: a.productCategory.name,
-        type: 'PRODUCT' as const,
-      }));
-
-    const categories = associations
-      .filter(a => a.associationType === ProductCategoryType.CATEGORY)
-      .map(a => ({
-        id: a.productCategory.id,
-        name: a.productCategory.name,
-        type: 'CATEGORY' as const,
-      }));
-
-    return this.mapPromotionToResponse(promotion, products, categories);
   }
 
   /**

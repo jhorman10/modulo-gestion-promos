@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
-import { PromotionService, PromotionCreateInput, PromotionListQuery, PromotionUpdateInput } from '../services/promotion.service';
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import type { Request, Response } from 'express';
+import type { PromotionCreateInput, PromotionListQuery, PromotionUpdateInput } from '../services/promotion.service';
+import { PromotionService } from '../services/promotion.service';
 import { SummaryService } from '../services/summary.service';
 import { createPromotionSchema, promotionQuerySchema, promotionParamsSchema, updatePromotionSchema } from '../validators/promotion.validator';
 import { validateBody, validateQuery, validateParams } from '../middleware/validate';
-import { createAppError, ErrorCode } from '../utils/errors';
 
 export class PromotionController {
   private service: PromotionService;
@@ -41,7 +42,7 @@ export class PromotionController {
       const listQuery: PromotionListQuery = {
         page: query.page ? parseInt(query.page as string, 10) : undefined,
         size: query.size ? parseInt(query.size as string, 10) : undefined,
-        status: query.status as PromotionListQuery['status'],
+        status: query.status,
         product_id: query.product_id,
         category_id: query.category_id,
         start_date_from: query.start_date_from ? new Date(query.start_date_from as string) : undefined,
@@ -172,12 +173,8 @@ export class PromotionController {
   }
 
   async getSummary(req: Request, res: Response): Promise<void> {
-    try {
-      const summary = await this.summaryService.getSummary();
-      res.status(200).json(summary);
-    } catch (error: any) {
-      throw error;
-    }
+    const summary = await this.summaryService.getSummary();
+    res.status(200).json(summary);
   }
 }
 

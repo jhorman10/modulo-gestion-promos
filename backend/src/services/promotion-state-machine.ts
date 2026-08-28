@@ -1,4 +1,4 @@
-import { createAppError, ErrorCode } from '../utils/errors';
+import { ErrorCode } from '../utils/errors';
 
 /**
  * Promotion status enum (matches Prisma enum)
@@ -65,7 +65,7 @@ export class PromotionStateMachine {
       return {
         allowed: false,
         error: new StateTransitionError(
-          `Invalid source state: ${fromState}`,
+          `Invalid source state: ${fromState as string}`,
           fromState,
           toState
         ),
@@ -76,7 +76,7 @@ export class PromotionStateMachine {
       return {
         allowed: false,
         error: new StateTransitionError(
-          `Invalid target state: ${toState}`,
+          `Invalid target state: ${toState as string}`,
           fromState,
           toState
         ),

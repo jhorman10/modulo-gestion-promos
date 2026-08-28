@@ -1,6 +1,8 @@
-import { PrismaClient, ProductCategoryType } from '@prisma/client';
+import type { PrismaClient, Prisma } from '@prisma/client';
+import { ProductCategoryType } from '@prisma/client';
 import { prisma } from '../prisma/client';
-import { calculatePagination, PaginationQuery } from '../utils/pagination';
+import type { PaginationQuery } from '../utils/pagination';
+import { calculatePagination } from '../utils/pagination';
 
 export interface ProductCategoryListResult {
   products: Array<{ id: string; name: string; type: 'PRODUCT' }>;
@@ -24,11 +26,11 @@ export class ProductCategoryService {
     this.prisma = prismaClient || prisma;
   }
 
-  async listAll(params: ProductCategoryListParams = {}): Promise<ProductCategoryListResult> {
+  async listAll(params: ProductCategoryListParams = {} as ProductCategoryListParams): Promise<ProductCategoryListResult> {
     const { page = 1, size = 50, type } = params;
     
     // Build where clause
-    const where: any = {};
+    const where: Prisma.ProductCategoryWhereInput = {};
     if (type) {
       where.type = type;
     }

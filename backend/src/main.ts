@@ -1,14 +1,15 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import type { Express, Request, Response} from 'express';
+import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { createHealthRoutes } from './routes/health.routes';
 import { createProductCategoryRoutes } from './routes/product-category.routes';
 import { createPromotionRoutes } from './routes/promotion.routes';
-import { HealthService } from './services/health.service';
-import { ProductCategoryService } from './services/product-category.service';
-import { PromotionService } from './services/promotion.service';
-import { SummaryService } from './services/summary.service';
+import type { HealthService } from './services/health.service';
+import type { ProductCategoryService } from './services/product-category.service';
+import type { PromotionService } from './services/promotion.service';
+import type { SummaryService } from './services/summary.service';
 import { errorHandler } from './middleware/error-handler';
 
 export interface AppDependencies {
@@ -72,9 +73,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   });
 
   // Graceful shutdown
-  const shutdown = async (signal: string) => {
+  const shutdown = (signal: string) => {
     console.log(`${signal} received. Shutting down gracefully...`);
-    server.close(async () => {
+    server.close(() => {
       console.log('HTTP server closed.');
       process.exit(0);
     });
@@ -86,6 +87,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     }, 10000);
   };
 
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => void shutdown('SIGTERM'));
+  process.on('SIGINT', () => void shutdown('SIGINT'));
 }

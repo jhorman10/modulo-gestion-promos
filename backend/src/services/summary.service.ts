@@ -1,4 +1,5 @@
-import { PrismaClient, PromotionStatus } from '@prisma/client';
+import type { PrismaClient} from '@prisma/client';
+import { PromotionStatus } from '@prisma/client';
 import { prisma } from '../prisma/client';
 
 export interface PromotionSummary {

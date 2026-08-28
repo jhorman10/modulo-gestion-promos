@@ -5,14 +5,14 @@ import { vi, afterAll } from 'vitest';
 vi.setConfig({ testTimeout: 10000 });
 
 // Mock console methods to reduce noise in tests
-const originalConsole = console;
+const originalConsole = { ...console };
 global.console = {
   ...originalConsole,
   log: vi.fn(),
   debug: vi.fn(),
   info: vi.fn(),
-  warn: originalConsole.warn,
-  error: originalConsole.error,
+  warn: originalConsole.warn.bind(originalConsole),
+  error: originalConsole.error.bind(originalConsole),
 };
 
 // Clean up after all tests

@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import type { Request, Response, NextFunction } from 'express';
+import type { AnyZodObject } from 'zod';
+import { ZodError } from 'zod';
 import { formatError, ErrorCode } from '../utils/errors';
 
 /**
@@ -11,11 +12,13 @@ export function validate(schema: AnyZodObject) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Validate body, query, and params
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
       await schema.parseAsync({
         body: req.body,
         query: req.query,
         params: req.params,
       });
+      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
       next();
     } catch (error) {
       if (error instanceof ZodError) {

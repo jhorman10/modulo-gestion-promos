@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ProductCategoryController } from '../controllers/product-category.controller';
-import { ProductCategoryService } from '../services/product-category.service';
+import type { ProductCategoryService } from '../services/product-category.service';
 
 export function createProductCategoryRoutes(
   productCategoryService?: ProductCategoryService
@@ -8,7 +8,7 @@ export function createProductCategoryRoutes(
   const router = Router();
   const controller = new ProductCategoryController(productCategoryService);
 
-  router.get('/api/products-categories', (req, res) => controller.listAll(req, res));
+  router.get('/api/products-categories', (req, res) => { void controller.listAll(req, res); });
 
   return router;
 }
