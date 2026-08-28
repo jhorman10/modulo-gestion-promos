@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { AnyZodObject } from 'zod';
-import { ZodError } from 'zod';
+import { ZodError, type ZodTypeAny } from 'zod';
 import { formatError, ErrorCode } from '../utils/errors';
 
 /**
@@ -8,7 +7,7 @@ import { formatError, ErrorCode } from '../utils/errors';
  * @param schema - Zod schema to validate against
  * @returns Express middleware
  */
-export function validate(schema: AnyZodObject) {
+export function validate(schema: ZodTypeAny) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Validate body, query, and params
@@ -40,7 +39,7 @@ export function validate(schema: AnyZodObject) {
 /**
  * Validates only the request body
  */
-export function validateBody(schema: AnyZodObject) {
+export function validateBody(schema: ZodTypeAny) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await schema.parseAsync(req.body);
@@ -65,7 +64,7 @@ export function validateBody(schema: AnyZodObject) {
 /**
  * Validates only the query parameters
  */
-export function validateQuery(schema: AnyZodObject) {
+export function validateQuery(schema: ZodTypeAny) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await schema.parseAsync(req.query);
@@ -90,7 +89,7 @@ export function validateQuery(schema: AnyZodObject) {
 /**
  * Validates only the route parameters
  */
-export function validateParams(schema: AnyZodObject) {
+export function validateParams(schema: ZodTypeAny) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await schema.parseAsync(req.params);

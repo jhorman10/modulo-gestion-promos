@@ -64,7 +64,7 @@ export function createApp(deps: AppDependencies = {}): Express {
 }
 
 // Only start server if this file is run directly (not imported for testing)
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   const PORT = parseInt(process.env.PORT || '3001', 10);
   const app = createApp();
   

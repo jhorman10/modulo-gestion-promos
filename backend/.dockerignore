@@ -1,0 +1,16 @@
+node_modules
+dist
+test
+*.test.ts
+.env
+.env.local
+.env.*.local
+.git
+.gitignore
+.eslintrc.js
+.prettierrc
+coverage
+.nyc_output
+vitest.config.ts
+tsconfig.eslint.json
+README.md

@@ -40,13 +40,13 @@ export class PromotionController {
       const query = req.query as unknown as PromotionListQuery;
       // Convert string query params to proper types
       const listQuery: PromotionListQuery = {
-        page: query.page ? parseInt(query.page as string, 10) : undefined,
-        size: query.size ? parseInt(query.size as string, 10) : undefined,
+        page: query.page ? parseInt(String(query.page), 10) : undefined,
+        size: query.size ? parseInt(String(query.size), 10) : undefined,
         status: query.status,
         product_id: query.product_id,
         category_id: query.category_id,
-        start_date_from: query.start_date_from ? new Date(query.start_date_from as string) : undefined,
-        end_date_to: query.end_date_to ? new Date(query.end_date_to as string) : undefined,
+        start_date_from: query.start_date_from ? new Date(String(query.start_date_from)) : undefined,
+        end_date_to: query.end_date_to ? new Date(String(query.end_date_to)) : undefined,
       };
       const result = await this.service.list(listQuery);
       res.status(200).json(result);
@@ -68,7 +68,7 @@ export class PromotionController {
   async getById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const promotion = await this.service.getById(id);
+      const promotion = await this.service.getById(id!);
       if (!promotion) {
         res.status(404).json({
           error: {
@@ -98,7 +98,7 @@ export class PromotionController {
     try {
       const { id } = req.params;
       const input = req.body as PromotionUpdateInput;
-      const promotion = await this.service.update(id, input);
+      const promotion = await this.service.update(id!, input);
       res.status(200).json(promotion);
     } catch (error: any) {
       if (error.statusCode === 400 || error.statusCode === 404 || error.statusCode === 409) {
@@ -118,7 +118,7 @@ export class PromotionController {
   async activate(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const promotion = await this.service.activate(id);
+      const promotion = await this.service.activate(id!);
       res.status(200).json(promotion);
     } catch (error: any) {
       if (error.statusCode === 404 || error.statusCode === 409) {
@@ -137,7 +137,7 @@ export class PromotionController {
   async finalize(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const promotion = await this.service.finalize(id);
+      const promotion = await this.service.finalize(id!);
       res.status(200).json(promotion);
     } catch (error: any) {
       if (error.statusCode === 404 || error.statusCode === 409) {
@@ -156,7 +156,7 @@ export class PromotionController {
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      await this.service.softDelete(id);
+      await this.service.softDelete(id!);
       res.status(204).send();
     } catch (error: any) {
       if (error.statusCode === 404 || error.statusCode === 409) {
