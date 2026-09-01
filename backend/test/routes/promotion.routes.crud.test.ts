@@ -771,8 +771,8 @@ describe('GET /api/promotions/summary integration', () => {
         name: 'Test Promotion',
         discountType: 'PERCENTAGE',
         discountValue: 15,
-        startDate: new Date(overrides.start_date || '2026-08-01T00:00:00.000Z'),
-        endDate: new Date(overrides.end_date || '2026-08-30T23:59:59.000Z'),
+        startDate: new Date(overrides.start_date || '2026-01-01T00:00:00.000Z'),
+        endDate: new Date(overrides.end_date || '2026-12-31T23:59:59.000Z'),
         status: statusMap[overrides.status || 'Programada'],
         deletedAt: null,
       },
@@ -810,7 +810,7 @@ describe('GET /api/promotions/summary integration', () => {
       Activa: 5,
       Finalizada: 2,
     });
-    // valid_today should be 5 since all Activa promotions have date range including today (Aug 2026)
+    // valid_today should be 5 since all Activa promotions have date range including today
     expect(response.body.valid_today).toBe(5);
   });
 
