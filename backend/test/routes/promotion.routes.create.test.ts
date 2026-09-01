@@ -84,8 +84,8 @@ describe('POST /api/promotions integration', () => {
         ]),
         deleted_at: null,
       });
-      expect(response.body.start_date).toBe('2026-09-01T00:00:00.000Z');
-      expect(response.body.end_date).toBe('2026-09-30T23:59:59.000Z');
+      expect(response.body.start_date).toBe('2026-01-01T00:00:00.000Z');
+      expect(response.body.end_date).toBe('2026-12-31T23:59:59.000Z');
     });
 
     it('should create fixed amount promotion', async () => {
