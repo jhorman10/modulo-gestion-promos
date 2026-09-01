@@ -55,8 +55,8 @@ describe('POST /api/promotions integration', () => {
     name: 'Test Promotion',
     discount_type: 'percentage',
     discount_value: 15,
-    start_date: '2026-09-01T00:00:00.000Z',
-    end_date: '2026-09-30T23:59:59.000Z',
+    start_date: '2026-01-01T00:00:00.000Z',
+    end_date: '2026-12-31T23:59:59.000Z',
     product_ids: [],
     category_ids: [],
   };
