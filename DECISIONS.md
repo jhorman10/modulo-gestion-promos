@@ -428,3 +428,40 @@ ProductCategory ──┘
 - Size clamped to `[1, 100]` range
 - Total pages computed as `Math.ceil(total / size)`
 - Frontend uses pagination for list navigation
+
+---
+
+## ADR-015: Promotion Overlap Prevention
+
+**Date**: 2026-09-01
+**Status**: Accepted
+**Context**: Without validation, two simultaneous promotions on the same product or category can coexist in `PROGRAMADA`/`ACTIVA` states, creating ambiguous pricing rules at checkout and confusing reporting. Operators need an explicit, server-enforced guarantee that at most one non-finished promotion targets the same product/category at the same time.
+
+**Decision**: Reject `create` and `update` on a promotion that overlaps in time **and** shares at least one product or category with an existing `PROGRAMADA` or `ACTIVA`, non-soft-deleted promotion. Return HTTP `409` with code `PROMOTION_OVERLAP` and a message that names the conflicting promotion and its date range.
+
+**Rule** (strict half-open overlap):
+
+```
+overlap(a, b)  ⇔  a.start < b.end  AND  a.end > b.start
+```
+
+Adjacent ranges (`end == start`) are **not** considered overlapping.
+
+**Existing promotion is considered a conflict iff**:
+
+- `status ∈ {PROGRAMADA, ACTIVA}` (FINALIZADA is excluded)
+- `deletedAt IS NULL`
+- shares ≥ 1 product **or** ≥ 1 category with the candidate (junction table `promotion_products_categories`)
+
+**Update semantics**: when updating, the overlap check uses the **resulting** range and associations (current values merged with the patch), and excludes the current promotion from the query so a promotion never conflicts with itself.
+
+**Trade-off / cost**:
+
+- Users must explicitly `finalize` or `softDelete` a conflicting promotion before creating a new one on the same scope. This is intentional — silent stacking of overlapping promotions is the bug we are preventing, not a feature.
+- A compound index on `(status, deletedAt, startDate, endDate)` plus the existing junction index keeps the overlap query cheap.
+
+**Consequences**:
+
+- `ErrorCode.PROMOTION_OVERLAP` mapped to `409` in `backend/src/utils/errors.ts`
+- `PromotionService.create()` and `update()` call a private `assertNoOverlap` before persisting
+- Tested with 12 dedicated cases (full, partial, nested, adjacent, FINALIZADA allowed, soft-deleted allowed, self-update safe, etc.)

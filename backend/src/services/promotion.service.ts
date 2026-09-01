@@ -87,6 +87,14 @@ export class PromotionService {
       throw createAppError(ErrorCode.VALIDATION_ERROR, 'Product or category not found', 400);
     }
 
+    // Reject if any active/programmed promotion overlaps on time AND products/categories
+    await this.assertNoOverlap({
+      start_date: input.start_date,
+      end_date: input.end_date,
+      product_ids: input.product_ids,
+      category_ids: input.category_ids,
+    });
+
     // Create promotion and junction records in a transaction
     const promotion = await this.prisma.$transaction(async tx => {
       // Create promotion
@@ -150,6 +158,88 @@ export class PromotionService {
       }));
 
     return this.mapPromotionToResponse(promotion, products, categories);
+  }
+
+  /**
+   * Assert that no active/programmed promotion overlaps the given range and
+   * product/category associations. Throws PROMOTION_OVERLAP if a conflict exists.
+   *
+   * Overlap rule: two ranges [start, end] overlap iff
+   *   start_a < end_b AND end_a > start_b
+   * (strict). Adjacent ranges (end == start) do NOT overlap.
+   *
+   * Existing promotion is considered for overlap only if:
+   *   - status is PROGRAMADA or ACTIVA (FINALIZADA excluded)
+   *   - deletedAt is null
+   *   - shares at least one product OR category with the candidate (junction table)
+   *
+   * @param params.start_date - candidate start date
+   * @param params.end_date - candidate end date
+   * @param params.product_ids - candidate product association IDs
+   * @param params.category_ids - candidate category association IDs
+   * @param params.excludePromotionId - promotion id to exclude (used for update)
+   */
+  private async assertNoOverlap(params: {
+    start_date: Date;
+    end_date: Date;
+    product_ids: string[];
+    category_ids: string[];
+    excludePromotionId?: string;
+  }): Promise<void> {
+    const overlap = await this.findOverlappingPromotion(params);
+    if (!overlap) return;
+
+    const fmt = (d: Date) => d.toISOString();
+    throw createAppError(
+      ErrorCode.PROMOTION_OVERLAP,
+      `Promotion overlaps with existing promotion "${overlap.name}" (${fmt(overlap.startDate)} - ${fmt(overlap.endDate)})`,
+      409
+    );
+  }
+
+  /**
+   * Find an existing PROGRAMADA/ACTIVA, non-deleted promotion that overlaps the
+   * given range and shares at least one product or category. Returns the
+   * conflicting promotion (without junction rows) or null.
+   *
+   * @see assertNoOverlap for the full overlap rule.
+   */
+  private async findOverlappingPromotion(params: {
+    start_date: Date;
+    end_date: Date;
+    product_ids: string[];
+    category_ids: string[];
+    excludePromotionId?: string;
+  }) {
+    const { start_date, end_date, product_ids, category_ids, excludePromotionId } = params;
+
+    // No associations => no possible overlap on products/categories
+    if (product_ids.length === 0 && category_ids.length === 0) {
+      return null;
+    }
+
+    const conflictingIds = new Set<string>([...product_ids, ...category_ids]);
+
+    return this.prisma.promotion.findFirst({
+      where: {
+        deletedAt: null,
+        status: { in: [PromotionStatus.PROGRAMADA, PromotionStatus.ACTIVA] },
+        // Strict date overlap: start_a < end_b AND end_a > start_b
+        startDate: { lt: end_date },
+        endDate: { gt: start_date },
+        // Shares at least one product/category through the junction table
+        associations: {
+          some: { productCategoryId: { in: Array.from(conflictingIds) } },
+        },
+        ...(excludePromotionId ? { id: { not: excludePromotionId } } : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        endDate: true,
+      },
+    });
   }
 
   /**
@@ -365,6 +455,44 @@ export class PromotionService {
           throw createAppError(ErrorCode.VALIDATION_ERROR, 'Product or category not found', 400);
         }
       }
+    }
+
+    // If any field that affects overlap is changing, validate no other active/programmed
+    // promotion overlaps with the resulting range + associations.
+    if (
+      input.start_date !== undefined ||
+      input.end_date !== undefined ||
+      input.product_ids !== undefined ||
+      input.category_ids !== undefined
+    ) {
+      // Resolve effective post-update associations: keep current ones if not replaced.
+      let effectiveProductIds = input.product_ids;
+      let effectiveCategoryIds = input.category_ids;
+
+      if (effectiveProductIds === undefined || effectiveCategoryIds === undefined) {
+        const currentAssociations = await this.prisma.promotionProductCategory.findMany({
+          where: { promotionId: id },
+          select: { productCategoryId: true, associationType: true },
+        });
+        if (effectiveProductIds === undefined) {
+          effectiveProductIds = currentAssociations
+            .filter(a => a.associationType === ProductCategoryType.PRODUCT)
+            .map(a => a.productCategoryId);
+        }
+        if (effectiveCategoryIds === undefined) {
+          effectiveCategoryIds = currentAssociations
+            .filter(a => a.associationType === ProductCategoryType.CATEGORY)
+            .map(a => a.productCategoryId);
+        }
+      }
+
+      await this.assertNoOverlap({
+        start_date: input.start_date ?? existing.startDate,
+        end_date: input.end_date ?? existing.endDate,
+        product_ids: effectiveProductIds,
+        category_ids: effectiveCategoryIds,
+        excludePromotionId: id,
+      });
     }
 
     // Update promotion and associations in a transaction

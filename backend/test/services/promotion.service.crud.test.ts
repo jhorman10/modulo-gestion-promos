@@ -10,6 +10,7 @@ vi.mock('../../src/prisma/client', () => ({
   prisma: {
     promotion: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       update: vi.fn(),
       groupBy: vi.fn(),
       count: vi.fn(),
